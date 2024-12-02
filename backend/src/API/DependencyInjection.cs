@@ -1,0 +1,71 @@
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+
+namespace API;
+
+public static class DependencyInjection
+{
+    public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddSwagger();
+        
+        return builder;
+    }
+
+    public static WebApplication ConfigureMiddlewares(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        
+        // app.UseAuthentication();
+        // app.UseAuthorization();
+
+        return app;
+    }
+
+    private static void AddSwagger(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Put Bearer [space] and then your token ",
+            };
+
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+
+            var securityRequirement = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = JwtBearerDefaults.AuthenticationScheme
+                        }
+                    },
+                    []
+                }
+            };
+
+            c.AddSecurityRequirement(securityRequirement);
+        });
+    }
+    
+    
+}
