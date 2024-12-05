@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "src\API\API.csproj",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{753B1C7A-CE37-4C8A-8DA0-3BB9B90562F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{4D8630B1-43C5-47C6-8858-74EE9D044376}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,8 +16,13 @@ Global
 		{404B0EF0-3C93-4DE9-A4C3-7F7DEA401462}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{404B0EF0-3C93-4DE9-A4C3-7F7DEA401462}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{404B0EF0-3C93-4DE9-A4C3-7F7DEA401462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D8630B1-43C5-47C6-8858-74EE9D044376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D8630B1-43C5-47C6-8858-74EE9D044376}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D8630B1-43C5-47C6-8858-74EE9D044376}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D8630B1-43C5-47C6-8858-74EE9D044376}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{404B0EF0-3C93-4DE9-A4C3-7F7DEA401462} = {753B1C7A-CE37-4C8A-8DA0-3BB9B90562F9}
+		{4D8630B1-43C5-47C6-8858-74EE9D044376} = {753B1C7A-CE37-4C8A-8DA0-3BB9B90562F9}
 	EndGlobalSection
 EndGlobal
