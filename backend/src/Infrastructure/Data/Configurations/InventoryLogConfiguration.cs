@@ -16,7 +16,7 @@ public class InventoryLogConfiguration : IEntityTypeConfiguration<InventoryLog>
             .HasConversion<string>();
 
         builder.HasOne(e => e.Product)
-            .WithMany()
+            .WithMany(m=>m.InventoryLogs)
             .HasForeignKey(f => f.ProductId);
     }
 }

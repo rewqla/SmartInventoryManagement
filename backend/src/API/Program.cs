@@ -1,12 +1,15 @@
 using API;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureServices();
+builder.ConfigureDatabase();
 
 var app = builder.Build();
 
 app.ConfigureMiddlewares();
+app.ApplyMigrations();
 
 var summaries = new[]
 {

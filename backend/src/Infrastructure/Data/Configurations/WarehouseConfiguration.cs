@@ -14,7 +14,7 @@ public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
         builder.Property(e => e.Location);
 
         builder.HasMany(e => e.Inventories)
-            .WithOne()
+            .WithOne(o => o.Warehouse)
             .HasForeignKey(f => f.WarehouseId);
     }
 }

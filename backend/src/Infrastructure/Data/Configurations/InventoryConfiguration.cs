@@ -15,9 +15,9 @@ public class InventoryConfiguration : IEntityTypeConfiguration<Inventory>
         builder.HasOne(e => e.Product)
             .WithMany()
             .HasForeignKey(f => f.ProductId);
-        
+
         builder.HasOne(e => e.Warehouse)
-            .WithMany()
+            .WithMany(m => m.Inventories)
             .HasForeignKey(f => f.WarehouseId);
     }
 }

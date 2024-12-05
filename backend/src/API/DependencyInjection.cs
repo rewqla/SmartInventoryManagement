@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace API;
@@ -15,6 +17,17 @@ public static class DependencyInjection
         return builder;
     }
 
+    public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddDbContext<InventoryContext>(
+            options=>options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        
+        return builder;
+    }
+    
     public static WebApplication ConfigureMiddlewares(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);

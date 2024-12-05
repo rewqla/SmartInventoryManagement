@@ -13,7 +13,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(e => e.Name);
 
         builder.HasMany(e => e.Products)
-            .WithOne()
+            .WithOne(o=>o.Category)
             .HasForeignKey(f => f.CategoryId);
     }
 }

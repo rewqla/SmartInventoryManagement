@@ -17,7 +17,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.PasswordHash);
 
         builder.HasOne(e => e.Role)
-            .WithMany()
+            .WithMany(m=>m.Users)
             .HasForeignKey(f => f.RoleId);
 
         builder.HasIndex(p => p.Email)

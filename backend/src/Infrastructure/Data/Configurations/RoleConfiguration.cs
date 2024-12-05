@@ -13,7 +13,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.Property(e => e.Name);
 
         builder.HasMany(e => e.Users)
-            .WithOne()
+            .WithOne(o=>o.Role)
             .HasForeignKey(f => f.RoleId);
     }
 }

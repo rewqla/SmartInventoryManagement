@@ -16,11 +16,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(e => e.UnitPrice);
 
         builder.HasOne(e => e.Category)
-            .WithMany()
+            .WithMany(m=>m.Products)
             .HasForeignKey(f => f.CategoryId);
 
         builder.HasMany(e => e.InventoryLogs)
-            .WithOne()
+            .WithOne(o=>o.Product)
             .HasForeignKey(f => f.ProductId);
 
         builder.HasIndex(p => p.SKU)
