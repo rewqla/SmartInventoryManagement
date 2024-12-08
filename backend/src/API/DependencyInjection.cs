@@ -1,4 +1,5 @@
-﻿using Infrastructure.Data;
+﻿using API.GraphQL;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -33,7 +34,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
 
-        services.AddGraphQLServer();
+        services.AddGraphQLServer().AddQueryType<Query>();
 
         return builder;
     }
