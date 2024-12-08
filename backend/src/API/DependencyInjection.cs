@@ -1,4 +1,5 @@
 ﻿using API.GraphQL;
+using API.GraphQL.Mutation;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,9 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
 
-        services.AddGraphQLServer().AddQueryType<Query>();
+        services.AddGraphQLServer()
+            .AddQueryType<Query>()
+            .AddMutationType<Mutation>();
 
         return builder;
     }
