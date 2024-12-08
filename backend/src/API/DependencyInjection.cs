@@ -13,7 +13,7 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddSwagger();
-        
+
         return builder;
     }
 
@@ -23,21 +23,21 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddDbContext<InventoryContext>(
-            options=>options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-        
+            options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
         return builder;
     }
-    
+
     public static WebApplication ConfigureMiddlewares(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
+
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        
+
         // app.UseAuthentication();
         // app.UseAuthorization();
 
@@ -79,6 +79,4 @@ public static class DependencyInjection
             c.AddSecurityRequirement(securityRequirement);
         });
     }
-    
-    
 }

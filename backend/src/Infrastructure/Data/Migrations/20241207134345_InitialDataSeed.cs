@@ -21,19 +21,31 @@ namespace Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var adminRoleId = Guid.NewGuid();
-            var managerRoleId = Guid.NewGuid();
-            var workerRoleId = Guid.NewGuid();
-            
-            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{adminRoleId}','Admin')");
-            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{managerRoleId}','Manager')");
-            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{workerRoleId}','Worker')");
-            
-            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Admin User', '1234567890', 'admin@example.com', '{HashPassword("123456")}', '{adminRoleId}')");
-            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Manager User', '0987654321', 'manager@example.com', '{HashPassword("123456")}', '{managerRoleId}')");
-            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Worker User', '1112223333', 'worker@example.com', '{HashPassword("123456")}', '{workerRoleId}')");
+            SeedRoles(migrationBuilder);
+            SeedUsers(migrationBuilder);
         }
 
+        private Guid _adminRoleId;
+        private Guid _managerRoleId;
+        private Guid _workerRoleId;
+        
+        private void SeedRoles(MigrationBuilder migrationBuilder)
+        {
+             _adminRoleId = Guid.NewGuid();
+             _managerRoleId = Guid.NewGuid();
+             _workerRoleId = Guid.NewGuid();
+
+            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{_adminRoleId}','Admin')");
+            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{_managerRoleId}','Manager')");
+            migrationBuilder.Sql($"INSERT INTO \"Roles\" (\"Id\", \"Name\") VALUES ('{_workerRoleId}','Worker')");
+        }
+        
+        private void SeedUsers(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Admin User', '1234567890', 'admin@example.com', '{HashPassword("123456")}', '{_adminRoleId}')");
+            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Manager User', '0987654321', 'manager@example.com', '{HashPassword("123456")}', '{_managerRoleId}')");
+            migrationBuilder.Sql($"INSERT INTO \"Users\" (\"Id\", \"Name\", \"Phone\", \"Email\", \"PasswordHash\", \"RoleId\") VALUES ('{Guid.NewGuid()}', 'Worker User', '1112223333', 'worker@example.com', '{HashPassword("123456")}', '{_workerRoleId}')");
+        }
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
