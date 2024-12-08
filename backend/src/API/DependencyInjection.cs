@@ -1,5 +1,5 @@
 ﻿using API.GraphQL;
-using API.GraphQL.Mutation;
+using API.GraphQL.Mutations;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
