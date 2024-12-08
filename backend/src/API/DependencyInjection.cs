@@ -27,6 +27,16 @@ public static class DependencyInjection
 
         return builder;
     }
+    
+    public static WebApplicationBuilder ConfigureGraphQL(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddGraphQLServer();
+
+        return builder;
+    }
 
     public static WebApplication ConfigureMiddlewares(this WebApplication app)
     {
@@ -43,7 +53,14 @@ public static class DependencyInjection
 
         return app;
     }
+    public static WebApplication MapEndpoints(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
 
+        app.MapGraphQL();
+
+        return app;
+    }
     private static void AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();

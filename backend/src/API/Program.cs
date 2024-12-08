@@ -5,10 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureServices();
 builder.ConfigureDatabase();
+builder.ConfigureGraphQL();
 
 var app = builder.Build();
 
 app.ConfigureMiddlewares();
+app.MapEndpoints();
 app.ApplyMigrations();
 
 var summaries = new[]
