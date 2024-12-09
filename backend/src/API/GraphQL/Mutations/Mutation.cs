@@ -15,17 +15,18 @@ public class Mutation
             Name = input.Name,
             Location = input.Location
         };
-        
+
         context.Warehouses.Add(warehouse);
         await context.SaveChangesAsync();
-        
+
         return new WarehouseResult(warehouse.Id, warehouse.Name, warehouse.Location);
     }
-    
-    public async Task<WarehouseResult?> UpdateWarehouse(InventoryContext context, Guid warehouseId, WarehouseInput input)
+
+    public async Task<WarehouseResult?> UpdateWarehouse(InventoryContext context, Guid warehouseId,
+        WarehouseInput input)
     {
         var warehouse = await context.Warehouses.FindAsync(warehouseId);
-        
+
         if (warehouse == null)
         {
             return null;
@@ -37,5 +38,20 @@ public class Mutation
         await context.SaveChangesAsync();
 
         return new WarehouseResult(warehouse.Id, warehouse.Name, warehouse.Location);
+    }
+
+    public async Task<bool> DeleteWarehouse(InventoryContext context, Guid warehouseId)
+    {
+        var warehouse = await context.Warehouses.FindAsync(warehouseId);
+
+        if (warehouse == null)
+        {
+            return false;
+        }
+
+        context.Warehouses.Remove(warehouse);
+        await context.SaveChangesAsync();
+
+        return true;
     }
 }
