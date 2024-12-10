@@ -1,6 +1,5 @@
 ﻿using API.GraphQL.Errors;
 using API.GraphQL.Mutations.Inputs;
-using API.GraphQL.Mutations.Results;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 
@@ -8,7 +7,7 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
-    public async Task<WarehouseResult> CreateWarehouse(InventoryContext context, CreateWarehouseInput input)
+    public async Task<Warehouse> CreateWarehouse(InventoryContext context, CreateWarehouseInput input)
     {
         var warehouse = new Warehouse
         {
@@ -20,10 +19,10 @@ public class Mutation
         context.Warehouses.Add(warehouse);
         await context.SaveChangesAsync();
 
-        return new WarehouseResult(warehouse.Id, warehouse.Name, warehouse.Location);
+        return warehouse;
     }
     
-    public async Task<WarehouseResult?> UpdateWarehouse(InventoryContext context, 
+    public async Task<Warehouse?> UpdateWarehouse(InventoryContext context, 
         UpdateWarehouseInput input)
     {
         var warehouse = await context.Warehouses.FindAsync(input.Id);
@@ -38,7 +37,7 @@ public class Mutation
 
         await context.SaveChangesAsync();
 
-        return new WarehouseResult(warehouse.Id, warehouse.Name, warehouse.Location);
+        return warehouse;
     }
 
     public async Task<bool> DeleteWarehouse(InventoryContext context, Guid warehouseId)
