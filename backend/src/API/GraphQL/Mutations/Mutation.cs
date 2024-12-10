@@ -1,4 +1,5 @@
-﻿using API.GraphQL.Mutations.Inputs;
+﻿using API.GraphQL.Errors;
+using API.GraphQL.Mutations.Inputs;
 using API.GraphQL.Mutations.Results;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -7,7 +8,7 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
-    public async Task<WarehouseResult> CreateWarehouse(InventoryContext context, WarehouseInput input)
+    public async Task<WarehouseResult> CreateWarehouse(InventoryContext context, CreateWarehouseInput input)
     {
         var warehouse = new Warehouse
         {
@@ -21,15 +22,15 @@ public class Mutation
 
         return new WarehouseResult(warehouse.Id, warehouse.Name, warehouse.Location);
     }
-
-    public async Task<WarehouseResult?> UpdateWarehouse(InventoryContext context, Guid warehouseId,
-        WarehouseInput input)
+    
+    public async Task<WarehouseResult?> UpdateWarehouse(InventoryContext context, 
+        UpdateWarehouseInput input)
     {
-        var warehouse = await context.Warehouses.FindAsync(warehouseId);
+        var warehouse = await context.Warehouses.FindAsync(input.Id);
 
         if (warehouse == null)
         {
-            return null;
+            throw new InvalidGuidError($"Warehouse {input.Id} not found");
         }
 
         warehouse.Name = input.Name;

@@ -37,7 +37,8 @@ public static class DependencyInjection
 
         services.AddGraphQLServer()
             .AddQueryType<Query>()
-            .AddMutationType<Mutation>();
+            .AddMutationType<Mutation>()
+            .AddMutationConventions();
 
         return builder;
     }
