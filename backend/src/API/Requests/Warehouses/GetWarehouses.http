@@ -1,0 +1,12 @@
+﻿### Get warehouses
+GRAPHQL {{baseUrl}}/graphql/
+
+query{
+  warehouse{
+    id
+    name
+    location
+  }
+}
+
+###
