@@ -22,6 +22,7 @@ public class Mutation
         return warehouse;
     }
     
+    [Error(typeof(InvalidGuidError))]
     public async Task<Warehouse?> UpdateWarehouse(InventoryContext context, 
         UpdateWarehouseInput input)
     {

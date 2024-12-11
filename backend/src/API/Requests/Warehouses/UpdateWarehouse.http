@@ -12,6 +12,12 @@ mutation{
       location
       id
     }
+     errors {
+      __typename
+      ... on InvalidGuidError {
+        message
+      }
+    }
   }
 }
 ###
