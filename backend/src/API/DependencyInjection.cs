@@ -1,5 +1,6 @@
 ﻿using API.GraphQL;
 using API.GraphQL.Mutations;
+using API.GraphQL.Subsciptions;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,9 @@ public static class DependencyInjection
         services.AddGraphQLServer()
             .AddQueryType<Query>()
             .AddMutationType<Mutation>()
-            .AddMutationConventions();
+            .AddMutationConventions()
+            .AddSubscriptionType<Subscription>()
+            .AddInMemorySubscriptions();
 
         return builder;
     }
@@ -53,6 +56,8 @@ public static class DependencyInjection
             app.UseSwaggerUI();
         }
 
+        app.UseWebSockets();
+        
         // app.UseAuthentication();
         // app.UseAuthorization();
 

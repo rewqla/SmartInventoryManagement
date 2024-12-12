@@ -1,5 +1,7 @@
 ﻿using API.GraphQL.Errors;
 using API.GraphQL.Mutations.Inputs;
+using API.GraphQL.Subsciptions;
+using HotChocolate.Subscriptions;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 
@@ -7,7 +9,8 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
-    public async Task<Warehouse> CreateWarehouse(InventoryContext context, CreateWarehouseInput input)
+    public async Task<Warehouse> CreateWarehouse(InventoryContext context, CreateWarehouseInput input,
+        [Service] ITopicEventSender sender)
     {
         var warehouse = new Warehouse
         {
@@ -19,6 +22,8 @@ public class Mutation
         context.Warehouses.Add(warehouse);
         await context.SaveChangesAsync();
 
+        await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouse);
+        
         return warehouse;
     }
     
