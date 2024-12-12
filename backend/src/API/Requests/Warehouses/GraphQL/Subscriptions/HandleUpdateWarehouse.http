@@ -1,0 +1,12 @@
+﻿### Get warehouses
+GRAPHQL {{baseUrl}}/graphql/
+
+subscription{
+  warehouseUpdated(warehouseId: "b9e64da6-a122-4886-b275-88096c18cec8"){
+    name
+    location
+    id
+  }
+}
+
+###

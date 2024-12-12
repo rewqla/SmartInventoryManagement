@@ -29,7 +29,7 @@ public class Mutation
     
     [Error(typeof(InvalidGuidError))]
     public async Task<Warehouse?> UpdateWarehouse(InventoryContext context, 
-        UpdateWarehouseInput input)
+        UpdateWarehouseInput input, [Service] ITopicEventSender sender)
     {
         var warehouse = await context.Warehouses.FindAsync(input.Id);
 
@@ -43,6 +43,9 @@ public class Mutation
 
         await context.SaveChangesAsync();
 
+        string updateWarehouseTopic = $"{warehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
+        await sender.SendAsync(updateWarehouseTopic, warehouse);
+        
         return warehouse;
     }
 
