@@ -1,0 +1,18 @@
+﻿### Update warehouse
+GRAPHQL {{baseUrl}}/graphql/
+
+mutation{
+    createWarehouse(input:  {
+       name: "Normal Warehouse",
+       location: "Lutsk"
+    }){
+    warehouse{
+      name
+      location
+      id
+    }
+    __typename
+  }
+}
+
+###
