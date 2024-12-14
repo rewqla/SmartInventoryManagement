@@ -3,6 +3,7 @@ using API.GraphQL.Mutations.Inputs;
 using API.GraphQL.Shared;
 using API.GraphQL.Subsciptions;
 using API.GraphQL.Subsciptions.Models;
+using API.GraphQL.Subsciptions.Topics;
 using HotChocolate.Subscriptions;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -25,7 +26,7 @@ public class Mutation
         await context.SaveChangesAsync();
 
         await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouse);
-        await sender.SendAsync(nameof(Subscription.WarehouseMutated), new WarehouseEvent(EventType.Created, warehouse));
+        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEvent(EventType.Created, warehouse));
         
         return warehouse;
     }
@@ -49,7 +50,7 @@ public class Mutation
         string updateWarehouseTopic = $"{warehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
         await sender.SendAsync(updateWarehouseTopic, warehouse);
         
-        await sender.SendAsync(nameof(Subscription.WarehouseMutated), new WarehouseEvent(EventType.Updated, warehouse));
+        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEvent(EventType.Updated, warehouse));
 
         return warehouse;
     }
@@ -68,7 +69,7 @@ public class Mutation
         await context.SaveChangesAsync();
 
         await sender.SendAsync(nameof(Subscription.WarehouseDeleted), warehouse);
-        await sender.SendAsync(nameof(Subscription.WarehouseMutated), new WarehouseEvent(EventType.Deleted, warehouse));
+        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEvent(EventType.Deleted, warehouse));
 
         return true;
     }
