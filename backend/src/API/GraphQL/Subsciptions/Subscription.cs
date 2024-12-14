@@ -1,4 +1,5 @@
-﻿using HotChocolate.Execution;
+﻿using API.GraphQL.Subsciptions.Models;
+using HotChocolate.Execution;
 using HotChocolate.Subscriptions;
 using Infrastructure.Entities;
 
@@ -21,4 +22,7 @@ public class Subscription
         
         return receiver.SubscribeAsync<Warehouse>(topic);
     }
+    
+    [Subscribe]
+    public WarehouseEvent WarehouseMutated([EventMessage] WarehouseEvent warehouseEvent) => warehouseEvent;
 }

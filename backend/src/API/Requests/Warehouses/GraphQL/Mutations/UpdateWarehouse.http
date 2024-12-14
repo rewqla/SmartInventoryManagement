@@ -3,7 +3,7 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
     updateWarehouse(input:  {
-       id: "b9e64da6-a122-4886-b275-88096c18cec8",
+       id: "a96111d9-5642-4496-aed3-193c467b2982",
        name: "Secret Warehouse",
        location: "Vinnytsia"
     }){

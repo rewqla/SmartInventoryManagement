@@ -1,0 +1,15 @@
+﻿### Get warehouses
+GRAPHQL {{baseUrl}}/graphql/
+
+subscription{
+  warehouseMutated{
+    eventType
+    warehouse{
+      name
+      location
+      id
+    }
+  }
+}
+
+###
