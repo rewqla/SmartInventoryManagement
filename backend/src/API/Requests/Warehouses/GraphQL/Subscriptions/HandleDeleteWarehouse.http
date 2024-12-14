@@ -1,0 +1,12 @@
+﻿### Get warehouses
+GRAPHQL {{baseUrl}}/graphql/
+
+subscription{
+  warehouseDeleted{
+    name
+    location
+    id
+  }
+}
+
+###

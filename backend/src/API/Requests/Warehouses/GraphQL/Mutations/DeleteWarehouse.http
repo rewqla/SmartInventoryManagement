@@ -1,0 +1,12 @@
+﻿### Update warehouse
+GRAPHQL {{baseUrl}}/graphql/
+
+mutation{
+  deleteWarehouse(input:  {
+     warehouseId: "a96111d9-5642-4496-aed3-193c467b2982"
+  }){
+    boolean
+  }
+}
+
+###
