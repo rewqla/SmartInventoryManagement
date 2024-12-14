@@ -8,7 +8,10 @@ public class Subscription
 {
     [Subscribe]
     public Warehouse WarehouseCreated([EventMessage] Warehouse warehouse) => warehouse;
-
+    
+    [Subscribe]
+    public Warehouse WarehouseDeleted([EventMessage] Warehouse warehouse) => warehouse;
+    
     [SubscribeAndResolve]
     public ValueTask<ISourceStream<Warehouse>> WarehouseUpdated(
         Guid warehouseId, 

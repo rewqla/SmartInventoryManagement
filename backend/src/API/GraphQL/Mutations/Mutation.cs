@@ -49,7 +49,8 @@ public class Mutation
         return warehouse;
     }
 
-    public async Task<bool> DeleteWarehouse(InventoryContext context, Guid warehouseId)
+    public async Task<bool> DeleteWarehouse(InventoryContext context, Guid warehouseId,
+        [Service] ITopicEventSender sender)
     {
         var warehouse = await context.Warehouses.FindAsync(warehouseId);
 
@@ -61,6 +62,8 @@ public class Mutation
         context.Warehouses.Remove(warehouse);
         await context.SaveChangesAsync();
 
+        await sender.SendAsync(nameof(Subscription.WarehouseDeleted), warehouse);
+        
         return true;
     }
 }
