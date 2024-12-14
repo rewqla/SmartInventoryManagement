@@ -1,6 +1,6 @@
 ﻿using API.GraphQL;
 using API.GraphQL.Mutations;
-using API.GraphQL.Subsciptions;
+using API.GraphQL.Subscriptions;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

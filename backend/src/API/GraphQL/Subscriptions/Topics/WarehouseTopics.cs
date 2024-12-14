@@ -1,4 +1,4 @@
-﻿namespace API.GraphQL.Subsciptions.Topics;
+﻿namespace API.GraphQL.Subscriptions.Topics;
 
 public static class WarehouseTopics
 {
