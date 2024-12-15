@@ -3,6 +3,7 @@ using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureRepositories();
 builder.ConfigureServices();
 builder.ConfigureDatabase();
 builder.ConfigureGraphQL();

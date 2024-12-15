@@ -10,10 +10,10 @@ public abstract  class GenericRepository<TEntity> : IGenericRepository<TEntity> 
     private readonly InventoryContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
-    protected GenericRepository(InventoryContext context, DbSet<TEntity> dbSet)
+    protected GenericRepository(InventoryContext context)
     {
         _dbContext = context;
-        _dbSet = dbSet;
+        _dbSet = context.Set<TEntity>();
     }
 
     public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)

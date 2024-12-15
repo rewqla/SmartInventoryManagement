@@ -2,6 +2,8 @@
 using API.GraphQL.Mutations;
 using API.GraphQL.Subscriptions;
 using Infrastructure.Data;
+using Infrastructure.Interfaces.Repositories.Warehouse;
+using Infrastructure.Repositories.Warehouse;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -20,6 +22,17 @@ public static class DependencyInjection
         return builder;
     }
 
+    public static WebApplicationBuilder ConfigureRepositories(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services
+            .AddScoped<IWarehouseRepository, WarehouseRepository>();
+
+        return builder;
+    }
+    
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
