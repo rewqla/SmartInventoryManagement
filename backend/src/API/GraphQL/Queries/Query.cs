@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;

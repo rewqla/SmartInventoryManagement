@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using Application.DTO.Warehouse;
 
 namespace Application.Interfaces.Services.Warehouse;
 

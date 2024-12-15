@@ -1,5 +1,7 @@
 ﻿using Application.DTO;
+using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
+using Application.Mapping.Warehouse;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 
 namespace Application.Services.Warehouse;
@@ -17,23 +19,13 @@ public class WarehouseService : IWarehouseService
     {
         var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
 
-        return new WarehouseDTO
-        {
-            Id = warehouse.Id,
-            Name = warehouse.Name,
-            Location = warehouse.Location
-        };
+        return WarehouseMapper.ToDTO(warehouse);
     }
 
     public async Task<IEnumerable<WarehouseDTO>> GetWarehousesAsync(CancellationToken cancellationToken = default)
     {
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
 
-        return warehouses.Select(item => new WarehouseDTO
-        {
-            Id = item.Id,
-            Name = item.Name,
-            Location = item.Location
-        });
+        return warehouses.Select(item => WarehouseMapper.ToDTO(item));
     }
 }
