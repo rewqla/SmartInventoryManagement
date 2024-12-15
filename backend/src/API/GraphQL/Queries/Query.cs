@@ -1,14 +1,15 @@
-﻿using Infrastructure.Data;
+﻿using Application.DTO;
+using Application.Interfaces.Services.Warehouse;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 
-namespace API.GraphQL;
+namespace API.GraphQL.Queries;
 
 public class Query
 {
-    public async Task<IEnumerable<Warehouse>> GetWarehouse(IWarehouseRepository warehouseRepository) =>
-        await warehouseRepository.GetAllAsync();
+    public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService) =>
+        await warehouseService.GetWarehousesAsync();
 
-    public async Task<Warehouse?> GetWarehouseById(IWarehouseRepository warehouseRepository, Guid id) =>
-        await warehouseRepository.FindByIdAsync(id);
+    public async Task<WarehouseDTO?> GetWarehouseById(IWarehouseService warehouseService, Guid id) =>
+        await warehouseService.GetWarehouseByIdAsync(id);
 }

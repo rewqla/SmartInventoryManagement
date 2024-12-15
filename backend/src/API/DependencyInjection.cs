@@ -1,6 +1,9 @@
 ﻿using API.GraphQL;
 using API.GraphQL.Mutations;
+using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
+using Application.Interfaces.Services.Warehouse;
+using Application.Services.Warehouse;
 using Infrastructure.Data;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Infrastructure.Repositories.Warehouse;
@@ -18,6 +21,7 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddSwagger();
+        services.AddScoped<IWarehouseService, WarehouseService>();
 
         return builder;
     }
@@ -32,7 +36,7 @@ public static class DependencyInjection
 
         return builder;
     }
-    
+
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -43,7 +47,7 @@ public static class DependencyInjection
 
         return builder;
     }
-    
+
     public static WebApplicationBuilder ConfigureGraphQL(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -70,12 +74,13 @@ public static class DependencyInjection
         }
 
         app.UseWebSockets();
-        
+
         // app.UseAuthentication();
         // app.UseAuthorization();
 
         return app;
     }
+
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
@@ -84,6 +89,7 @@ public static class DependencyInjection
 
         return app;
     }
+
     private static void AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
