@@ -28,4 +28,15 @@ public class WarehouseService : IWarehouseService
 
         return warehouses.Select(item => WarehouseMapper.ToDTO(item));
     }
+
+    public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto, CancellationToken cancellationToken = default)
+    {
+        warehouseDto.Id = Guid.NewGuid();
+        var warehouse = WarehouseMapper.ToEntity(warehouseDto);
+
+        await _warehouseRepository.AddAsync(warehouse, cancellationToken);
+        await _warehouseRepository.CompleteAsync();
+
+        return warehouseDto;
+    }
 }

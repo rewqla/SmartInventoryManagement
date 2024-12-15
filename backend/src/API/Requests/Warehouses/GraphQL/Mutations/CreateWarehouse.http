@@ -6,11 +6,9 @@ mutation{
        name: "Normal Warehouse",
        location: "Lutsk"
     }){
-    warehouse{
-      name
-      location
-      id
-    }
+    name
+    location
+    id
     __typename
   }
 }

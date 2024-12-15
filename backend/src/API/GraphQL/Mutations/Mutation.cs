@@ -1,9 +1,12 @@
 ﻿using API.GraphQL.Errors;
+using API.GraphQL.Mappers.Warehouse;
 using API.GraphQL.Mutations.Inputs;
+using API.GraphQL.Mutations.Payload;
 using API.GraphQL.Shared;
 using API.GraphQL.Subscriptions;
 using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
+using Application.Interfaces.Services.Warehouse;
 using HotChocolate.Subscriptions;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -12,27 +15,22 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
-    public async Task<Warehouse> CreateWarehouse(InventoryContext context, CreateWarehouseInput input,
-        [Service] ITopicEventSender sender)
+    public async Task<CreateWarehousePayload> CreateWarehouse(IWarehouseService warehouseService, CreateWarehouseInput input,
+        [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
-        var warehouse = new Warehouse
-        {
-            Id = Guid.NewGuid(),
-            Name = input.Name,
-            Location = input.Location
-        };
+        var createdWarehouse =
+            await warehouseService.CreateWarehouseAsync(WarehouseMapper.ToDTO(input), cancellationToken);
 
-        context.Warehouses.Add(warehouse);
-        await context.SaveChangesAsync();
+        var warehouseResult = WarehouseMapper.ToPayload(createdWarehouse);
 
-        await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouse);
-        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Created, warehouse));
-        
-        return warehouse;
+        await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouseResult, cancellationToken);
+        // await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Created, warehouseDto));
+
+        return warehouseResult;
     }
-    
+
     [Error(typeof(InvalidGuidError))]
-    public async Task<Warehouse?> UpdateWarehouse(InventoryContext context, 
+    public async Task<Warehouse?> UpdateWarehouse(InventoryContext context,
         UpdateWarehouseInput input, [Service] ITopicEventSender sender)
     {
         var warehouse = await context.Warehouses.FindAsync(input.Id);
@@ -49,7 +47,7 @@ public class Mutation
 
         string updateWarehouseTopic = $"{warehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
         await sender.SendAsync(updateWarehouseTopic, warehouse);
-        
+
         await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouse));
 
         return warehouse;

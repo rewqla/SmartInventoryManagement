@@ -1,5 +1,7 @@
-﻿using API.GraphQL.Subscriptions.EventsMessages;
+﻿using API.GraphQL.Mutations.Payload;
+using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
+using Application.DTO.Warehouse;
 using HotChocolate.Execution;
 using HotChocolate.Subscriptions;
 using Infrastructure.Entities;
@@ -9,7 +11,7 @@ namespace API.GraphQL.Subscriptions;
 public class Subscription
 {
     [Subscribe]
-    public Warehouse WarehouseCreated([EventMessage] Warehouse warehouse) => warehouse;
+    public CreateWarehousePayload WarehouseCreated([EventMessage] CreateWarehousePayload createWarehouse) => createWarehouse;
     
     [Subscribe]
     public Warehouse WarehouseDeleted([EventMessage] Warehouse warehouse) => warehouse;
