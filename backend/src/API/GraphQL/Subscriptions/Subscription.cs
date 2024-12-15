@@ -13,9 +13,6 @@ public class Subscription
     [Subscribe]
     public CreateWarehousePayload WarehouseCreated([EventMessage] CreateWarehousePayload createWarehouse) => createWarehouse;
     
-    [Subscribe]
-    public Warehouse WarehouseDeleted([EventMessage] Warehouse warehouse) => warehouse;
-    
     [SubscribeAndResolve]
     public ValueTask<ISourceStream<Warehouse>> WarehouseUpdated(
         Guid warehouseId, 

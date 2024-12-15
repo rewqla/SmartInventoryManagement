@@ -15,7 +15,8 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
-    public async Task<CreateWarehousePayload> CreateWarehouse(IWarehouseService warehouseService, CreateWarehouseInput input,
+    public async Task<CreateWarehousePayload> CreateWarehouse(IWarehouseService warehouseService,
+        CreateWarehouseInput input,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
         var createdWarehouse =
@@ -53,21 +54,12 @@ public class Mutation
         return warehouse;
     }
 
-    public async Task<bool> DeleteWarehouse(InventoryContext context, Guid warehouseId,
-        [Service] ITopicEventSender sender)
+    public async Task<bool> DeleteWarehouse(IWarehouseService warehouseService, Guid warehouseId,
+        [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
-        var warehouse = await context.Warehouses.FindAsync(warehouseId);
+        await warehouseService.DeleteWarehouse(warehouseId, cancellationToken);
 
-        if (warehouse == null)
-        {
-            return false;
-        }
-
-        context.Warehouses.Remove(warehouse);
-        await context.SaveChangesAsync();
-
-        await sender.SendAsync(nameof(Subscription.WarehouseDeleted), warehouse);
-        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Deleted, warehouse));
+        // await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Deleted, warehouse));
 
         return true;
     }

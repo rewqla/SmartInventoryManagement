@@ -3,7 +3,7 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
   deleteWarehouse(input:  {
-     warehouseId: "a96111d9-5642-4496-aed3-193c467b2982"
+     warehouseId: "80d0f1ba-3952-4e23-a116-5e21e1a898d0"
   }){
     boolean
   }

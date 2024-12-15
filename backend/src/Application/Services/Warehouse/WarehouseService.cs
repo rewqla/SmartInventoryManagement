@@ -29,7 +29,8 @@ public class WarehouseService : IWarehouseService
         return warehouses.Select(item => WarehouseMapper.ToDTO(item));
     }
 
-    public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto, CancellationToken cancellationToken = default)
+    public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto,
+        CancellationToken cancellationToken = default)
     {
         warehouseDto.Id = Guid.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
@@ -38,5 +39,17 @@ public class WarehouseService : IWarehouseService
         await _warehouseRepository.CompleteAsync();
 
         return warehouseDto;
+    }
+
+    public async Task<bool> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default)
+    {
+        var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
+        
+        if (warehouse == null) return false;
+        
+        _warehouseRepository.Delete(warehouse);
+        await _warehouseRepository.CompleteAsync();
+        
+        return true;
     }
 }
