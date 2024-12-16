@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
-using Infrastructure.Interfaces.Authentication;
+using Application.Interfaces.Authentication;
 
 namespace Application.Authentication;
 
-public sealed class PasswordHasher : IPasswordHasher
+internal sealed class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;

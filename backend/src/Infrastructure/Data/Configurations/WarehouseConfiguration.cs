@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.Configurations;
 
-public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
+internal class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
 {
     public void Configure(EntityTypeBuilder<Warehouse> builder)
     {

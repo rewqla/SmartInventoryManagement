@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.Configurations;
 
-public class InventoryLogConfiguration : IEntityTypeConfiguration<InventoryLog>
+internal class InventoryLogConfiguration : IEntityTypeConfiguration<InventoryLog>
 {
     public void Configure(EntityTypeBuilder<InventoryLog> builder)
     {
