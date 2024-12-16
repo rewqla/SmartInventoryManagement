@@ -10,6 +10,15 @@ mutation{
     location
     id
     __typename
+    errors{
+      ...on ValidationError{
+        message
+        errors{
+          propertyName
+          errorMessage
+        }
+      }
+    }
   }
 }
 

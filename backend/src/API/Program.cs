@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureRepositories();
 builder.ConfigureServices();
+builder.ConfigureValidators();
 builder.ConfigureDatabase();
 builder.ConfigureGraphQL();
 

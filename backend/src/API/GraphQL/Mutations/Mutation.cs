@@ -7,6 +7,8 @@ using API.GraphQL.Subscriptions;
 using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
 using Application.Interfaces.Services.Warehouse;
+using Application.Validation.Warehouse;
+using FluentValidation;
 using HotChocolate.Subscriptions;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -15,12 +17,21 @@ namespace API.GraphQL.Mutations;
 
 public class Mutation
 {
+    [Error(typeof(ValidationException))]
     public async Task<CreateWarehousePayload> CreateWarehouse(IWarehouseService warehouseService,
-        CreateWarehouseInput input,
-        [Service] ITopicEventSender sender, CancellationToken cancellationToken)
+        CreateWarehouseInput input, [Service] ITopicEventSender sender,
+        WarehouseDTOValidator validator, CancellationToken cancellationToken)
     {
+        var warehouseDTO = WarehouseMapper.ToDTO(input);
+        
+        var validationResult = await validator.ValidateAsync(warehouseDTO, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+        
         var createdWarehouse =
-            await warehouseService.CreateWarehouseAsync(WarehouseMapper.ToDTO(input), cancellationToken);
+            await warehouseService.CreateWarehouseAsync(warehouseDTO, cancellationToken);
 
         var warehouseResult = WarehouseMapper.ToPayload(createdWarehouse);
 

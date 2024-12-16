@@ -4,6 +4,7 @@ using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using Application.Interfaces.Services.Warehouse;
 using Application.Services.Warehouse;
+using Application.Validation.Warehouse;
 using Infrastructure.Data;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Infrastructure.Repositories.Warehouse;
@@ -22,6 +23,15 @@ public static class DependencyInjection
 
         services.AddSwagger();
         services.AddScoped<IWarehouseService, WarehouseService>();
+
+        return builder;
+    }
+    public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddScoped<WarehouseDTOValidator>();
 
         return builder;
     }
