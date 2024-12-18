@@ -7,11 +7,9 @@ mutation{
        name: "Secret Warehouse",
        location: "Vinnytsia"
     }){
-    warehouse{
-      name
-      location
-      id
-    }
+    name
+    location
+    id
      errors {
       __typename
       ... on InvalidGuidError {

@@ -1,17 +1,13 @@
-﻿using API.GraphQL.Errors;
-using API.GraphQL.Mappers.Warehouse;
+﻿using API.GraphQL.Mappers.Warehouse;
 using API.GraphQL.Mutations.Inputs;
 using API.GraphQL.Mutations.Payload;
-using API.GraphQL.Shared;
 using API.GraphQL.Subscriptions;
-using API.GraphQL.Subscriptions.EventsMessages;
-using API.GraphQL.Subscriptions.Topics;
+using Application.Errors;
 using Application.Interfaces.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentValidation;
 using HotChocolate.Subscriptions;
 using Infrastructure.Data;
-using Infrastructure.Entities;
 
 namespace API.GraphQL.Mutations;
 
@@ -33,7 +29,7 @@ public class Mutation
         var createdWarehouse =
             await warehouseService.CreateWarehouseAsync(warehouseDTO, cancellationToken);
 
-        var warehouseResult = WarehouseMapper.ToPayload(createdWarehouse);
+        var warehouseResult = WarehouseMapper.ToCreatePayload(createdWarehouse);
 
         await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouseResult, cancellationToken);
         // await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Created, warehouseDto));
@@ -42,27 +38,22 @@ public class Mutation
     }
 
     [Error(typeof(InvalidGuidError))]
-    public async Task<Warehouse?> UpdateWarehouse(InventoryContext context,
-        UpdateWarehouseInput input, [Service] ITopicEventSender sender)
+    public async Task<UpdateWarehousePayload> UpdateWarehouse(IWarehouseService warehouseService,
+        InventoryContext context, UpdateWarehouseInput input,
+        [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
-        var warehouse = await context.Warehouses.FindAsync(input.Id);
+        var warehouseDTO = WarehouseMapper.ToDTO(input);
 
-        if (warehouse == null)
-        {
-            throw new InvalidGuidError($"Warehouse {input.Id} not found");
-        }
+        var updatedWarehouse = await warehouseService.UpdateWarehouseAsync(warehouseDTO, cancellationToken);
 
-        warehouse.Name = input.Name;
-        warehouse.Location = input.Location;
+        // string updateWarehouseTopic = $"{updatedWarehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
+        // await sender.SendAsync(updateWarehouseTopic, warehouse);
+        //
+        // await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouse));
 
-        await context.SaveChangesAsync();
-
-        string updateWarehouseTopic = $"{warehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
-        await sender.SendAsync(updateWarehouseTopic, warehouse);
-
-        await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouse));
-
-        return warehouse;
+        var warehouseResult = WarehouseMapper.ToUpdatePayload(updatedWarehouse);
+        
+        return warehouseResult;
     }
 
     public async Task<bool> DeleteWarehouse(IWarehouseService warehouseService, Guid warehouseId,

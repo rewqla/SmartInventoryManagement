@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using Application.DTO.Warehouse;
+using Application.Errors;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Infrastructure.Interfaces.Repositories.Warehouse;
@@ -15,7 +16,7 @@ public class WarehouseService : IWarehouseService
         _warehouseRepository = warehouseRepository;
     }
 
-    public async Task<WarehouseDTO> GetWarehouseByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<WarehouseDTO?> GetWarehouseByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
 
@@ -41,15 +42,34 @@ public class WarehouseService : IWarehouseService
         return warehouseDto;
     }
 
+    public async Task<WarehouseDTO> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
+        CancellationToken cancellationToken = default)
+    {
+        var warehouse = await _warehouseRepository.FindByIdAsync(warehouseDto.Id, cancellationToken);
+        
+        if (warehouse == null)
+        {
+            throw new InvalidGuidError($"Warehouse {warehouseDto.Id} not found");
+        }
+        
+        warehouse.Name = warehouseDto.Name;
+        warehouse.Location = warehouseDto.Location;
+        
+        _warehouseRepository.Update(warehouse);
+        await _warehouseRepository.CompleteAsync();
+
+        return warehouseDto;
+    }
+
     public async Task<bool> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default)
     {
         var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
-        
+
         if (warehouse == null) return false;
-        
+
         _warehouseRepository.Delete(warehouse);
         await _warehouseRepository.CompleteAsync();
-        
+
         return true;
     }
 }
