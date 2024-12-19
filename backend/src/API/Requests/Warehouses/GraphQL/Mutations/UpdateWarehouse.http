@@ -3,13 +3,13 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
     updateWarehouse(input:  {
-       id: "b9e64da6-a122-4886-b275-88096c18cec8",
+       id: "996a89d1-e8d9-410c-b161-21afd2906726",
        name: "Secret Warehouse",
        location: "Vinnytsia"
     }){
-    name
-    location
-    id
+     name
+     location
+     id
      errors {
       __typename
       ... on InvalidGuidError {

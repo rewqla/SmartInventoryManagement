@@ -3,9 +3,15 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
   deleteWarehouse(input:  {
-     warehouseId: "80d0f1ba-3952-4e23-a116-5e21e1a898d0"
+     warehouseId: "d21d4656-b0f9-4693-b01b-25f52a5c36b6"
   }){
     boolean
+    errors {
+      __typename
+      ... on InvalidGuidError {
+        message
+      }
+    }
   }
 }
 

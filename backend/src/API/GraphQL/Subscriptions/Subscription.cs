@@ -14,13 +14,13 @@ public class Subscription
     public CreateWarehousePayload WarehouseCreated([EventMessage] CreateWarehousePayload createWarehouse) => createWarehouse;
     
     [SubscribeAndResolve]
-    public ValueTask<ISourceStream<Warehouse>> WarehouseUpdated(
+    public ValueTask<ISourceStream<UpdateWarehousePayload>> WarehouseUpdated(
         Guid warehouseId, 
         [Service] ITopicEventReceiver receiver)
     {
         string topic = $"{warehouseId}_{nameof(WarehouseUpdated)}";
         
-        return receiver.SubscribeAsync<Warehouse>(topic);
+        return receiver.SubscribeAsync<UpdateWarehousePayload>(topic);
     }
     
     [Subscribe]
