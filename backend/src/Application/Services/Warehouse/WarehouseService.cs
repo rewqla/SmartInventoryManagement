@@ -4,16 +4,19 @@ using Application.Errors;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Infrastructure.Interfaces.Repositories.Warehouse;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Services.Warehouse;
 
 public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly ILogger<WarehouseService> _logger;
 
-    public WarehouseService(IWarehouseRepository warehouseRepository)
+    public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger)
     {
         _warehouseRepository = warehouseRepository;
+        _logger = logger;
     }
 
     public async Task<WarehouseDTO?> GetWarehouseByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -25,6 +28,7 @@ public class WarehouseService : IWarehouseService
 
     public async Task<IEnumerable<WarehouseDTO>> GetWarehousesAsync(CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Retrieve all warehouses");
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
 
         return warehouses.Select(item => WarehouseMapper.ToDTO(item));
