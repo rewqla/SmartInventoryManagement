@@ -1,5 +1,6 @@
 ﻿using Application.Errors;
 using Application.Services.Warehouse;
+using Application.Validation.Warehouse;
 using FluentAssertions;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;
@@ -12,13 +13,16 @@ public class WarehouseServiceTests
 {
     private readonly WarehouseService _warehouseService;
     private readonly Mock<ILogger<WarehouseService>> _logger;
+    private readonly Mock<WarehouseDTOValidator> _warehouseValidator;
     private readonly Mock<IWarehouseRepository> _warehouseRepository;
 
     public WarehouseServiceTests()
     {
+        _warehouseValidator = new Mock<WarehouseDTOValidator>();
         _warehouseRepository = new Mock<IWarehouseRepository>();
         _logger = new Mock<ILogger<WarehouseService>>();
-        _warehouseService = new WarehouseService(_warehouseRepository.Object, _logger.Object);
+        _warehouseService =
+            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator.Object);
     }
 
     [Fact]
@@ -236,7 +240,7 @@ public class WarehouseServiceTests
 
         // Assert
     }
-    
+
     [Fact]
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsFound()
     {
