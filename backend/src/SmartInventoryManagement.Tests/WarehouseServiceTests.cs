@@ -175,11 +175,11 @@ public class WarehouseServiceTests
 
         // Act
         var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
-
+        
         // Assert
         var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
         Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
-
+        
         _logger.Verify(
             x => x.Log(
                 LogLevel.Error,
