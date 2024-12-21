@@ -1,7 +1,10 @@
-﻿using Application.Errors;
+﻿using Application.DTO.Warehouse;
+using Application.Errors;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
@@ -13,16 +16,16 @@ public class WarehouseServiceTests
 {
     private readonly WarehouseService _warehouseService;
     private readonly Mock<ILogger<WarehouseService>> _logger;
-    private readonly Mock<WarehouseDTOValidator> _warehouseValidator;
+    private readonly WarehouseDTOValidator _warehouseValidator;
     private readonly Mock<IWarehouseRepository> _warehouseRepository;
 
     public WarehouseServiceTests()
     {
-        _warehouseValidator = new Mock<WarehouseDTOValidator>();
+        _warehouseValidator = new WarehouseDTOValidator();
         _warehouseRepository = new Mock<IWarehouseRepository>();
         _logger = new Mock<ILogger<WarehouseService>>();
         _warehouseService =
-            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator.Object);
+            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator);
     }
 
     [Fact]
@@ -175,11 +178,11 @@ public class WarehouseServiceTests
 
         // Act
         var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
-        
+
         // Assert
         var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
         Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
-        
+
         _logger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -195,10 +198,29 @@ public class WarehouseServiceTests
     public async Task CreateWarehouseAsync_ShouldCreateUser_WhenObjectIsValid()
     {
         // Arrange
+        var expectedResult = new Warehouse()
+        {
+            Name = "Test Warehouse",
+            Location = "Test Location"
+        };
+
+        _warehouseRepository.Setup(r => r.AddAsync(It.IsAny<Warehouse>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedResult)
+            .Verifiable();
+
+        var warehouseDTO = new WarehouseDTO()
+        {
+            Name = "Test Warehouse",
+            Location = "Test Location"
+        };
 
         // Act
+        var result = await _warehouseService.CreateWarehouseAsync(warehouseDTO);
 
         // Assert
+        result.Should().BeEquivalentTo(expectedResult, options => options
+            .Excluding(warehouse => warehouse.Id)
+            .Excluding(warehouse => warehouse.Inventories));
     }
 
     [Fact]
