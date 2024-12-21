@@ -171,11 +171,11 @@ public class WarehouseServiceTests
 
         // Act
         var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
-        
+
         // Assert
         var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
         Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
-        
+
         _logger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -185,5 +185,75 @@ public class WarehouseServiceTests
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateWarehouseAsync_ShouldCreateUser_WhenObjectIsValid()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task CreateWarehouseAsync_ShouldReturnValidationException_WhenObjectIsNotValid()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task UpdateWarehouseAsync_ShouldUpdateWarehouse_WhenObjectIsValid()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task UpdateWarehouseAsync_ShouldReturnInvalidGuidError_WhenObjectIsNotFound()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task UpdateWarehouseAsync_ShouldReturnValidationException_WhenObjectIsNotValid()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+    
+    [Fact]
+    public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsFound()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsNotFound()
+    {
+        // Arrange
+
+        // Act
+
+        // Assert
     }
 }
