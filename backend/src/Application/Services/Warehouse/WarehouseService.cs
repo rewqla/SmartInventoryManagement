@@ -16,7 +16,8 @@ public class WarehouseService : IWarehouseService
     private readonly WarehouseDTOValidator _warehouseDTOValidator;
     private readonly ILogger<WarehouseService> _logger;
 
-    public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger, WarehouseDTOValidator warehouseDtoValidator)
+    public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
+        WarehouseDTOValidator warehouseDtoValidator)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
@@ -54,7 +55,7 @@ public class WarehouseService : IWarehouseService
         {
             throw new ValidationException(validationResult.Errors);
         }
-        
+
         warehouseDto.Id = Guid.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 
@@ -67,6 +68,12 @@ public class WarehouseService : IWarehouseService
     public async Task<WarehouseDTO> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         var warehouse = await _warehouseRepository.FindByIdAsync(warehouseDto.Id, cancellationToken);
 
         if (warehouse == null)
