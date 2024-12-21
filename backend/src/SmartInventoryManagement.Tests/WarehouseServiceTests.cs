@@ -1,4 +1,5 @@
-﻿using Application.Services.Warehouse;
+﻿using Application.Errors;
+using Application.Services.Warehouse;
 using FluentAssertions;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;
@@ -59,7 +60,7 @@ public class WarehouseServiceTests
         result.Should().BeEquivalentTo(expectedWarehouses, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
-    
+
     [Fact]
     public async Task GetWarehousesAsync_ShouldLogMessages_WhenInvoked()
     {
@@ -76,7 +77,111 @@ public class WarehouseServiceTests
             x => x.Log(
                 LogLevel.Information,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((o, t) => string.Equals("Retrieve all warehouses", o.ToString(), StringComparison.InvariantCultureIgnoreCase)),
+                It.Is<It.IsAnyType>((o, t) => string.Equals("Retrieve all warehouses", o.ToString(),
+                    StringComparison.InvariantCultureIgnoreCase)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task GetWarehouseByIdAsync_ShouldReturnWarehouse_WhenWarehouseExistsWithoutInventories()
+    {
+        // Arrange
+        Guid warehouseId = Guid.NewGuid();
+        var expectedWarehouse = new Warehouse
+        {
+            Id = warehouseId,
+            Name = "Main Warehouse",
+            Location = "Rivne"
+        };
+
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedWarehouse)
+            .Verifiable();
+
+        // Act
+        var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+
+        // Assert
+        result.Should().BeEquivalentTo(expectedWarehouse, options => options
+            .Excluding(warehouse => warehouse.Inventories));
+    }
+
+    [Fact]
+    public async Task GetWarehouseByIdAsync_ShouldReturnException_WhenWarehouseNotFound()
+    {
+        // Arrange
+        var warehouseId = Guid.NewGuid();
+
+        // Act
+        var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
+    }
+
+    [Fact]
+    public async Task GetWarehouseByIdAsync_ShouldLogMessages_WhenInvoked()
+    {
+        // Arrange
+        Guid warehouseId = Guid.NewGuid();
+        var expectedWarehouse = new Warehouse
+        {
+            Id = warehouseId,
+            Name = "Main Warehouse",
+            Location = "Rivne"
+        };
+
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedWarehouse)
+            .Verifiable();
+
+        // Act
+        var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+
+        // Assert
+        _logger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => string.Equals($"Retrieve warehouse with id: {warehouseId}", o.ToString(),
+                    StringComparison.InvariantCultureIgnoreCase)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+
+        _logger.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => string.Equals($"Warehouse with id {warehouseId} retrieved", o.ToString(),
+                    StringComparison.InvariantCultureIgnoreCase)),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task GetWarehouseByIdAsync_ShouldLogMessages_WhenWarehouseNotFound()
+    {
+        // Arrange
+        Guid warehouseId = Guid.NewGuid();
+
+        // Act
+        var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+        
+        // Assert
+        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
+        
+        _logger.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => string.Equals($"Warehouse with id {warehouseId} not found", o.ToString(),
+                    StringComparison.InvariantCultureIgnoreCase)),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
