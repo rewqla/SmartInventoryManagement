@@ -3,6 +3,8 @@ using Application.DTO.Warehouse;
 using Application.Errors;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
+using Application.Validation.Warehouse;
+using FluentValidation;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
 
@@ -11,12 +13,14 @@ namespace Application.Services.Warehouse;
 public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly WarehouseDTOValidator _warehouseDTOValidator;
     private readonly ILogger<WarehouseService> _logger;
 
-    public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger)
+    public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger, WarehouseDTOValidator warehouseDtoValidator)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
+        _warehouseDTOValidator = warehouseDtoValidator;
     }
 
     public async Task<WarehouseDTO?> GetWarehouseByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -45,6 +49,12 @@ public class WarehouseService : IWarehouseService
     public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
     {
+        var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+        
         warehouseDto.Id = Guid.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 

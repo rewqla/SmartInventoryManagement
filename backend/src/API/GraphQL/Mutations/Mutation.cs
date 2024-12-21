@@ -24,12 +24,6 @@ public class Mutation
     {
         var warehouseDTO = WarehouseMapper.ToDTO(input);
 
-        var validationResult = await validator.ValidateAsync(warehouseDTO, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            throw new ValidationException(validationResult.Errors);
-        }
-
         var createdWarehouse =
             await warehouseService.CreateWarehouseAsync(warehouseDTO, cancellationToken);
 
