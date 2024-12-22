@@ -247,30 +247,83 @@ public class WarehouseServiceTests
     public async Task UpdateWarehouseAsync_ShouldUpdateWarehouse_WhenObjectIsValid()
     {
         // Arrange
+        var warehouseId = Guid.NewGuid();
+        var expectedResult = new Warehouse()
+        {
+            Id = warehouseId,
+            Name = "Test Warehouse",
+            Location = "Test Location"
+        };
 
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedResult)
+            .Verifiable();
+
+        _warehouseRepository.Setup(r => r.Update(It.IsAny<Warehouse>()))
+            .Returns(expectedResult)
+            .Verifiable();
+
+        var warehouseDTO = new WarehouseDTO()
+        {
+            Id = warehouseId,
+            Name = "Test Warehouse",
+            Location = "Test Location"
+        };
         // Act
+        var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
+        result.Should().BeEquivalentTo(expectedResult, options => options
+            .Excluding(warehouse => warehouse.Id)
+            .Excluding(warehouse => warehouse.Inventories));
+
+        _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        _warehouseRepository.Verify(r => r.Update(It.IsAny<Warehouse>()), Times.Once);
     }
 
     [Fact]
     public async Task UpdateWarehouseAsync_ShouldReturnInvalidGuidError_WhenObjectIsNotFound()
     {
         // Arrange
+        var warehouseId = Guid.NewGuid();
 
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Warehouse)null)
+            .Verifiable();
+
+        var warehouseDTO = new WarehouseDTO()
+        {
+            Id = warehouseId,
+            Name = "Test Warehouse",
+            Location = "Test Location"
+        };
         // Act
+        var action = async () => await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
+        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        _warehouseRepository.Verify(r => r.Update(It.IsAny<Warehouse>()), Times.Never);
     }
 
     [Fact]
     public async Task UpdateWarehouseAsync_ShouldReturnValidationException_WhenObjectIsNotValid()
     {
         // Arrange
+        var warehouseDTO = new WarehouseDTO()
+        {
+            Name = "",
+            Location = "Te"
+        };
 
         // Act
+        var action = async () => await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
+        var exception = await Assert.ThrowsAsync<ValidationException>(action);
+        Assert.Contains(exception.Errors, x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
+        Assert.Contains(exception.Errors,
+            x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
