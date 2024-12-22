@@ -30,6 +30,8 @@ public class InventoryContext : DbContext
         modelBuilder.ApplyConfiguration(new InventoryConfiguration());
         modelBuilder.ApplyConfiguration(new InventoryLogConfiguration());
         
+        modelBuilder.HasDefaultSchema(Schemas.Default);
+        
         base.OnModelCreating(modelBuilder);
     }
 }
