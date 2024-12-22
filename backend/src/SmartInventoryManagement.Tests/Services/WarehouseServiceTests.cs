@@ -10,7 +10,7 @@ using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace SmartInventoryManagement.Tests;
+namespace SmartInventoryManagement.Tests.Services;
 
 public class WarehouseServiceTests
 {
