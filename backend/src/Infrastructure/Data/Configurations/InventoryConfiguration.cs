@@ -13,7 +13,7 @@ internal class InventoryConfiguration : IEntityTypeConfiguration<Inventory>
         builder.Property(e => e.Quantity);
 
         builder.HasOne(e => e.Product)
-            .WithMany()
+            .WithMany(m=>m.Inventories)
             .HasForeignKey(f => f.ProductId);
 
         builder.HasOne(e => e.Warehouse)

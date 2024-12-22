@@ -19,7 +19,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithMany(m=>m.Products)
             .HasForeignKey(f => f.CategoryId);
 
-        builder.HasMany(e => e.InventoryLogs)
+        builder.HasMany(e => e.Inventories)
             .WithOne(o=>o.Product)
             .HasForeignKey(f => f.ProductId);
 

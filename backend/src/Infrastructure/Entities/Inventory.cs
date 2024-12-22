@@ -7,4 +7,5 @@ public sealed class Inventory : BaseEntity
     public Guid WarehouseId { get; set; }
     public Warehouse Warehouse { get; set; } = null!;
     public int Quantity { get; set; }
+    public ICollection<InventoryLog> InventoryLogs { get; set; } = new List<InventoryLog>();
 }

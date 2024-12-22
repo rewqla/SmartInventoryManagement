@@ -35,7 +35,7 @@ public static class WarehouseMapper
     {
         if (warehouse == null)
             throw new ArgumentNullException(nameof(warehouse));
-
+ 
         return new CreateWarehousePayload(warehouse.Id, warehouse.Name, warehouse.Location);
     }
     
