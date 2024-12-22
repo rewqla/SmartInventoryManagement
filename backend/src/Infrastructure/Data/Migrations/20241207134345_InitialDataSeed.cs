@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Globalization;
+using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -25,6 +26,7 @@ namespace Infrastructure.Data.Migrations
             SeedUsers(migrationBuilder);
             SeedCategories(migrationBuilder);
             SeedWarehouses(migrationBuilder);
+            SeedProducts(migrationBuilder);
         }
 
         private Guid _adminRoleId;
@@ -77,6 +79,41 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.Sql($"INSERT INTO \"Warehouses\" (\"Id\", \"Name\", \"Location\") VALUES ('{_warehouse1Id}', 'Central Warehouse','Rivne')");
             migrationBuilder.Sql($"INSERT INTO \"Warehouses\" (\"Id\", \"Name\", \"Location\") VALUES ('{_warehouse2Id}', 'Secondary Warehouse', 'Zhytomyr')");
+        }
+        
+        private void SeedProducts(MigrationBuilder migrationBuilder)
+        {
+            var products = new[]
+            {
+                new { Id = Guid.NewGuid(), Name = "Smartphone", SKU = "ELEC-001", Description = "Latest smartphone", UnitPrice = 699.99, CategoryId = _electronicsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Laptop", SKU = "ELEC-002", Description = "High-performance laptop", UnitPrice = 1299.99, CategoryId = _electronicsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Office Chair", SKU = "FURN-001", Description = "Ergonomic office chair", UnitPrice = 149.99, CategoryId = _furnitureCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Sofa", SKU = "FURN-002", Description = "Comfortable sofa", UnitPrice = 499.99, CategoryId = _furnitureCategoryId },
+                new { Id = Guid.NewGuid(), Name = "T-Shirt", SKU = "CLOT-001", Description = "100% cotton T-shirt", UnitPrice = 19.99, CategoryId = _clothingCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Jeans", SKU = "CLOT-002", Description = "Stylish jeans", UnitPrice = 49.99, CategoryId = _clothingCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Football", SKU = "SPRT-001", Description = "Professional football", UnitPrice = 29.99, CategoryId = _sportsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Basketball", SKU = "SPRT-002", Description = "Durable basketball", UnitPrice = 39.99, CategoryId = _sportsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Lipstick", SKU = "BEAU-001", Description = "Matte lipstick", UnitPrice = 9.99, CategoryId = _beautyCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Perfume", SKU = "BEAU-002", Description = "Luxury perfume", UnitPrice = 99.99, CategoryId = _beautyCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Tablet", SKU = "ELEC-003", Description = "Portable tablet", UnitPrice = 499.99, CategoryId = _electronicsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Headphones", SKU = "ELEC-004", Description = "Noise-cancelling headphones", UnitPrice = 199.99, CategoryId = _electronicsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Desk", SKU = "FURN-003", Description = "Wooden office desk", UnitPrice = 299.99, CategoryId = _furnitureCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Bookshelf", SKU = "FURN-004", Description = "5-shelf bookshelf", UnitPrice = 129.99, CategoryId = _furnitureCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Jacket", SKU = "CLOT-003", Description = "Waterproof jacket", UnitPrice = 89.99, CategoryId = _clothingCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Sneakers", SKU = "CLOT-004", Description = "Comfortable sneakers", UnitPrice = 79.99, CategoryId = _clothingCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Tennis Racket", SKU = "SPRT-003", Description = "Lightweight tennis racket", UnitPrice = 59.99, CategoryId = _sportsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Yoga Mat", SKU = "SPRT-004", Description = "Non-slip yoga mat", UnitPrice = 24.99, CategoryId = _sportsCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Face Cream", SKU = "BEAU-003", Description = "Anti-aging face cream", UnitPrice = 39.99, CategoryId = _beautyCategoryId },
+                new { Id = Guid.NewGuid(), Name = "Hair Dryer", SKU = "BEAU-004", Description = "High-speed hair dryer", UnitPrice = 79.99, CategoryId = _beautyCategoryId }
+            };
+
+            foreach (var product in products)
+            {
+                migrationBuilder.Sql($@"
+                    INSERT INTO ""Products"" (""Id"", ""Name"", ""SKU"", ""Description"", ""UnitPrice"", ""CategoryId"")
+                    VALUES ('{product.Id}', '{product.Name}', '{product.SKU}', '{product.Description}', {product.UnitPrice.ToString("0.00", CultureInfo.InvariantCulture)}, '{product.CategoryId}');
+                ");
+            }
         }
         
         /// <inheritdoc />
