@@ -239,7 +239,8 @@ public class WarehouseServiceTests
         // Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(action);
         Assert.Contains(exception.Errors, x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
-        Assert.Contains(exception.Errors, x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
+        Assert.Contains(exception.Errors,
+            x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
@@ -276,19 +277,38 @@ public class WarehouseServiceTests
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsFound()
     {
         // Arrange
+        Guid warehouseId = Guid.NewGuid();
+        var warehouse = new Warehouse { Id = warehouseId, Name = "Test Warehouse", Location = "Test Location" };
+
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(warehouse)
+            .Verifiable();
+
+        _warehouseRepository.Setup(r => r.Delete(It.IsAny<Warehouse>()));
 
         // Act
+        var result = await _warehouseService.DeleteWarehouse(warehouseId);
 
         // Assert
+        result.Should().BeTrue();
     }
 
     [Fact]
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsNotFound()
     {
         // Arrange
+        Guid warehouseId = Guid.NewGuid();
+
+        _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Warehouse)null)
+            .Verifiable();
 
         // Act
+        var result = await _warehouseService.DeleteWarehouse(warehouseId);
 
         // Assert
+        result.Should().BeFalse();
+        _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Never);
     }
 }
