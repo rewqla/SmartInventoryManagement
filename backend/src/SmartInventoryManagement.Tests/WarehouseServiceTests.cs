@@ -227,10 +227,19 @@ public class WarehouseServiceTests
     public async Task CreateWarehouseAsync_ShouldReturnValidationException_WhenObjectIsNotValid()
     {
         // Arrange
+        var warehouseDTO = new WarehouseDTO()
+        {
+            Name = "",
+            Location = "Te"
+        };
 
         // Act
+        var action = async () => await _warehouseService.CreateWarehouseAsync(warehouseDTO);
 
         // Assert
+        var exception = await Assert.ThrowsAsync<ValidationException>(action);
+        Assert.Contains(exception.Errors, x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
+        Assert.Contains(exception.Errors, x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
