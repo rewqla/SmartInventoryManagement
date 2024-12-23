@@ -26,6 +26,7 @@ public partial class InitialDataSeed : Migration
             SeedCategories(migrationBuilder);
             SeedWarehouses(migrationBuilder);
             SeedProducts(migrationBuilder);
+            SeedInventories(migrationBuilder);
         }
 
         private Guid _adminRoleId;
@@ -69,6 +70,7 @@ public partial class InitialDataSeed : Migration
             migrationBuilder.Sql($"INSERT INTO \"Categories\" (\"Id\", \"Name\") VALUES ('{_sportsCategoryId}', 'Sports')");
             migrationBuilder.Sql($"INSERT INTO \"Categories\" (\"Id\", \"Name\") VALUES ('{_beautyCategoryId}', 'Beauty')");
         }
+        
         private Guid _warehouse1Id;
         private Guid _warehouse2Id;
         private void SeedWarehouses(MigrationBuilder migrationBuilder)
@@ -80,20 +82,31 @@ public partial class InitialDataSeed : Migration
             migrationBuilder.Sql($"INSERT INTO \"Warehouses\" (\"Id\", \"Name\", \"Location\") VALUES ('{_warehouse2Id}', 'Secondary Warehouse', 'Zhytomyr')");
         }
         
+        private Guid _electronicsProductId;
+        private Guid _furnitureProductId;
+        private Guid _clothingProductId;
+        private Guid _sportsProductId;
+        private Guid _beautyProductId;
         private void SeedProducts(MigrationBuilder migrationBuilder)
         {
+            _electronicsProductId = Guid.NewGuid();
+            _furnitureProductId = Guid.NewGuid();
+            _clothingProductId = Guid.NewGuid();
+            _sportsProductId = Guid.NewGuid();
+            _beautyProductId = Guid.NewGuid();
+
             var products = new[]
             {
-                new { Id = Guid.NewGuid(), Name = "Smartphone", SKU = "ELEC-001", Description = "Latest smartphone", UnitPrice = 699.99, CategoryId = _electronicsCategoryId },
+                new { Id = _electronicsProductId, Name = "Smartphone", SKU = "ELEC-001", Description = "Latest smartphone", UnitPrice = 699.99, CategoryId = _electronicsCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Laptop", SKU = "ELEC-002", Description = "High-performance laptop", UnitPrice = 1299.99, CategoryId = _electronicsCategoryId },
-                new { Id = Guid.NewGuid(), Name = "Office Chair", SKU = "FURN-001", Description = "Ergonomic office chair", UnitPrice = 149.99, CategoryId = _furnitureCategoryId },
+                new { Id = _furnitureProductId, Name = "Office Chair", SKU = "FURN-001", Description = "Ergonomic office chair", UnitPrice = 149.99, CategoryId = _furnitureCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Sofa", SKU = "FURN-002", Description = "Comfortable sofa", UnitPrice = 499.99, CategoryId = _furnitureCategoryId },
-                new { Id = Guid.NewGuid(), Name = "T-Shirt", SKU = "CLOT-001", Description = "100% cotton T-shirt", UnitPrice = 19.99, CategoryId = _clothingCategoryId },
+                new { Id = _clothingProductId, Name = "T-Shirt", SKU = "CLOT-001", Description = "100% cotton T-shirt", UnitPrice = 19.99, CategoryId = _clothingCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Jeans", SKU = "CLOT-002", Description = "Stylish jeans", UnitPrice = 49.99, CategoryId = _clothingCategoryId },
-                new { Id = Guid.NewGuid(), Name = "Football", SKU = "SPRT-001", Description = "Professional football", UnitPrice = 29.99, CategoryId = _sportsCategoryId },
+                new { Id =_sportsProductId, Name = "Football", SKU = "SPRT-001", Description = "Professional football", UnitPrice = 29.99, CategoryId = _sportsCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Basketball", SKU = "SPRT-002", Description = "Durable basketball", UnitPrice = 39.99, CategoryId = _sportsCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Lipstick", SKU = "BEAU-001", Description = "Matte lipstick", UnitPrice = 9.99, CategoryId = _beautyCategoryId },
-                new { Id = Guid.NewGuid(), Name = "Perfume", SKU = "BEAU-002", Description = "Luxury perfume", UnitPrice = 99.99, CategoryId = _beautyCategoryId },
+                new { Id = _beautyProductId, Name = "Perfume", SKU = "BEAU-002", Description = "Luxury perfume", UnitPrice = 99.99, CategoryId = _beautyCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Tablet", SKU = "ELEC-003", Description = "Portable tablet", UnitPrice = 499.99, CategoryId = _electronicsCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Headphones", SKU = "ELEC-004", Description = "Noise-cancelling headphones", UnitPrice = 199.99, CategoryId = _electronicsCategoryId },
                 new { Id = Guid.NewGuid(), Name = "Desk", SKU = "FURN-003", Description = "Wooden office desk", UnitPrice = 299.99, CategoryId = _furnitureCategoryId },
@@ -115,6 +128,33 @@ public partial class InitialDataSeed : Migration
             }
         }
         
+        private void SeedInventories(MigrationBuilder migrationBuilder)
+        {
+            var inventories = new[]
+            {
+                // Inventory records for the first warehouse (_warehouse1Id)
+                new { Id = Guid.NewGuid(), ProductId = _electronicsProductId, WarehouseId = _warehouse1Id, Quantity = 100 },
+                new { Id = Guid.NewGuid(), ProductId = _furnitureProductId, WarehouseId = _warehouse1Id, Quantity = 50 },
+                new { Id = Guid.NewGuid(), ProductId = _clothingProductId, WarehouseId = _warehouse1Id, Quantity = 200 },
+                new { Id = Guid.NewGuid(), ProductId = _sportsProductId, WarehouseId = _warehouse1Id, Quantity = 150 },
+                new { Id = Guid.NewGuid(), ProductId = _beautyProductId, WarehouseId = _warehouse1Id, Quantity = 75 },
+
+                // Inventory records for the second warehouse (_warehouse2Id)
+                new { Id = Guid.NewGuid(), ProductId = _electronicsProductId, WarehouseId = _warehouse2Id, Quantity = 120 },
+                new { Id = Guid.NewGuid(), ProductId = _furnitureProductId, WarehouseId = _warehouse2Id, Quantity = 60 },
+                new { Id = Guid.NewGuid(), ProductId = _clothingProductId, WarehouseId = _warehouse2Id, Quantity = 180 },
+                new { Id = Guid.NewGuid(), ProductId = _sportsProductId, WarehouseId = _warehouse2Id, Quantity = 130 },
+                new { Id = Guid.NewGuid(), ProductId = _beautyProductId, WarehouseId = _warehouse2Id, Quantity = 85 }
+            };
+
+            foreach (var inventory in inventories)
+            {
+                migrationBuilder.Sql($@"
+                    INSERT INTO ""Inventories"" (""Id"", ""ProductId"", ""WarehouseId"", ""Quantity"")
+                    VALUES ('{inventory.Id}', '{inventory.ProductId}', '{inventory.WarehouseId}', {inventory.Quantity});
+                ");
+            }
+        }
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
