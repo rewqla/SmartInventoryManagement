@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Security.Cryptography;
+using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -27,6 +28,7 @@ public partial class InitialDataSeed : Migration
             SeedWarehouses(migrationBuilder);
             SeedProducts(migrationBuilder);
             SeedInventories(migrationBuilder);
+            SeedInventoryLogs(migrationBuilder);
         }
 
         private Guid _adminRoleId;
@@ -126,21 +128,27 @@ public partial class InitialDataSeed : Migration
                     VALUES ('{product.Id}', '{product.Name}', '{product.SKU}', '{product.Description}', {product.UnitPrice.ToString("0.00", CultureInfo.InvariantCulture)}, '{product.CategoryId}');
                 ");
             }
-        }
+        }  
+
+        private Guid _inventoryWarehouse1;
+        private Guid _inventoryWarehouse2;
         
         private void SeedInventories(MigrationBuilder migrationBuilder)
         {
+            _inventoryWarehouse1 = Guid.NewGuid();
+            _inventoryWarehouse2 = Guid.NewGuid();
+            
             var inventories = new[]
             {
                 // Inventory records for the first warehouse (_warehouse1Id)
-                new { Id = Guid.NewGuid(), ProductId = _electronicsProductId, WarehouseId = _warehouse1Id, Quantity = 100 },
+                new { Id = _inventoryWarehouse1, ProductId = _electronicsProductId, WarehouseId = _warehouse1Id, Quantity = 100 },
                 new { Id = Guid.NewGuid(), ProductId = _furnitureProductId, WarehouseId = _warehouse1Id, Quantity = 50 },
                 new { Id = Guid.NewGuid(), ProductId = _clothingProductId, WarehouseId = _warehouse1Id, Quantity = 200 },
                 new { Id = Guid.NewGuid(), ProductId = _sportsProductId, WarehouseId = _warehouse1Id, Quantity = 150 },
                 new { Id = Guid.NewGuid(), ProductId = _beautyProductId, WarehouseId = _warehouse1Id, Quantity = 75 },
 
                 // Inventory records for the second warehouse (_warehouse2Id)
-                new { Id = Guid.NewGuid(), ProductId = _electronicsProductId, WarehouseId = _warehouse2Id, Quantity = 120 },
+                new { Id = _inventoryWarehouse2, ProductId = _electronicsProductId, WarehouseId = _warehouse2Id, Quantity = 120 },
                 new { Id = Guid.NewGuid(), ProductId = _furnitureProductId, WarehouseId = _warehouse2Id, Quantity = 60 },
                 new { Id = Guid.NewGuid(), ProductId = _clothingProductId, WarehouseId = _warehouse2Id, Quantity = 180 },
                 new { Id = Guid.NewGuid(), ProductId = _sportsProductId, WarehouseId = _warehouse2Id, Quantity = 130 },
@@ -152,6 +160,27 @@ public partial class InitialDataSeed : Migration
                 migrationBuilder.Sql($@"
                     INSERT INTO ""Inventories"" (""Id"", ""ProductId"", ""WarehouseId"", ""Quantity"")
                     VALUES ('{inventory.Id}', '{inventory.ProductId}', '{inventory.WarehouseId}', {inventory.Quantity});
+                ");
+            }
+        }
+        
+        private void SeedInventoryLogs(MigrationBuilder migrationBuilder)
+        {
+            var inventoryLogs = new[]
+            {
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse1, Timestamp = DateTime.UtcNow.AddDays(-10), QuantityChanged = 20, ChangeType = ChangeType.Adjusted },
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse1, Timestamp = DateTime.UtcNow.AddDays(-8), QuantityChanged = -5, ChangeType = ChangeType.Adjusted },
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse1, Timestamp = DateTime.UtcNow.AddDays(-6), QuantityChanged = 15, ChangeType = ChangeType.Released },
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse1, Timestamp = DateTime.UtcNow.AddDays(-4), QuantityChanged = -10, ChangeType = ChangeType.Removed },
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse2, Timestamp = DateTime.UtcNow.AddDays(-2), QuantityChanged = 30, ChangeType = ChangeType.Added },
+                new { Id = Guid.NewGuid(), InventoryId = _inventoryWarehouse2, Timestamp = DateTime.UtcNow.AddDays(-2), QuantityChanged = 30, ChangeType = ChangeType.Added },
+            };
+
+            foreach (var log in inventoryLogs)
+            {
+                migrationBuilder.Sql($@"
+                    INSERT INTO ""InventoryLogs"" (""Id"", ""InventoryId"", ""Timestamp"", ""QuantityChanged"", ""ChangeType"")
+                    VALUES ('{log.Id}', '{log.InventoryId}', '{log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}', {log.QuantityChanged}, '{log.ChangeType}');
                 ");
             }
         }
