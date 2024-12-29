@@ -8,7 +8,7 @@ namespace API.GraphQL.Queries;
 
 public class Query
 {
-    [UseOffsetPaging]
+    [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService) =>
         await warehouseService.GetWarehousesAsync();
 
