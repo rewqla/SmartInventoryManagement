@@ -68,7 +68,8 @@ public static class DependencyInjection
             .AddMutationType<WarehouseMutations>()
             .AddMutationConventions()
             .AddSubscriptionType<WarehouseSubscriptions>()
-            .AddInMemorySubscriptions();
+            .AddInMemorySubscriptions()
+            .AddFiltering();
 
         return builder;
     }

@@ -1,14 +1,12 @@
-﻿using Application.DTO;
-using Application.DTO.Warehouse;
+﻿using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
-using Infrastructure.Entities;
-using Infrastructure.Interfaces.Repositories.Warehouse;
 
 namespace API.GraphQL.Queries;
 
-public  sealed class WarehouseQueries
+public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
+    [UseFiltering]
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService) =>
         await warehouseService.GetWarehousesAsync();
 

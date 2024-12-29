@@ -2,7 +2,16 @@
 GRAPHQL {{baseUrl}}/graphql/
 
 query{
-  warehouse(take: 3, skip: 1) {
+  warehouse (take: 5, skip: 3, where:  {
+     and: [ {
+      name:  {
+         contains: "Ware"
+      }
+      location:  {
+         eq: "Rivne"
+      }
+     }]
+  }) {
     items{
       id
       name
