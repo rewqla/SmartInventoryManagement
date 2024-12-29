@@ -2,10 +2,16 @@
 GRAPHQL {{baseUrl}}/graphql/
 
 query{
-  warehouse{
-    id
-    name
-    location
+  warehouse(take: 3, skip: 1) {
+    items{
+      id
+      name
+      location
+    }
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }
 
