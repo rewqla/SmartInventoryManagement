@@ -8,7 +8,7 @@ using Infrastructure.Entities;
 
 namespace API.GraphQL.Subscriptions;
 
-public class Subscription
+public sealed class WarehouseSubscriptions
 {
     [Subscribe]
     public CreateWarehousePayload WarehouseCreated([EventMessage] CreateWarehousePayload createWarehouse) => createWarehouse;

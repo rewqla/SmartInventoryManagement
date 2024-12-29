@@ -6,7 +6,7 @@ using Infrastructure.Interfaces.Repositories.Warehouse;
 
 namespace API.GraphQL.Queries;
 
-public class Query
+public  sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService) =>

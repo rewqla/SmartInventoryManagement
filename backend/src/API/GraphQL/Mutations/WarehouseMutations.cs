@@ -5,7 +5,6 @@ using API.GraphQL.Shared;
 using API.GraphQL.Subscriptions;
 using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
-using Application.DTO.Warehouse;
 using Application.Errors;
 using Application.Interfaces.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -15,7 +14,7 @@ using Infrastructure.Data;
 
 namespace API.GraphQL.Mutations;
 
-public class Mutation
+public  sealed class WarehouseMutations
 {
     [Error(typeof(ValidationException))]
     public async Task<CreateWarehousePayload> CreateWarehouse(IWarehouseService warehouseService,
@@ -30,7 +29,7 @@ public class Mutation
         var warehouseResult = WarehouseMapper.ToCreatePayload(createdWarehouse);
         warehouseDTO.Id = createdWarehouse.Id;
 
-        await sender.SendAsync(nameof(Subscription.WarehouseCreated), warehouseResult, cancellationToken);
+        await sender.SendAsync(nameof(WarehouseSubscriptions.WarehouseCreated), warehouseResult, cancellationToken);
         await sender.SendAsync(WarehouseTopics.Mutated, 
             new WarehouseEventMessage(EventType.Created, warehouseDTO), cancellationToken);
 
@@ -46,7 +45,7 @@ public class Mutation
 
         var updatedWarehouse = await warehouseService.UpdateWarehouseAsync(warehouseDTO, cancellationToken);
 
-        string updateWarehouseTopic = $"{updatedWarehouse.Id}_{nameof(Subscription.WarehouseUpdated)}";
+        string updateWarehouseTopic = $"{updatedWarehouse.Id}_{nameof(WarehouseSubscriptions.WarehouseUpdated)}";
         await sender.SendAsync(updateWarehouseTopic, updatedWarehouse, cancellationToken);
 
         await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouseDTO),

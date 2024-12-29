@@ -64,10 +64,10 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddGraphQLServer()
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>()
+            .AddQueryType<WarehouseQueries>()
+            .AddMutationType<WarehouseMutations>()
             .AddMutationConventions()
-            .AddSubscriptionType<Subscription>()
+            .AddSubscriptionType<WarehouseSubscriptions>()
             .AddInMemorySubscriptions();
 
         return builder;
