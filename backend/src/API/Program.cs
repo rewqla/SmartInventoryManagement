@@ -13,7 +13,7 @@ var app = builder.Build();
 
 app.ConfigureMiddlewares();
 app.MapEndpoints();
-app.ApplyMigrations();
+app.ApplyMigrationsAndGenerateScripts();
 
 var summaries = new[]
 {
