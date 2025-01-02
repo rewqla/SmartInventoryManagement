@@ -16,7 +16,7 @@ internal static class MigrationExtensions
 
         ApplyDatabaseMigrations(dbContext);
     
-        GenerateMigrationScript(dbContext);
+        GenerateFullMigrationScript(dbContext);
     }
 
     private static void ApplyDatabaseMigrations(InventoryContext dbContext)
@@ -25,12 +25,15 @@ internal static class MigrationExtensions
         Console.WriteLine("Migrations applied to the database.");
     }
 
-    private static void GenerateMigrationScript(InventoryContext dbContext)
+    private static void GenerateFullMigrationScript(InventoryContext dbContext)
     {
         var migrator = dbContext.Database.GetService<IMigrator>();
         var sqlScript = migrator.GenerateScript(fromMigration: null, toMigration: null);
 
-        var scriptPath = Path.Combine(AppContext.BaseDirectory, "Migrations", "LastMigration.sql");
+        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName;
+        var scriptDirectory = Path.Combine(projectRoot!, "src","Infrastructure", "Data", "Scripts");
+        var scriptFileName = "full_migrations_script.sql";
+        var scriptPath = Path.Combine(scriptDirectory, scriptFileName);
 
         Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
 
