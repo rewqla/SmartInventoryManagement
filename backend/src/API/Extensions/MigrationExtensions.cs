@@ -21,6 +21,7 @@ internal static class MigrationExtensions
             dbContext.Database.Migrate();
             Console.WriteLine("Migrations applied to the database.");
             GenerateFullMigrationScript(dbContext);
+            GenerateLatestMigrationScript(dbContext);
         }
         else
         {
@@ -47,5 +48,23 @@ internal static class MigrationExtensions
 
     private static void GenerateLatestMigrationScript(InventoryContext dbContext)
     {
+        var migrator = dbContext.Database.GetService<IMigrator>();
+
+        var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
+        var previousMigration = appliedMigrations[^2];
+        var latestMigration = appliedMigrations[^1];
+
+        var sqlScript = migrator.GenerateScript(fromMigration: previousMigration, toMigration: latestMigration);
+
+        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName;
+        var scriptDirectory = Path.Combine(projectRoot!, "src", "Infrastructure", "Data", "Scripts");
+        var scriptFileName = $"{latestMigration}_script.sql";
+        var scriptPath = Path.Combine(scriptDirectory, scriptFileName);
+
+        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
+
+        File.WriteAllText(scriptPath, sqlScript);
+
+        Console.WriteLine($"Latest migration script saved to {scriptPath}");
     }
 }
