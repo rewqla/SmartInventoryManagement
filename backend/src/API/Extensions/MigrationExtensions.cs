@@ -14,15 +14,18 @@ internal static class MigrationExtensions
         using IServiceScope scope = app.ApplicationServices.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<InventoryContext>();
 
-        ApplyDatabaseMigrations(dbContext);
-    
-        GenerateFullMigrationScript(dbContext);
-    }
+        var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
 
-    private static void ApplyDatabaseMigrations(InventoryContext dbContext)
-    {
-        dbContext.Database.Migrate();
-        Console.WriteLine("Migrations applied to the database.");
+        if (pendingMigrations.Any())
+        {
+            dbContext.Database.Migrate();
+            Console.WriteLine("Migrations applied to the database.");
+            GenerateFullMigrationScript(dbContext);
+        }
+        else
+        {
+            Console.WriteLine("No pending migrations. Skipping migration script generation.");
+        }
     }
 
     private static void GenerateFullMigrationScript(InventoryContext dbContext)
@@ -31,7 +34,7 @@ internal static class MigrationExtensions
         var sqlScript = migrator.GenerateScript(fromMigration: null, toMigration: null);
 
         var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName;
-        var scriptDirectory = Path.Combine(projectRoot!, "src","Infrastructure", "Data", "Scripts");
+        var scriptDirectory = Path.Combine(projectRoot!, "src", "Infrastructure", "Data", "Scripts");
         var scriptFileName = "full_migrations_script.sql";
         var scriptPath = Path.Combine(scriptDirectory, scriptFileName);
 
@@ -40,5 +43,9 @@ internal static class MigrationExtensions
         File.WriteAllText(scriptPath, sqlScript);
 
         Console.WriteLine($"Migration script saved to {scriptPath}");
+    }
+
+    private static void GenerateLatestMigrationScript(InventoryContext dbContext)
+    {
     }
 }
