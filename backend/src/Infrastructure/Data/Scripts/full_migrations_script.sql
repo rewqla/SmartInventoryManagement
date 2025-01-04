@@ -90,214 +90,231 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO "Roles" ("Id", "Name") VALUES ('ab457b88-388d-43ba-a6f6-ea952b90fb44','Admin')
+INSERT INTO "Roles" ("Id", "Name") VALUES ('104a2384-7e6e-408e-b11b-a64e300530d3','Admin')
 
-INSERT INTO "Roles" ("Id", "Name") VALUES ('cae5aaa6-a1ea-4038-829e-6ca1895141b5','Manager')
+INSERT INTO "Roles" ("Id", "Name") VALUES ('06cf9e40-f9db-4ab9-87ac-b9a13d7f97a3','Manager')
 
-INSERT INTO "Roles" ("Id", "Name") VALUES ('93cb369b-6625-49dd-bbcd-f2ff928af465','Worker')
+INSERT INTO "Roles" ("Id", "Name") VALUES ('930341d0-77a4-467c-a437-55e73dee2632','Worker')
 
-INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('de5a82e5-7b7e-4fc9-88ee-1a6cb74ad9c1', 'Admin User', '1234567890', 'admin@example.com', 'FB30A05E46860E510CFECC2494E5D73923E0397EA54F0B97178F4C30B8180F1B-525AE6B2DD0254C46D2FEEA5C65A7CD4', 'ab457b88-388d-43ba-a6f6-ea952b90fb44')
+INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('5ed1af34-b5ad-4f6f-aaa8-7a3f70eb3905', 'Admin User', '1234567890', 'admin@example.com', '4505839E9B9EF0BC344C8FFCEDE434AF9F18A6790E6B7D3E4A33BA12E1FF7840-030714FD005565AC5995713239CEFF5A', '104a2384-7e6e-408e-b11b-a64e300530d3')
 
-INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('a4d70f7a-418e-4d09-ba2d-ad6920d8b788', 'Manager User', '0987654321', 'manager@example.com', '427E3A02AFF3A027EEF52AD98D55DE84E314C2677E44A8F1FBF3EDC226CF073C-0DBD74C3B2F8D7FAA24BF6922A546A3F', 'cae5aaa6-a1ea-4038-829e-6ca1895141b5')
+INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('57e59663-f4c2-4867-b805-fd12653297b1', 'Manager User', '0987654321', 'manager@example.com', '09F2ACB2F01A80BD1237F5362F25E68A142FC12BDB4D0C1C0FCAF6C1A094022D-131CF48E7D577712DD767AE26B96490B', '06cf9e40-f9db-4ab9-87ac-b9a13d7f97a3')
 
-INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('5913691a-7a96-4217-9864-5912802e09db', 'Worker User', '1112223333', 'worker@example.com', '1AA096A5FB077FDDABEB20CF72F78E5CF1F7E2D7ABB5027C9D74251A27BA8F75-228DD323DBE68CBC5DD3A1E82EFEC8A1', '93cb369b-6625-49dd-bbcd-f2ff928af465')
+INSERT INTO "Users" ("Id", "Name", "Phone", "Email", "PasswordHash", "RoleId") VALUES ('9c1e44c0-c042-4749-9025-30a2cf4729b7', 'Worker User', '1112223333', 'worker@example.com', '4EE57C9E368CA70D3EC44C1B190545A42330B51427C21155D24DF08380BAE990-B105510993BC7F0E6F4A9EEA9D1E4B98', '930341d0-77a4-467c-a437-55e73dee2632')
 
-INSERT INTO "Categories" ("Id", "Name") VALUES ('533a1a7f-1102-4a79-9391-6e5892e097be', 'Electronics')
+INSERT INTO "Categories" ("Id", "Name") VALUES ('7b60ace0-9876-4a10-9347-8f786061c18c', 'Electronics')
 
-INSERT INTO "Categories" ("Id", "Name") VALUES ('0ba7b965-5d71-45c5-ae79-d52d98866f13', 'Furniture')
+INSERT INTO "Categories" ("Id", "Name") VALUES ('c4af9782-cd4a-489a-a699-6b700bf2dab4', 'Furniture')
 
-INSERT INTO "Categories" ("Id", "Name") VALUES ('129424ef-1c5c-4e23-8d2d-9fb6e37561af', 'Clothing')
+INSERT INTO "Categories" ("Id", "Name") VALUES ('3f70affe-5a68-4e87-9b5d-12f18ddef631', 'Clothing')
 
-INSERT INTO "Categories" ("Id", "Name") VALUES ('5f4786c8-c754-402b-8442-eebceaf7c849', 'Sports')
+INSERT INTO "Categories" ("Id", "Name") VALUES ('e7179b17-75d1-4caa-b7de-1907ee140957', 'Sports')
 
-INSERT INTO "Categories" ("Id", "Name") VALUES ('fb9b6942-f56b-4fbd-8bec-2ef04f473998', 'Beauty')
+INSERT INTO "Categories" ("Id", "Name") VALUES ('0b56197f-4c30-47f7-8508-7c52a6364c06', 'Beauty')
 
-INSERT INTO "Warehouses" ("Id", "Name", "Location") VALUES ('a952501f-701f-4d9d-a565-b6f3c2a0129e', 'Central Warehouse','Rivne')
+INSERT INTO "Warehouses" ("Id", "Name", "Location") VALUES ('37af8801-96b3-49d4-8b06-126026aa40ba', 'Central Warehouse','Rivne')
 
-INSERT INTO "Warehouses" ("Id", "Name", "Location") VALUES ('d89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 'Secondary Warehouse', 'Zhytomyr')
+INSERT INTO "Warehouses" ("Id", "Name", "Location") VALUES ('aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 'Secondary Warehouse', 'Zhytomyr')
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('4f1f4e2b-3bb7-4b3b-8970-c92e95152256', 'Smartphone', 'ELEC-001', 'Latest smartphone', 699.99, '533a1a7f-1102-4a79-9391-6e5892e097be');
+                    VALUES ('bfb31566-4e8b-4c8a-adf0-f34671a27635', 'Smartphone', 'ELEC-001', 'Latest smartphone', 699.99, '7b60ace0-9876-4a10-9347-8f786061c18c');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('f59ece80-e697-440c-a41f-d5dbdcb9b4c6', 'Laptop', 'ELEC-002', 'High-performance laptop', 1299.99, '533a1a7f-1102-4a79-9391-6e5892e097be');
+                    VALUES ('9131150e-d98f-4ef9-8a1d-a55ca440e16a', 'Laptop', 'ELEC-002', 'High-performance laptop', 1299.99, '7b60ace0-9876-4a10-9347-8f786061c18c');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('8a2de30f-cc6c-468d-bb30-b1ec70b8ff35', 'Office Chair', 'FURN-001', 'Ergonomic office chair', 149.99, '0ba7b965-5d71-45c5-ae79-d52d98866f13');
+                    VALUES ('8ba2fc5e-79a2-4bec-b7e5-0d722ed37fce', 'Office Chair', 'FURN-001', 'Ergonomic office chair', 149.99, 'c4af9782-cd4a-489a-a699-6b700bf2dab4');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('e5f970d3-43a5-4064-8475-cb524e061fd4', 'Sofa', 'FURN-002', 'Comfortable sofa', 499.99, '0ba7b965-5d71-45c5-ae79-d52d98866f13');
+                    VALUES ('beb872ae-9aab-4529-a10c-3d298e2d6f11', 'Sofa', 'FURN-002', 'Comfortable sofa', 499.99, 'c4af9782-cd4a-489a-a699-6b700bf2dab4');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('47a0b5eb-bbb1-4a56-950d-6d8c3fdf92ce', 'T-Shirt', 'CLOT-001', '100% cotton T-shirt', 19.99, '129424ef-1c5c-4e23-8d2d-9fb6e37561af');
+                    VALUES ('48cfac42-393d-4bd9-bebc-14135503c823', 'T-Shirt', 'CLOT-001', '100% cotton T-shirt', 19.99, '3f70affe-5a68-4e87-9b5d-12f18ddef631');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('ef5089c3-715c-4c93-8a08-6f948aba7016', 'Jeans', 'CLOT-002', 'Stylish jeans', 49.99, '129424ef-1c5c-4e23-8d2d-9fb6e37561af');
+                    VALUES ('a41b8247-738f-4648-bc72-98f38e8dcd05', 'Jeans', 'CLOT-002', 'Stylish jeans', 49.99, '3f70affe-5a68-4e87-9b5d-12f18ddef631');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('09564048-3b26-429f-9985-c8103101cd5b', 'Football', 'SPRT-001', 'Professional football', 29.99, '5f4786c8-c754-402b-8442-eebceaf7c849');
+                    VALUES ('71acb451-924f-4d33-bf34-fcd357d90846', 'Football', 'SPRT-001', 'Professional football', 29.99, 'e7179b17-75d1-4caa-b7de-1907ee140957');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('9d19a801-9fa2-4536-8f54-9b7174e51922', 'Basketball', 'SPRT-002', 'Durable basketball', 39.99, '5f4786c8-c754-402b-8442-eebceaf7c849');
+                    VALUES ('179ad281-b2fc-4cfa-b37e-5a135e9d6d7e', 'Basketball', 'SPRT-002', 'Durable basketball', 39.99, 'e7179b17-75d1-4caa-b7de-1907ee140957');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('d9d1f96a-e568-4f7f-a164-181c2e00961b', 'Lipstick', 'BEAU-001', 'Matte lipstick', 9.99, 'fb9b6942-f56b-4fbd-8bec-2ef04f473998');
+                    VALUES ('67433718-d293-4045-877a-0daa9b23b884', 'Lipstick', 'BEAU-001', 'Matte lipstick', 9.99, '0b56197f-4c30-47f7-8508-7c52a6364c06');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('2986b848-6269-4404-8157-44b8408b1774', 'Perfume', 'BEAU-002', 'Luxury perfume', 99.99, 'fb9b6942-f56b-4fbd-8bec-2ef04f473998');
+                    VALUES ('d117ce90-940f-497e-bc5b-068404b814af', 'Perfume', 'BEAU-002', 'Luxury perfume', 99.99, '0b56197f-4c30-47f7-8508-7c52a6364c06');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('fa5968aa-fadf-45bd-a50d-f9c9e359fd27', 'Tablet', 'ELEC-003', 'Portable tablet', 499.99, '533a1a7f-1102-4a79-9391-6e5892e097be');
+                    VALUES ('03c6eb50-ae23-4f45-b208-3ac3e975968b', 'Tablet', 'ELEC-003', 'Portable tablet', 499.99, '7b60ace0-9876-4a10-9347-8f786061c18c');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('b74bb73e-08c2-4542-9c28-2d8fb09e967a', 'Headphones', 'ELEC-004', 'Noise-cancelling headphones', 199.99, '533a1a7f-1102-4a79-9391-6e5892e097be');
+                    VALUES ('a785d24c-a1f3-4893-98ee-8448e092c3ab', 'Headphones', 'ELEC-004', 'Noise-cancelling headphones', 199.99, '7b60ace0-9876-4a10-9347-8f786061c18c');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('31519e3f-291f-4735-9c3a-8e4bfa9a54c4', 'Desk', 'FURN-003', 'Wooden office desk', 299.99, '0ba7b965-5d71-45c5-ae79-d52d98866f13');
+                    VALUES ('c45cb9b1-8f12-4694-b26b-256797411b3d', 'Desk', 'FURN-003', 'Wooden office desk', 299.99, 'c4af9782-cd4a-489a-a699-6b700bf2dab4');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('4d849b80-e3fa-4158-b447-2ff35254ef82', 'Bookshelf', 'FURN-004', '5-shelf bookshelf', 129.99, '0ba7b965-5d71-45c5-ae79-d52d98866f13');
+                    VALUES ('80109140-25d5-43e3-a1de-c8a118c84444', 'Bookshelf', 'FURN-004', '5-shelf bookshelf', 129.99, 'c4af9782-cd4a-489a-a699-6b700bf2dab4');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('e2e002e4-e09c-44a5-94ce-136d1abc4b89', 'Jacket', 'CLOT-003', 'Waterproof jacket', 89.99, '129424ef-1c5c-4e23-8d2d-9fb6e37561af');
+                    VALUES ('d3426ffc-4ada-41bc-bb0b-bd7047b6df41', 'Jacket', 'CLOT-003', 'Waterproof jacket', 89.99, '3f70affe-5a68-4e87-9b5d-12f18ddef631');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('5404939d-1f28-4bba-8731-e3fb7819ea89', 'Sneakers', 'CLOT-004', 'Comfortable sneakers', 79.99, '129424ef-1c5c-4e23-8d2d-9fb6e37561af');
+                    VALUES ('0f5a5baf-a6d2-4cbf-b469-5a014210f27b', 'Sneakers', 'CLOT-004', 'Comfortable sneakers', 79.99, '3f70affe-5a68-4e87-9b5d-12f18ddef631');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('28b16cb1-4210-4c0f-9b3d-636a5155817c', 'Tennis Racket', 'SPRT-003', 'Lightweight tennis racket', 59.99, '5f4786c8-c754-402b-8442-eebceaf7c849');
+                    VALUES ('684c8995-746c-4060-a693-3a4fa6fdff25', 'Tennis Racket', 'SPRT-003', 'Lightweight tennis racket', 59.99, 'e7179b17-75d1-4caa-b7de-1907ee140957');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('b09fbd57-aa06-4480-9dd7-8afbdc3cf165', 'Yoga Mat', 'SPRT-004', 'Non-slip yoga mat', 24.99, '5f4786c8-c754-402b-8442-eebceaf7c849');
+                    VALUES ('6919bd21-852c-4712-ad15-1ff53c3817c2', 'Yoga Mat', 'SPRT-004', 'Non-slip yoga mat', 24.99, 'e7179b17-75d1-4caa-b7de-1907ee140957');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('4607a0ce-b8ce-4596-976e-12dc2fb33313', 'Face Cream', 'BEAU-003', 'Anti-aging face cream', 39.99, 'fb9b6942-f56b-4fbd-8bec-2ef04f473998');
+                    VALUES ('14408232-9504-4493-8d5b-aa051aa9fc6b', 'Face Cream', 'BEAU-003', 'Anti-aging face cream', 39.99, '0b56197f-4c30-47f7-8508-7c52a6364c06');
                 
 
 
                     INSERT INTO "Products" ("Id", "Name", "SKU", "Description", "UnitPrice", "CategoryId")
-                    VALUES ('3fbd7400-0f86-4912-8477-08b41c2cd7a4', 'Hair Dryer', 'BEAU-004', 'High-speed hair dryer', 79.99, 'fb9b6942-f56b-4fbd-8bec-2ef04f473998');
+                    VALUES ('844c49b1-e3cf-4110-ac94-1ac583f08007', 'Hair Dryer', 'BEAU-004', 'High-speed hair dryer', 79.99, '0b56197f-4c30-47f7-8508-7c52a6364c06');
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('cf3f486e-bb1a-4593-90ca-33688517b6c4', '4f1f4e2b-3bb7-4b3b-8970-c92e95152256', 'a952501f-701f-4d9d-a565-b6f3c2a0129e', 100);
+                    VALUES ('841c64a3-0599-4cab-b3b7-97906335fc28', 'bfb31566-4e8b-4c8a-adf0-f34671a27635', '37af8801-96b3-49d4-8b06-126026aa40ba', 100);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('cbf2c4f5-50be-44c3-bddf-2a8220369866', '8a2de30f-cc6c-468d-bb30-b1ec70b8ff35', 'a952501f-701f-4d9d-a565-b6f3c2a0129e', 50);
+                    VALUES ('ae921c4b-7c62-4970-9a05-ff8a7f0bcf26', '8ba2fc5e-79a2-4bec-b7e5-0d722ed37fce', '37af8801-96b3-49d4-8b06-126026aa40ba', 50);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('c273f6eb-2a22-4679-b95b-1a921f593ac1', '47a0b5eb-bbb1-4a56-950d-6d8c3fdf92ce', 'a952501f-701f-4d9d-a565-b6f3c2a0129e', 200);
+                    VALUES ('4363e63e-c294-497a-ab73-f905dd6c3f93', '48cfac42-393d-4bd9-bebc-14135503c823', '37af8801-96b3-49d4-8b06-126026aa40ba', 200);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('57f4e364-0a24-4304-abcd-9dcffd56dab0', '09564048-3b26-429f-9985-c8103101cd5b', 'a952501f-701f-4d9d-a565-b6f3c2a0129e', 150);
+                    VALUES ('907843e4-c251-4ef7-872c-3f5125bd9a47', '71acb451-924f-4d33-bf34-fcd357d90846', '37af8801-96b3-49d4-8b06-126026aa40ba', 150);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('31f75b3c-2cff-44c5-b051-dd7c574bb4cf', '2986b848-6269-4404-8157-44b8408b1774', 'a952501f-701f-4d9d-a565-b6f3c2a0129e', 75);
+                    VALUES ('ce4da199-92e6-436b-ab5e-6bcc0552acf2', 'd117ce90-940f-497e-bc5b-068404b814af', '37af8801-96b3-49d4-8b06-126026aa40ba', 75);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('ac499e31-de87-4667-9bfb-f4bfa7ec387f', '4f1f4e2b-3bb7-4b3b-8970-c92e95152256', 'd89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 120);
+                    VALUES ('9b17758f-79a5-4044-9412-465e846c3380', 'bfb31566-4e8b-4c8a-adf0-f34671a27635', 'aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 120);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('efbbae31-0454-431e-b970-beb7da907658', '8a2de30f-cc6c-468d-bb30-b1ec70b8ff35', 'd89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 60);
+                    VALUES ('825ff143-ccf0-4d6b-955f-cf8d1148d6df', '8ba2fc5e-79a2-4bec-b7e5-0d722ed37fce', 'aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 60);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('eb00f35a-9ef2-4ca3-842d-3a598c2ef8f8', '47a0b5eb-bbb1-4a56-950d-6d8c3fdf92ce', 'd89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 180);
+                    VALUES ('88ae6e68-b8e2-418e-a03d-db1e2ab78b3f', '48cfac42-393d-4bd9-bebc-14135503c823', 'aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 180);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('45705ce4-ac0a-40c4-97c8-1281e12bb613', '09564048-3b26-429f-9985-c8103101cd5b', 'd89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 130);
+                    VALUES ('f9a3efa5-d578-48ad-a7a1-80212f180dc3', '71acb451-924f-4d33-bf34-fcd357d90846', 'aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 130);
                 
 
 
                     INSERT INTO "Inventories" ("Id", "ProductId", "WarehouseId", "Quantity")
-                    VALUES ('154a7093-a90d-464a-a728-a3b7d7f53f88', '2986b848-6269-4404-8157-44b8408b1774', 'd89a5221-4f6b-42b9-a1a6-e2db1c9c6da0', 85);
+                    VALUES ('1d9e5d5e-40df-40ff-b84d-b67188e0e672', 'd117ce90-940f-497e-bc5b-068404b814af', 'aba3c1b9-85ff-4bbe-a66f-1ce9a6f66a78', 85);
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('a3df35a8-ccec-4c22-9343-c8aba357bae2', 'cf3f486e-bb1a-4593-90ca-33688517b6c4', '2024-12-24 18:40:37', 20, 'Adjusted');
+                    VALUES ('5af32770-9402-49bb-bd0e-ba1587ddbb5c', '841c64a3-0599-4cab-b3b7-97906335fc28', '2024-12-25 10:55:51', 20, 'Adjusted');
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('b14e2b3e-3dfb-4716-a076-c40febd02873', 'cf3f486e-bb1a-4593-90ca-33688517b6c4', '2024-12-26 18:40:37', -5, 'Adjusted');
+                    VALUES ('6ff858a8-dc4c-47ef-94c4-2d047726930f', '841c64a3-0599-4cab-b3b7-97906335fc28', '2024-12-27 10:55:51', -5, 'Adjusted');
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('16827340-fb75-48df-8f26-605f01e06a95', 'cf3f486e-bb1a-4593-90ca-33688517b6c4', '2024-12-28 18:40:37', 15, 'Released');
+                    VALUES ('8a7f431e-24f2-4376-978b-6d7f0b233868', '841c64a3-0599-4cab-b3b7-97906335fc28', '2024-12-29 10:55:51', 15, 'Released');
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('2f5a2231-13f4-4bce-8cd4-0bbbc7419ad9', 'cf3f486e-bb1a-4593-90ca-33688517b6c4', '2024-12-30 18:40:37', -10, 'Removed');
+                    VALUES ('792a13aa-303f-4bce-b906-fc1f7e1d3b17', '841c64a3-0599-4cab-b3b7-97906335fc28', '2024-12-31 10:55:51', -10, 'Removed');
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('3b2b069e-f0a9-4609-9033-1e31772a61dd', 'ac499e31-de87-4667-9bfb-f4bfa7ec387f', '2025-01-01 18:40:37', 30, 'Added');
+                    VALUES ('9c8fcc84-1987-4d7c-9df7-5f7cfe8406e5', '9b17758f-79a5-4044-9412-465e846c3380', '2025-01-02 10:55:51', 30, 'Added');
                 
 
 
                     INSERT INTO "InventoryLogs" ("Id", "InventoryId", "Timestamp", "QuantityChanged", "ChangeType")
-                    VALUES ('10db545a-186b-4d5d-8b09-bb8673c386e8', 'ac499e31-de87-4667-9bfb-f4bfa7ec387f', '2025-01-01 18:40:37', 30, 'Added');
+                    VALUES ('3357cd40-a75e-4202-83c6-67c14ae2a743', '9b17758f-79a5-4044-9412-465e846c3380', '2025-01-02 10:55:51', 30, 'Added');
                 
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20241222152647_InitialDataSeed', '8.0.2');
+
+COMMIT;
+
+START TRANSACTION;
+
+CREATE TABLE public."Tests" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Text" text NOT NULL,
+    "DateTime" timestamp with time zone NOT NULL,
+    "Age" integer NOT NULL,
+    "Persents" real NOT NULL,
+    CONSTRAINT "PK_Tests" PRIMARY KEY ("Id")
+);
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250104105416_TestMigration', '8.0.2');
 
 COMMIT;
 

@@ -17,6 +17,7 @@ public class InventoryContext : DbContext
     public DbSet<InventoryLog> InventoryLogs { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Test> Tests { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
