@@ -7,8 +7,7 @@ public static class WarehouseMapper
 {
     public static WarehouseDTO ToDTO(Infrastructure.Entities.Warehouse warehouse)
     {
-        if (warehouse == null)
-            throw new ArgumentNullException(nameof(warehouse));
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         return new WarehouseDTO
         {
@@ -20,8 +19,7 @@ public static class WarehouseMapper
 
     public static Infrastructure.Entities.Warehouse ToEntity(WarehouseDTO warehouseDto)
     {
-        if (warehouseDto == null)
-            throw new ArgumentNullException(nameof(warehouseDto));
+        ArgumentNullException.ThrowIfNull(warehouseDto);
 
         return new Infrastructure.Entities.Warehouse
         {

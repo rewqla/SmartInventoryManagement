@@ -8,8 +8,7 @@ public static class WarehouseMapper
 {
     public static WarehouseDTO ToDTO(CreateWarehouseInput warehouse)
     {
-        if (warehouse == null)
-            throw new ArgumentNullException(nameof(warehouse));
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         return new WarehouseDTO
         {
@@ -20,8 +19,7 @@ public static class WarehouseMapper
     
     public static WarehouseDTO ToDTO(UpdateWarehouseInput warehouse)
     {
-        if (warehouse == null)
-            throw new ArgumentNullException(nameof(warehouse));
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         return new WarehouseDTO
         {
@@ -33,16 +31,14 @@ public static class WarehouseMapper
     
     public static CreateWarehousePayload ToCreatePayload(WarehouseDTO warehouse)
     {
-        if (warehouse == null)
-            throw new ArgumentNullException(nameof(warehouse));
- 
+        ArgumentNullException.ThrowIfNull(warehouse);
+
         return new CreateWarehousePayload(warehouse.Id, warehouse.Name, warehouse.Location);
     }
     
     public static UpdateWarehousePayload ToUpdatePayload(WarehouseDTO warehouse)
     {
-        if (warehouse == null)
-            throw new ArgumentNullException(nameof(warehouse));
+        ArgumentNullException.ThrowIfNull(warehouse);
 
         return new UpdateWarehousePayload(warehouse.Id, warehouse.Name, warehouse.Location);
     }

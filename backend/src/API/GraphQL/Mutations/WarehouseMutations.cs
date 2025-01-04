@@ -5,7 +5,7 @@ using API.GraphQL.Shared;
 using API.GraphQL.Subscriptions;
 using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
-using Application.Errors;
+using Application.Exceptions;
 using Application.Interfaces.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentValidation;
@@ -36,7 +36,7 @@ public  sealed class WarehouseMutations
         return warehouseResult;
     }
 
-    [Error(typeof(InvalidGuidError))]
+    [Error(typeof(InvalidGuidException))]
     public async Task<UpdateWarehousePayload> UpdateWarehouse(IWarehouseService warehouseService,
         InventoryContext context, UpdateWarehouseInput input,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ public  sealed class WarehouseMutations
         return warehouseResult;
     }
     
-    [Error(typeof(InvalidGuidError))]
+    [Error(typeof(InvalidGuidException))]
     public async Task<bool> DeleteWarehouse(IWarehouseService warehouseService, Guid warehouseId,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
@@ -64,7 +64,7 @@ public  sealed class WarehouseMutations
     
         if (warehouseDTO == null)
         {
-            throw new InvalidGuidError($"Warehouse with ID {warehouseId} not found.");
+            throw new InvalidGuidException($"Warehouse with ID {warehouseId} not found.");
         }
 
         

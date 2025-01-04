@@ -1,6 +1,6 @@
 ﻿using Application.DTO;
 using Application.DTO.Warehouse;
-using Application.Errors;
+using Application.Exceptions;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Application.Validation.Warehouse;
@@ -32,7 +32,7 @@ public class WarehouseService : IWarehouseService
         if (warehouse == null)
         {
             _logger.LogError($"Warehouse with id {id} not found");
-            throw new InvalidGuidError($"Warehouse {id} not found");
+            throw new InvalidGuidException($"Warehouse {id} not found");
         }
 
         _logger.LogInformation("Warehouse with id " + id + " retrieved");
@@ -78,7 +78,7 @@ public class WarehouseService : IWarehouseService
 
         if (warehouse == null)
         {
-            throw new InvalidGuidError($"Warehouse {warehouseDto.Id} not found");
+            throw new InvalidGuidException($"Warehouse {warehouseDto.Id} not found");
         }
 
         warehouse.Name = warehouseDto.Name;

@@ -1,5 +1,5 @@
 ﻿using Application.DTO.Warehouse;
-using Application.Errors;
+using Application.Exceptions;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentAssertions;
@@ -125,7 +125,7 @@ public class WarehouseServiceTests
         var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
         Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
     }
 
@@ -180,7 +180,7 @@ public class WarehouseServiceTests
         var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
         Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
 
         _logger.Verify(
@@ -301,7 +301,7 @@ public class WarehouseServiceTests
         var action = async () => await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidGuidError>(action);
+        var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.Update(It.IsAny<Warehouse>()), Times.Never);
     }

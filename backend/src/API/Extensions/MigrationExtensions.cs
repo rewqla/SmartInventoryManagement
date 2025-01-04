@@ -16,7 +16,7 @@ internal static class MigrationExtensions
 
         var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
 
-        if (pendingMigrations.Any())
+        if (pendingMigrations.Count != 0)
         {
             dbContext.Database.Migrate();
             Console.WriteLine("Migrations applied to the database.");
