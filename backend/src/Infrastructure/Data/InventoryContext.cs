@@ -21,15 +21,7 @@ public class InventoryContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(ValueTypeConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
-        modelBuilder.ApplyConfiguration(new ProductConfiguration());
-        modelBuilder.ApplyConfiguration(new WarehouseConfiguration());
-        modelBuilder.ApplyConfiguration(new RoleConfiguration());
-        modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-        modelBuilder.ApplyConfiguration(new InventoryConfiguration());
-        modelBuilder.ApplyConfiguration(new InventoryLogConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventoryContext).Assembly);
         
         modelBuilder.HasDefaultSchema(Schemas.Default);
         
