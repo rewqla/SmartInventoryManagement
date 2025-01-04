@@ -1,4 +1,5 @@
-﻿using API.GraphQL;
+﻿using API.Endpoints;
+using API.GraphQL;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
@@ -97,6 +98,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(app);
 
         app.MapGraphQL();
+        app.MapApiEndpoints();
 
         return app;
     }
