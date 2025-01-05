@@ -1,4 +1,5 @@
-﻿using Application.DTO;
+﻿using Application.Common;
+using Application.DTO;
 using Application.DTO.Warehouse;
 using Application.Exceptions;
 using Application.Interfaces.Services.Warehouse;
@@ -39,12 +40,14 @@ public class WarehouseService : IWarehouseService
         return WarehouseMapper.ToDTO(warehouse);
     }
 
-    public async Task<IEnumerable<WarehouseDTO>> GetWarehousesAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesAsync(CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieve all warehouses");
-        var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
 
-        return warehouses.Select(item => WarehouseMapper.ToDTO(item));
+        var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
+        var warehousesDto = warehouses.Select(WarehouseMapper.ToDTO);
+        
+        return Result<IEnumerable<WarehouseDTO>>.Success(warehousesDto);
     }
 
     public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto,

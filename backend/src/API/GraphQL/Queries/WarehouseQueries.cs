@@ -8,8 +8,12 @@ public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
     [UseFiltering(typeof(WarehouseFilterType))]
-    public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService) =>
-        await warehouseService.GetWarehousesAsync();
+    public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService, CancellationToken cancellationToken)
+    {
+        var result = await warehouseService.GetWarehousesAsync(cancellationToken);
+        
+        return result.Value!;
+    }
 
     public async Task<WarehouseDTO?> GetWarehouseById(IWarehouseService warehouseService, Guid id) =>
         await warehouseService.GetWarehouseByIdAsync(id);

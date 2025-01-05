@@ -1,8 +1,8 @@
-﻿### Get warehouses
+﻿### Get warehouses with condition
 GRAPHQL {{baseUrl}}/graphql/
 
 query{
-  warehouse (take: 5, skip: 3, where:  {
+  warehouse (take: 5, skip: 0, where:  {
      and: [ {
       name:  {
          contains: "Ware"
