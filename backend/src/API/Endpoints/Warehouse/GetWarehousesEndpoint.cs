@@ -1,4 +1,5 @@
 ﻿using API.Endpoints.Constants;
+using API.Extensions;
 using Application.Interfaces.Services.Warehouse;
 
 namespace API.Endpoints.Warehouse;
@@ -13,10 +14,9 @@ public static class GetWarehousesEndpoint
             {
                 var result = await warehouseService.GetWarehousesAsync(cancellationToken);
 
-                // #todo: add ResultExtensions class with Match method
-                return result.IsSuccess
-                    ? Results.Ok(result.Value)
-                    : Results.BadRequest(result.Error);
+                return result.Match(
+                    onSuccess: value => Results.Ok(value),
+                    onFailure: error => Results.BadRequest(error));
             })
             .WithName(Name)
             .WithTags("Warehouse");

@@ -11,6 +11,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Name);
+        // #todo: add unique attribute
         builder.Property(e => e.SKU);
         builder.Property(e => e.Description);
         builder.Property(e => e.UnitPrice);

@@ -11,9 +11,10 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Name);
+        // #todo: add unique attribute
         builder.Property(e => e.Phone);
+        // #todo: add unique attribute
         builder.Property(e => e.Email);
-        builder.Property(e => e.Phone);
         builder.Property(e => e.PasswordHash);
 
         builder.HasOne(e => e.Role)
