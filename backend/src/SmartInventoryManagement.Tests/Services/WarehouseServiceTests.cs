@@ -28,6 +28,7 @@ public class WarehouseServiceTests
             new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator);
     }
 
+    // #todo: Add assert for result.IsSuccess to fix test
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEmpty_WhenNoWarehouses()
     {
@@ -42,7 +43,7 @@ public class WarehouseServiceTests
         // Assert
         result.Should().BeEmpty();
     }
-
+    // #todo: Add assert for result.IsSuccess to fix test
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEnumerableWarehouses_WhenWarehousesExistWithoutInventories()
     {
@@ -67,7 +68,7 @@ public class WarehouseServiceTests
         result.Should().BeEquivalentTo(expectedWarehouses, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
-
+    // #todo: Add assert for result.IsSuccess to fix test
     [Fact]
     public async Task GetWarehousesAsync_ShouldLogMessages_WhenInvoked()
     {
