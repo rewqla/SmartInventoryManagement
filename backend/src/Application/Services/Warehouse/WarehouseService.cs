@@ -54,22 +54,30 @@ public class WarehouseService : IWarehouseService
         return Result<IEnumerable<WarehouseDTO>>.Success(warehousesDto);
     }
 
-    public async Task<WarehouseDTO> CreateWarehouseAsync(WarehouseDTO warehouseDto,
+    public async Task<Result<WarehouseDTO>> CreateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
+
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            var errorDetails = validationResult.Errors.Select(error => new  ErrorDetail
+            {
+                PropertyName = error.PropertyName,
+                ErrorMessage = error.ErrorMessage
+            }).ToList();
+            
+            return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
         warehouseDto.Id = Guid.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 
+        // todo: add try catch to handle possible errors
         await _warehouseRepository.AddAsync(warehouse, cancellationToken);
         await _warehouseRepository.CompleteAsync();
 
-        return warehouseDto;
+        return Result<WarehouseDTO>.Success(warehouseDto);
     }
 
     public async Task<WarehouseDTO> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
