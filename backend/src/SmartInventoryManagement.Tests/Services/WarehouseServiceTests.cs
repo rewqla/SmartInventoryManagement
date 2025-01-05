@@ -1,4 +1,5 @@
-﻿using Application.DTO.Warehouse;
+﻿using Application.Common;
+using Application.DTO.Warehouse;
 using Application.Exceptions;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -27,8 +28,7 @@ public class WarehouseServiceTests
         _warehouseService =
             new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator);
     }
-
-    // #todo: Add assert for result.IsSuccess to fix test
+    
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEmpty_WhenNoWarehouses()
     {
@@ -41,9 +41,11 @@ public class WarehouseServiceTests
         var result = await _warehouseService.GetWarehousesAsync();
 
         // Assert
-        result.Should().BeEmpty();
+        result.IsSuccess.Should().BeTrue();
+        result.Error.Should().Be(Error.None);
+        result.Value.Should().BeEmpty();
     }
-    // #todo: Add assert for result.IsSuccess to fix test
+    
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEnumerableWarehouses_WhenWarehousesExistWithoutInventories()
     {
@@ -65,10 +67,12 @@ public class WarehouseServiceTests
         var result = await _warehouseService.GetWarehousesAsync();
 
         // Assert
-        result.Should().BeEquivalentTo(expectedWarehouses, options => options
+        result.IsSuccess.Should().BeTrue();
+        result.Error.Should().Be(Error.None);
+        result.Value.Should().BeEquivalentTo(expectedWarehouses, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
-    // #todo: Add assert for result.IsSuccess to fix test
+    
     [Fact]
     public async Task GetWarehousesAsync_ShouldLogMessages_WhenInvoked()
     {
