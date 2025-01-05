@@ -25,7 +25,8 @@ public class WarehouseService : IWarehouseService
         _warehouseDTOValidator = warehouseDtoValidator;
     }
 
-    public async Task<WarehouseDTO?> GetWarehouseByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
+        CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieve warehouse with id: " + id);
         var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
@@ -33,20 +34,23 @@ public class WarehouseService : IWarehouseService
         if (warehouse == null)
         {
             _logger.LogError($"Warehouse with id {id} not found");
-            throw new InvalidGuidException($"Warehouse {id} not found");
+            return Result<WarehouseDTO>.Failure(CommonErrors.NotFound("warehouse", id));
         }
 
         _logger.LogInformation("Warehouse with id " + id + " retrieved");
-        return WarehouseMapper.ToDTO(warehouse);
+
+        var warehouseDto = WarehouseMapper.ToDTO(warehouse);
+        return Result<WarehouseDTO>.Success(warehouseDto);
     }
 
-    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesAsync(
+        CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieve all warehouses");
 
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
         var warehousesDto = warehouses.Select(WarehouseMapper.ToDTO);
-        
+
         return Result<IEnumerable<WarehouseDTO>>.Success(warehousesDto);
     }
 

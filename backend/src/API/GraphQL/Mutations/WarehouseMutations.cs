@@ -71,7 +71,7 @@ public  sealed class WarehouseMutations
         await warehouseService.DeleteWarehouse(warehouseId, cancellationToken);
 
         await sender.SendAsync(WarehouseTopics.Mutated,
-            new WarehouseEventMessage(EventType.Deleted, warehouseDTO), cancellationToken);
+            new WarehouseEventMessage(EventType.Deleted, warehouseDTO.Value), cancellationToken);
 
         return true;
     }

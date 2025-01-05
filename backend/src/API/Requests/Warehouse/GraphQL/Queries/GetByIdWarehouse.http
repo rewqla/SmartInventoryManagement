@@ -1,0 +1,12 @@
+﻿### Get by id warehouse
+GRAPHQL {{baseUrl}}/graphql/
+
+query{
+  warehouseById(id: "5d7dc7dc-a56f-4c4d-82a5-fa7ff4eb728d"){
+    id
+    name
+    location
+  }
+}
+
+###
