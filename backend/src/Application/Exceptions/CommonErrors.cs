@@ -9,6 +9,6 @@ public static class CommonErrors
 
     public static Error ValidationError(string entity, List<ErrorDetail> errorDetails) => new Error(
         $"{entity.ToUpperFirstLetter()}.ValidationError", 
-        string.Join("; ", errorDetails.Select(e => $"{e.PropertyName}: {e.ErrorMessage}")),
+        "Some validation problem occured",
         errorDetails);
 }

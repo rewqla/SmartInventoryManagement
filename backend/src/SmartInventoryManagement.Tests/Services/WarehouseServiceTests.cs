@@ -227,9 +227,14 @@ public class WarehouseServiceTests
         var result = await _warehouseService.CreateWarehouseAsync(warehouseDTO);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedResult, options => options
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Should().BeEquivalentTo(expectedResult, options => options
             .Excluding(warehouse => warehouse.Id)
             .Excluding(warehouse => warehouse.Inventories));
+        
+        _warehouseRepository.Verify(r => r.AddAsync(It.IsAny<Warehouse>(), It.IsAny<CancellationToken>()), Times.Once);
+        _warehouseRepository.Verify(r => r.CompleteAsync(), Times.Once);
     }
 
     [Fact]
@@ -243,13 +248,17 @@ public class WarehouseServiceTests
         };
 
         // Act
-        var action = async () => await _warehouseService.CreateWarehouseAsync(warehouseDTO);
+        var result = await _warehouseService.CreateWarehouseAsync(warehouseDTO);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(action);
-        Assert.Contains(exception.Errors, x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
-        Assert.Contains(exception.Errors,
-            x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
+        result.IsFailure.Should().BeTrue();
+        result.Error.Should().NotBeNull();
+        result.Error.Code.Should().Be("Warehouse.ValidationError");
+        result.Error.Description.Should().Contain("Some validation problem occured");
+
+        var errorDetails = result.Error.Errors;
+        errorDetails.Should().Contain(x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
+        errorDetails.Should().Contain(x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
