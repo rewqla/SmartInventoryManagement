@@ -16,7 +16,6 @@ public sealed class WarehouseQueries
         return result.Value!;
     }
 
-    // #todo: Add handle for InvalidGuidException 
     public async Task<WarehouseDTO?> GetWarehouseById(IWarehouseService warehouseService, Guid id,
         CancellationToken cancellationToken)
     {

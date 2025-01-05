@@ -1,4 +1,4 @@
-﻿namespace SmartInventoryManagement.Tests.Controllers;
+﻿namespace SmartInventoryManagement.Tests.Api;
 
 public class SecretControllerTests
 {
