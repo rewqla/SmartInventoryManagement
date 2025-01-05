@@ -28,7 +28,7 @@ public class WarehouseServiceTests
         _warehouseService =
             new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator);
     }
-    
+
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEmpty_WhenNoWarehouses()
     {
@@ -45,7 +45,7 @@ public class WarehouseServiceTests
         result.Error.Should().Be(Error.None);
         result.Value.Should().BeEmpty();
     }
-    
+
     [Fact]
     public async Task GetWarehousesAsync_ShouldReturnEnumerableWarehouses_WhenWarehousesExistWithoutInventories()
     {
@@ -72,7 +72,7 @@ public class WarehouseServiceTests
         result.Value.Should().BeEquivalentTo(expectedWarehouses, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
-    
+
     [Fact]
     public async Task GetWarehousesAsync_ShouldLogMessages_WhenInvoked()
     {
@@ -116,22 +116,26 @@ public class WarehouseServiceTests
         var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedWarehouse, options => options
+        result.IsSuccess.Should().BeTrue();
+        result.Error.Should().Be(Error.None);
+        result.Value.Should().BeEquivalentTo(expectedWarehouse, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
 
     [Fact]
-    public async Task GetWarehouseByIdAsync_ShouldReturnException_WhenWarehouseNotFound()
+    public async Task GetWarehouseByIdAsync_ShouldReturnFailureWithNotFoundError_WhenWarehouseNotFound()
     {
         // Arrange
         var warehouseId = Guid.NewGuid();
 
         // Act
-        var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+        var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
-        Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
+        result.IsFailure.Should().BeTrue();
+        result.Error.Code.Should().Be("Warehouse.NotFound");
+        result.Error.Description.Should().Be($"The follower with Id '{warehouseId}' was not found");
+        result.Value.Should().BeNull();
     }
 
     [Fact]
@@ -182,12 +186,12 @@ public class WarehouseServiceTests
         Guid warehouseId = Guid.NewGuid();
 
         // Act
-        var action = async () => await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+        var result =  await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
-        Assert.Equal($"Warehouse {warehouseId} not found", exception.Message);
-
+        result.Error.Code.Should().Be("Warehouse.NotFound");
+        result.Error.Description.Should().Be($"The follower with Id '{warehouseId}' was not found");
+        
         _logger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -304,7 +308,7 @@ public class WarehouseServiceTests
         };
         // Act
         var action = async () => await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
- 
+
         // Assert
         var exception = await Assert.ThrowsAsync<InvalidGuidException>(action);
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
