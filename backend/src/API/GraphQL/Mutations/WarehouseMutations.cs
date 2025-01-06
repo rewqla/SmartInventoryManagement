@@ -45,6 +45,7 @@ public sealed class WarehouseMutations
     }
 
     [Error(typeof(InvalidGuidException))]
+    [Error(typeof(ValidationException))]
     public async Task<UpdateWarehousePayload> UpdateWarehouse(IWarehouseService warehouseService,
         InventoryContext context, UpdateWarehouseInput input,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
@@ -53,13 +54,26 @@ public sealed class WarehouseMutations
 
         var updatedWarehouse = await warehouseService.UpdateWarehouseAsync(warehouseDTO, cancellationToken);
 
-        string updateWarehouseTopic = $"{updatedWarehouse.Id}_{nameof(WarehouseSubscriptions.WarehouseUpdated)}";
-        await sender.SendAsync(updateWarehouseTopic, updatedWarehouse, cancellationToken);
+        if (updatedWarehouse.IsFailure)
+        {
+            if (updatedWarehouse.Error.Code == "Warehouse.ValidationError")
+            {
+                throw new ValidationException(updatedWarehouse.Error.Description);
+            }
+
+            if (updatedWarehouse.Error.Code == "Warehouse.NotFound")
+            {
+                throw new InvalidGuidException(updatedWarehouse.Error.Description);
+            }
+        }
+        
+        string updateWarehouseTopic = $"{updatedWarehouse.Value!.Id}_{nameof(WarehouseSubscriptions.WarehouseUpdated)}";
+        await sender.SendAsync(updateWarehouseTopic, updatedWarehouse.Value, cancellationToken);
 
         await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouseDTO),
             cancellationToken);
 
-        var warehouseResult = WarehouseMapper.ToUpdatePayload(updatedWarehouse);
+        var warehouseResult = WarehouseMapper.ToUpdatePayload(updatedWarehouse.Value);
 
         return warehouseResult;
     }

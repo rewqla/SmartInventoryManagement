@@ -80,20 +80,26 @@ public class WarehouseService : IWarehouseService
         return Result<WarehouseDTO>.Success(warehouseDto);
     }
 
-    public async Task<WarehouseDTO> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
+    public async Task<Result<WarehouseDTO>> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            var errorDetails = validationResult.Errors.Select(error => new  ErrorDetail
+            {
+                PropertyName = error.PropertyName,
+                ErrorMessage = error.ErrorMessage
+            }).ToList();
+            
+            return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
         var warehouse = await _warehouseRepository.FindByIdAsync(warehouseDto.Id, cancellationToken);
 
         if (warehouse == null)
         {
-            throw new InvalidGuidException($"Warehouse {warehouseDto.Id} not found");
+            return Result<WarehouseDTO>.Failure(CommonErrors.NotFound("Warehouse", warehouseDto.Id));
         }
 
         warehouse.Name = warehouseDto.Name;
@@ -102,7 +108,7 @@ public class WarehouseService : IWarehouseService
         _warehouseRepository.Update(warehouse);
         await _warehouseRepository.CompleteAsync();
 
-        return warehouseDto;
+        return Result<WarehouseDTO>.Success(warehouseDto);
     }
 
     public async Task<bool> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default)
