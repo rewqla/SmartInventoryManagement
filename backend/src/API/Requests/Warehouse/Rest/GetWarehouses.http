@@ -1,4 +1,4 @@
 ﻿### Retrieve warehouses
-GET {{baseUrl}}/api/warehouses
+GET {{baseUrl}}/api/warehouses/
 
 ###

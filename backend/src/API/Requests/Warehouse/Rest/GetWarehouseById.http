@@ -1,0 +1,4 @@
+﻿### Retrieve warehouse by id 
+GET {{baseUrl}}/api/warehouses/d8a6d203-a572-454b-82f0-90b57457ea92
+
+###

@@ -5,7 +5,8 @@ public static class WarehouseEndpointExtension
     public static IEndpointRouteBuilder MapWarehouseEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGetWarehouses();
-        // #todo create add, update, delete, get by id warehouse endpoints
+        app.MapGetWarehouseById();
+        // #todo create add, update, delete warehouse endpoints
         return app;
     }
 }
