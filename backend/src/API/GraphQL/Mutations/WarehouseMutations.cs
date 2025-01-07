@@ -82,9 +82,9 @@ public sealed class WarehouseMutations
     public async Task<bool> DeleteWarehouse(IWarehouseService warehouseService, Guid warehouseId,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
-        var warehouseDTO = await warehouseService.GetWarehouseByIdAsync(warehouseId, cancellationToken);
+        var warehouseResult = await warehouseService.GetWarehouseByIdAsync(warehouseId, cancellationToken);
 
-        if (warehouseDTO == null)
+        if (warehouseResult.IsFailure)
         {
             throw new InvalidGuidException($"Warehouse with ID {warehouseId} not found.");
         }
@@ -92,7 +92,7 @@ public sealed class WarehouseMutations
         await warehouseService.DeleteWarehouse(warehouseId, cancellationToken);
 
         await sender.SendAsync(WarehouseTopics.Mutated,
-            new WarehouseEventMessage(EventType.Deleted, warehouseDTO.Value), cancellationToken);
+            new WarehouseEventMessage(EventType.Deleted, warehouseResult.Value!), cancellationToken);
 
         return true;
     }

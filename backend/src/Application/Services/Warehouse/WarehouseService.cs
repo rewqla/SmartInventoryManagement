@@ -111,15 +111,18 @@ public class WarehouseService : IWarehouseService
         return Result<WarehouseDTO>.Success(warehouseDto);
     }
 
-    public async Task<bool> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<bool>> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default)
     {
         var warehouse = await _warehouseRepository.FindByIdAsync(id, cancellationToken);
 
-        if (warehouse == null) return false;
+        if (warehouse == null)
+        {
+            return Result<bool>.Failure(CommonErrors.NotFound("warehouse", id));
+        }
 
         _warehouseRepository.Delete(warehouse);
         await _warehouseRepository.CompleteAsync();
 
-        return true;
+        return Result<bool>.Success(true);
     }
 }
