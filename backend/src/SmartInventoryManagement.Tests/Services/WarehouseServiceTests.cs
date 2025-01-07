@@ -369,7 +369,10 @@ public class WarehouseServiceTests
         var result = await _warehouseService.DeleteWarehouse(warehouseId);
 
         // Assert
-        result.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeTrue();
+        _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
+        _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Once);
     }
 
     [Fact]
@@ -386,7 +389,9 @@ public class WarehouseServiceTests
         var result = await _warehouseService.DeleteWarehouse(warehouseId);
 
         // Assert
-        result.Should().BeFalse();
+        result.IsFailure.Should().BeTrue();
+        result.Error.Code.Should().Be("Warehouse.NotFound");
+        result.Error.Description.Should().Be($"The warehouse with Id '{warehouseId}' was not found");
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Never);
     }
