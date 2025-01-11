@@ -27,6 +27,7 @@ public static class DependencyInjection
 
         return builder;
     }
+    // todo: add healthcheks
     public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
