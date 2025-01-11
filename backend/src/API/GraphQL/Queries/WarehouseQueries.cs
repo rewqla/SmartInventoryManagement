@@ -8,6 +8,8 @@ public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
     [UseFiltering(typeof(WarehouseFilterType))]
+    // todo: add sorting
+    // todo: add projection
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService,
         CancellationToken cancellationToken)
     {

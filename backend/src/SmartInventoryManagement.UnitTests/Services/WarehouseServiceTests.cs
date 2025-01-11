@@ -395,4 +395,6 @@ public class WarehouseServiceTests
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Never);
     }
+    
+    // #todo: write tests with inventories
 }

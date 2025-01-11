@@ -1,0 +1,9 @@
+﻿### Create warehouse
+POST {{baseUrl}}/api/warehouses/
+Content-Type: application/json
+
+{
+  "name": "Mythic warehouse",
+  "location": "Loch Ness"
+}
+###
