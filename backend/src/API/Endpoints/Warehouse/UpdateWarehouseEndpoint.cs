@@ -18,10 +18,17 @@ public static class UpdateWarehouseEndpoint
                     warehouseDto.Id = id;
                     var result = await warehouseService.UpdateWarehouseAsync(warehouseDto, cancellationToken);
 
-                    // #todo: handle bad request or not found
                     return result.Match(
                         onSuccess: value => Results.Ok(value),
-                        onFailure: error => Results.BadRequest(error));
+                        onFailure: error =>
+                        {
+                            if (error.Code == "Warehouse.NotFound")
+                            {
+                                return Results.NotFound(error);
+                            }
+
+                            return Results.BadRequest(error);
+                        });
                 })
             .WithName(Name)
             .WithTags("Warehouse");

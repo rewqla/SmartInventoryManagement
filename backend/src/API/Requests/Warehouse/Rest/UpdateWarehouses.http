@@ -1,9 +1,9 @@
 ﻿### Update warehouse
-PUT {{baseUrl}}/api/warehouses/d8a6d222-a572-454b-82f0-90b57457ea92
+PUT {{baseUrl}}/api/warehouses/d8a6d209-a572-454b-82f0-90b57457ea92
 Content-Type: application/json
 
 {
   "name": "Mythic warehouse",
-  "location": "Loch Ness"
+  "location": "L"
 }
 ###
