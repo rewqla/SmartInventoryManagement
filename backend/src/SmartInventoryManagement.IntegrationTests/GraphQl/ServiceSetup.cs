@@ -1,4 +1,6 @@
-﻿using API.GraphQL.Queries;
+﻿using API.GraphQL.Mutations;
+using API.GraphQL.Queries;
+using API.GraphQL.Subscriptions;
 using Application.Interfaces.Services.Warehouse;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -24,7 +26,7 @@ public class ServiceSetup: IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _postgreSqlContainer.StartAsync();
-        
+
         var services = new ServiceCollection()
             .AddLogging()
             .AddScoped<IWarehouseService, WarehouseService>()
@@ -35,7 +37,11 @@ public class ServiceSetup: IAsyncLifetime
             .AddGraphQLServer()
             .AddQueryType<WarehouseQueries>()
             .AddFiltering()
-            .AddSorting();
+            .AddSorting()
+            .AddMutationType<WarehouseMutations>()
+            .AddMutationConventions()
+            .AddSubscriptionType<WarehouseSubscriptions>()
+            .AddInMemorySubscriptions();
 
         var executor = await services.BuildRequestExecutorAsync();
 

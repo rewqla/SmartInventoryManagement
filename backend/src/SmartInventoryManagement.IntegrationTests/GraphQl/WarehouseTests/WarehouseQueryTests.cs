@@ -4,11 +4,11 @@ using Snapshooter.Xunit;
 
 namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseTests : IClassFixture<ServiceSetup>
+public class WarehouseQueryTests : IClassFixture<ServiceSetup>
 {
     private readonly ServiceSetup _serviceSetup;
 
-    public WarehouseTests(ServiceSetup serviceSetup)
+    public WarehouseQueryTests(ServiceSetup serviceSetup)
     {
         _serviceSetup = serviceSetup;
     }
