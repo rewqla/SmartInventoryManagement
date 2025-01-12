@@ -22,6 +22,7 @@ public static class UpdateWarehouseEndpoint
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
                         {
+                            // todo: update return data of errors
                             if (error.Code == "Warehouse.NotFound")
                             {
                                 return Results.NotFound(error);

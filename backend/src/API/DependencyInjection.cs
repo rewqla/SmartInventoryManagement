@@ -27,7 +27,7 @@ public static class DependencyInjection
 
         return builder;
     }
-    // todo: add healthcheks
+    // todo: add healthchecks
     public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -71,7 +71,8 @@ public static class DependencyInjection
             .AddMutationConventions()
             .AddSubscriptionType<WarehouseSubscriptions>()
             .AddInMemorySubscriptions()
-            .AddFiltering();
+            .AddFiltering()
+            .AddSorting();
 
         return builder;
     }

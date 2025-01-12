@@ -1,28 +1,36 @@
 ﻿### Get warehouses with condition
 GRAPHQL {{baseUrl}}/graphql/
 
-query{
-  warehouse (take: 5, skip: 0, where:  {
-     and: [ {
-      name:  {
-         contains: "Ware"
-      }
-      location:  {
-         eq: "Rivne"
-      }
-     }]
-  }) {
-    items{
+query {
+  warehouse(
+    take: 5, 
+    skip: 0, 
+    where: {
+      or: [
+        {
+          name: { contains: "Ware" }
+        },
+        {
+          location: { eq: "Rivne" }
+        }
+      ]
+    },
+    order: [
+      { name: ASC }
+    ]
+  ) {
+    items {
       id
       name
       location
     }
-    pageInfo{
+    pageInfo {
       hasNextPage
       hasPreviousPage
     }
     totalCount
   }
 }
+
 
 ###
