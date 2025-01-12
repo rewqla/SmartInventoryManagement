@@ -1,4 +1,5 @@
 ﻿using API.GraphQL.Filters;
+using API.GraphQL.Sorting;
 using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
 
@@ -8,7 +9,7 @@ public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
     [UseFiltering(typeof(WarehouseFilterType))]
-    [UseSorting]
+    [UseSorting(typeof(WarehouseSortType))]
     // todo: add projection
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService,
         CancellationToken cancellationToken)
