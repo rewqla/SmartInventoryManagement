@@ -8,8 +8,8 @@ public static class WarehouseEndpointExtension
         app.MapGetWarehouseById();
         app.MapCreateWarehouse();
         app.MapUpdateWarehouse();
+        app.MapDeleteWarehouse();
         
-        // #todo delete warehouse endpoints
         return app;
     }
 }

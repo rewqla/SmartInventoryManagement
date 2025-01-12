@@ -1,0 +1,4 @@
+﻿### Delete warehouse
+DELETE {{baseUrl}}/api/warehouses/d8a6d209-a572-454b-82f0-90b57457ea92
+
+###
