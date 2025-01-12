@@ -1,0 +1,17 @@
+﻿{
+  "data": {
+    "warehouse": {
+      "items": [
+        {
+          "name": "Warehouse A",
+          "location": "New York"
+        },
+        {
+          "name": "Warehouse B",
+          "location": "Rivne"
+        }
+      ],
+      "totalCount": 2
+    }
+  }
+}

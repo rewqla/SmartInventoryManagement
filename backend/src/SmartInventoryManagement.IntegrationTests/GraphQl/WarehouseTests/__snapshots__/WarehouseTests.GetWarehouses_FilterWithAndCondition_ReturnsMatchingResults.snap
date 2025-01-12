@@ -1,0 +1,13 @@
+﻿{
+  "data": {
+    "warehouse": {
+      "items": [
+        {
+          "name": "Warehouse B",
+          "location": "Rivne"
+        }
+      ],
+      "totalCount": 1
+    }
+  }
+}
