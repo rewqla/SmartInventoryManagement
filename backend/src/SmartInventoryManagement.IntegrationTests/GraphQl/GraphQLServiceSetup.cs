@@ -15,25 +15,25 @@ using Testcontainers.PostgreSql;
 
 namespace SmartInventoryManagement.IntegrationTests.GraphQl;
 
-public class ServiceSetup: IAsyncLifetime
+public class GraphQLServiceSetup: IAsyncLifetime
 {
     public IRequestExecutor RequestExecutor { get; private set; } = null!;
     
-    private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
+    private readonly PostgreSqlContainer _postgresqlContainer = new PostgreSqlBuilder()
         .WithImage("postgres:15")
         .Build();
-    
-    public async Task InitializeAsync()
-    {
-        await _postgreSqlContainer.StartAsync();
 
+    public async Task InitializeAsync()
+    { 
+        await _postgresqlContainer.StartAsync();
+        
         var services = new ServiceCollection()
             .AddLogging()
             .AddScoped<IWarehouseService, WarehouseService>()
             .AddScoped<IWarehouseRepository, WarehouseRepository>()
             .AddScoped<WarehouseDTOValidator>()
             .AddDbContext<InventoryContext>(options =>
-                options.UseNpgsql(_postgreSqlContainer.GetConnectionString()))
+                options.UseNpgsql(_postgresqlContainer.GetConnectionString()))
             .AddGraphQLServer()
             .AddQueryType<WarehouseQueries>()
             .AddFiltering()
@@ -46,7 +46,7 @@ public class ServiceSetup: IAsyncLifetime
         var executor = await services.BuildRequestExecutorAsync();
 
         RequestExecutor = executor;
-
+        
         var dbContext = RequestExecutor.Services
             .GetApplicationServices()
             .GetRequiredService<InventoryContext>();
@@ -55,10 +55,8 @@ public class ServiceSetup: IAsyncLifetime
         
         await SeedDataAsync(dbContext);
     }
-    
     private async Task SeedDataAsync(InventoryContext dbContext)
     {
-        // Check if the database is empty
         if (!dbContext.Warehouses.Any())
         {
             var warehouses = new List<Warehouse>
@@ -72,12 +70,10 @@ public class ServiceSetup: IAsyncLifetime
 
             await dbContext.Warehouses.AddRangeAsync(warehouses);
             await dbContext.SaveChangesAsync();
-            
         }
     }
-    
     public async Task DisposeAsync()
     {
-        await _postgreSqlContainer.DisposeAsync();
+        await _postgresqlContainer.DisposeAsync();
     }
 }

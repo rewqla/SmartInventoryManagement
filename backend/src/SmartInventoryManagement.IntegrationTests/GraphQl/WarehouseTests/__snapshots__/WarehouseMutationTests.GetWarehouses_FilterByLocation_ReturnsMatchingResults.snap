@@ -1,0 +1,10 @@
+﻿{
+  "data": {
+    "createWarehouse": {
+      "name": "Normal Warehouse",
+      "location": "Lutsk",
+      "__typename": "CreateWarehousePayload",
+      "errors": null
+    }
+  }
+}

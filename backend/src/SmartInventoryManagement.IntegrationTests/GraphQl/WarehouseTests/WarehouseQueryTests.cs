@@ -4,20 +4,20 @@ using Snapshooter.Xunit;
 
 namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseQueryTests : IClassFixture<ServiceSetup>
+public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
 {
-    private readonly ServiceSetup _serviceSetup;
+  private readonly GraphQLServiceSetup _graphQlServiceSetup;
 
-    public WarehouseQueryTests(ServiceSetup serviceSetup)
-    {
-        _serviceSetup = serviceSetup;
-    }
+  public WarehouseQueryTests(GraphQLServiceSetup graphQlServiceSetup)
+  {
+    _graphQlServiceSetup = graphQlServiceSetup;
+  }
 
     [Fact]
     public async Task GetWarehouses_FilterByLocation_ReturnsMatchingResults()
     {
         // Arrange & Act
-        IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
         query {
           warehouse(where: { location: { eq: ""New York"" } }) {
@@ -36,7 +36,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouses_FilterWithOrCondition_ReturnsMatchingResults()
     {
         // Arrange & Act
-        IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
         query {
           warehouse(
@@ -62,7 +62,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouses_FilterWithAndCondition_ReturnsMatchingResults()
     {
         // Arrange & Act
-        IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
         query {
           warehouse(
@@ -88,7 +88,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouses_SortedByNameDescending_ReturnsSortedResults()
     {
       // Arrange & Act
-      IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
         @"
         query {
           warehouse(order: [{ name: DESC }]) {
@@ -107,7 +107,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouses_FilteredAndSorted_ReturnsFilteredAndSortedResults()
     {
       // Arrange & Act
-      IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
         @"
         query {
           warehouse(
@@ -129,7 +129,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouses_NoResultsForFilter_ReturnsEmpty()
     {
       // Arrange & Act
-      IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
         @"
         query {
           warehouse(where: { location: { eq: ""NonExistentLocation"" } }) {
@@ -148,7 +148,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
     public async Task GetWarehouseById_ReturnWarehouse_WhenExists()
     {
         // Arrange & Act
-        IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
                 query{
                   warehouseById(id: ""089a905d-660d-46d3-97b5-2933747387bc""){
@@ -170,7 +170,7 @@ public class WarehouseQueryTests : IClassFixture<ServiceSetup>
         var nonExistentId = "00000000-0000-0000-0000-000000000000";
 
         // Act
-        IExecutionResult result = await _serviceSetup.RequestExecutor.ExecuteAsync(
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             $@"
             query{{
               warehouseById(id: ""{nonExistentId}""){{
