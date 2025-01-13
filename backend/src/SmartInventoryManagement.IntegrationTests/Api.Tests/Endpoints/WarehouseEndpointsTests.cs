@@ -7,16 +7,17 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using SmartInventoryManagement.IntegrationTests.Helpers;
 
-namespace SmartInventoryManagement.IntegrationTests.Api.Tests.WarehouseEndpoints;
+namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
-public class CreateEndpoint: 
-    IClassFixture<WebApplicationFactory<IApiMarker>>
+public class WarehouseEndpointsTests : 
+    IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>
 {
     private readonly HttpClient _httpClient;
-    private Guid _createdWarehouseId;
+    private readonly WarehouseTestFixture _testFixture;
     
-    public CreateEndpoint(WebApplicationFactory<IApiMarker> appFactory)
+    public WarehouseEndpointsTests(WebApplicationFactory<IApiMarker> appFactory, WarehouseTestFixture testFixture)
     {
+        _testFixture = testFixture;
         _httpClient = appFactory.CreateClient();
     }
     
@@ -24,7 +25,7 @@ public class CreateEndpoint:
     public async Task CreateWarehouse_ReturnsOk_WhenValidWarehouseIsProvided()
     {
         // Arrange
-        var warehouseDto = WarehouseTestHelper.GetWarehouseDTO();
+        var warehouseDto = _testFixture.GetWarehouseDTO();
 
         // Act
         var response = await _httpClient.PostAsJsonAsync("/api/warehouses", warehouseDto);
@@ -38,7 +39,7 @@ public class CreateEndpoint:
         createdWarehouse.Name.Should().Be(warehouseDto.Name);
         createdWarehouse.Location.Should().Be(warehouseDto.Location);
         
-        WarehouseTestHelper.CreatedWarehouseId = createdWarehouse.Id;
+        _testFixture.CreatedWarehouseId = createdWarehouse.Id;
     }
     
     [Fact]
@@ -63,5 +64,45 @@ public class CreateEndpoint:
         errorResponse.Description.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
         errorResponse.Errors.Should().Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
+    }
+
+    [Fact]
+    public async Task GetById_ReturnsWarehouse_WhenWarehouseExists()
+    {
+        // Arrange
+        var warehouseId = _testFixture.CreatedWarehouseId;
+        
+        // Act
+        var response = await _httpClient
+            .GetAsync($"/api/warehouses/{warehouseId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var warehouse = await response.Content.ReadFromJsonAsync<WarehouseDTO>();
+        
+        warehouse.Should().NotBeNull();
+        warehouse!.Id.Should().Be(warehouseId);
+        warehouse.Name.Should().NotBeNullOrEmpty();
+        warehouse.Location.Should().NotBeNullOrEmpty();
+    }
+    
+    [Fact]
+    public async Task GetById_ReturnsNotFound_WhenWarehouseNotFound()
+    {
+        // Arrange
+        var id = Guid.Empty;
+
+        // Act
+        var response = await _httpClient
+            .GetAsync($"/api/warehouses/{id}");
+
+        // Assert
+        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        
+        errorResponse.Should().NotBeNull();
+        errorResponse!.Code.Should().Be("Warehouse.NotFound");
+        errorResponse!.Description.Should().Be($"The warehouse with Id '{id}' was not found");
     }
 }
