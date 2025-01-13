@@ -58,4 +58,6 @@ public class GetByIdEndpoint :
         errorResponse!.Code.Should().Be("Warehouse.NotFound");
         errorResponse!.Description.Should().Be($"The warehouse with Id '{id}' was not found");
     }
+    
+    // todo: add class with warehouseDTO object for further use
 }

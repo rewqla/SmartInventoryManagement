@@ -79,6 +79,7 @@ public class WarehouseService : IWarehouseService
 
         return Result<WarehouseDTO>.Success(warehouseDto);
     }
+    
     // todo: add comments to the code
     public async Task<Result<WarehouseDTO>> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
