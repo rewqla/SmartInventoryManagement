@@ -10,11 +10,9 @@ public static class WarehouseTestHelper
         string name = "Test Warehouse",
         string location = "Test Location")
     {
-        var id = CreatedWarehouseId != Guid.Empty ? CreatedWarehouseId : Guid.NewGuid();
 
         return new WarehouseDTO
         {
-            Id = id,
             Name = name,
             Location = location
         };

@@ -14,6 +14,7 @@ public class CreateEndpoint:
 {
     private readonly HttpClient _httpClient;
     private Guid _createdWarehouseId;
+    
     public CreateEndpoint(WebApplicationFactory<IApiMarker> appFactory)
     {
         _httpClient = appFactory.CreateClient();

@@ -10,7 +10,7 @@ builder.ConfigureDatabase();
 builder.ConfigureGraphQL();
 
 // todo: add serilog and magnify logging
-// todo: add request middleware fpr logging urls and methods
+// todo: add request middleware for logging urls and methods
 
 var app = builder.Build();
 

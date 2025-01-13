@@ -8,7 +8,6 @@ namespace API.Endpoints.Warehouse;
 public static class GetWarehousesEndpoint
 {
     private const string Name = "GetWarehouses";
-    // #todo: write api level tests
     public static IEndpointRouteBuilder MapGetWarehouses(this IEndpointRouteBuilder app)
     {
         app.MapGet(WarehouseEndpoints.GetAll, async ([FromServices]  IWarehouseService warehouseService, CancellationToken cancellationToken) => 

@@ -44,7 +44,7 @@ public sealed class WarehouseMutations
         return warehouseResult;
     }
 
-    [Error(typeof(InvalidGuidException))]
+    [Error(typeof(EntityNotFoundException))]
     [Error(typeof(ValidationException))]
     public async Task<UpdateWarehousePayload> UpdateWarehouse(IWarehouseService warehouseService,
         InventoryContext context, UpdateWarehouseInput input,
@@ -63,7 +63,7 @@ public sealed class WarehouseMutations
 
             if (updatedWarehouse.Error.Code == "Warehouse.NotFound")
             {
-                throw new InvalidGuidException(updatedWarehouse.Error.Description);
+                throw new EntityNotFoundException(updatedWarehouse.Error.Description);
             }
         }
         
@@ -78,7 +78,7 @@ public sealed class WarehouseMutations
         return warehouseResult;
     }
 
-    [Error(typeof(InvalidGuidException))]
+    [Error(typeof(EntityNotFoundException))]
     public async Task<bool> DeleteWarehouse(IWarehouseService warehouseService, Guid warehouseId,
         [Service] ITopicEventSender sender, CancellationToken cancellationToken)
     {
@@ -86,7 +86,7 @@ public sealed class WarehouseMutations
 
         if (warehouseResult.IsFailure)
         {
-            throw new InvalidGuidException($"Warehouse with ID {warehouseId} not found.");
+            throw new EntityNotFoundException($"Warehouse with ID {warehouseId} not found.");
         }
 
         await warehouseService.DeleteWarehouse(warehouseId, cancellationToken);
