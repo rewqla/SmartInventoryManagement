@@ -1,12 +1,12 @@
 ﻿using Application.DTO.Warehouse;
 
-namespace SmartInventoryManagement.IntegrationTests.Helpers;
+namespace SmartInventoryManagement.IntegrationTests.Fixtures;
 
 public class WarehouseTestFixture : IDisposable
 {
     public Guid CreatedWarehouseId { get; set; } = Guid.Empty;
 
-    public WarehouseDTO GetWarehouseDTO(string name = "Test Warehouse", string location = "Test Location")
+    public static WarehouseDTO GetWarehouseDTO(string name = "Test Warehouse", string location = "Test Location")
     {
         return new WarehouseDTO
         {

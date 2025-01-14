@@ -13,7 +13,8 @@ public static class UpdateWarehouseEndpoint
     public static IEndpointRouteBuilder MapUpdateWarehouse(this IEndpointRouteBuilder app)
     {
         app.MapPut(WarehouseEndpoints.Update,
-                async (Guid id,[FromBody] WarehouseDTO warehouseDto, [FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
+                async (Guid id, [FromBody] WarehouseDTO warehouseDto, [FromServices] IWarehouseService warehouseService,
+                    CancellationToken cancellationToken) =>
                 {
                     warehouseDto.Id = id;
                     var result = await warehouseService.UpdateWarehouseAsync(warehouseDto, cancellationToken);
