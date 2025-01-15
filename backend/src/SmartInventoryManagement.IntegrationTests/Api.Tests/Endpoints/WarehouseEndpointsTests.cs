@@ -5,12 +5,16 @@ using Application.Common;
 using Application.DTO.Warehouse;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using SmartInventoryManagement.IntegrationTests.ExecutionOrder;
 using SmartInventoryManagement.IntegrationTests.Fixtures;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
+[TestCaseOrderer(
+    "SmartInventoryManagement.IntegrationTests.ExecutionOrder.PriorityOrderer",
+    "SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints")]
 public class WarehouseEndpointsTests :
-    IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>
+    IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>, IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly WarehouseTestFixture _testFixture;
@@ -107,8 +111,6 @@ public class WarehouseEndpointsTests :
         errorResponse!.Description.Should().Be($"The warehouse with Id '{id}' was not found");
     }
 
-    // todo: add delete tests
-
     [Fact]
     public async Task UpdateWarehouse_ReturnsOk_WhenValidWarehouseIsProvided()
     {
@@ -124,8 +126,10 @@ public class WarehouseEndpointsTests :
         updatedWarehouse!.Id.Should().Be(warehouseDto.Id);
         updatedWarehouse.Name.Should().Be(warehouseDto.Name);
         updatedWarehouse.Location.Should().Be(warehouseDto.Location);
+
+        _testFixture.isUpdated = true;
     }
-    
+
     [Fact]
     public async Task UpdateWarehouse_ReturnsNotFound_WhenWarehouseDoesNotExist()
     {
@@ -148,7 +152,7 @@ public class WarehouseEndpointsTests :
         var warehouseDto = new WarehouseDTO
         {
             Id = _testFixture.CreatedWarehouseId,
-            Name = "", 
+            Name = "",
             Location = "Updated Location"
         };
 
@@ -161,6 +165,46 @@ public class WarehouseEndpointsTests :
         errorResponse!.Code.Should().Be("Warehouse.ValidationError");
         errorResponse.Description.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
-        errorResponse.Errors.Should().Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
+        errorResponse.Errors.Should()
+            .Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
+    }
+
+    [Fact]
+    public async Task DeleteWarehouse_ReturnsNotFound_WhenWarehouseDoesNotExist()
+    {
+        // Arrange
+        var nonExistentId = Guid.NewGuid();
+
+        // Act
+        var response = await _httpClient.DeleteAsync($"/api/warehouses/{nonExistentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        errorResponse.Should().NotBeNull();
+        errorResponse!.Code.Should().Be("Warehouse.NotFound");
+        errorResponse.Description.Should().Be($"The warehouse with Id '{nonExistentId}' was not found");
+    }
+
+    [Fact]
+    public async Task DeleteWarehouse_ReturnsOk_WhenWarehouseExists()
+    {
+        // Arrange
+        var warehouseId = _testFixture.CreatedWarehouseId;
+
+        // Act
+        var response = await _httpClient.DeleteAsync($"/api/warehouses/{warehouseId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    public async void Dispose()
+    {
+        if (_testFixture.isUpdated == false)
+            await Task.Delay(1000);
+        
+        await _httpClient.DeleteAsync($"/api/warehouses/{_testFixture.CreatedWarehouseId}");
     }
 }
