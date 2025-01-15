@@ -191,7 +191,18 @@ public class WarehouseEndpointsTests :
     public async Task DeleteWarehouse_ReturnsOk_WhenWarehouseExists()
     {
         // Arrange
-        var warehouseId = _testFixture.CreatedWarehouseId;
+        var warehouseDto = WarehouseTestFixture.GetWarehouseDTO();
+
+        // Act
+        var createResponse = await _httpClient.PostAsJsonAsync("/api/warehouses", warehouseDto);
+        
+        // Assert
+        createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        // Arrange
+
+        var createdWarehouse = await createResponse.Content.ReadFromJsonAsync<WarehouseDTO>();
+        var warehouseId = createdWarehouse?.Id;
 
         // Act
         var response = await _httpClient.DeleteAsync($"/api/warehouses/{warehouseId}");
@@ -204,7 +215,7 @@ public class WarehouseEndpointsTests :
     {
         if (_testFixture.isUpdated == false)
             await Task.Delay(1000);
-        
+
         await _httpClient.DeleteAsync($"/api/warehouses/{_testFixture.CreatedWarehouseId}");
     }
 }
