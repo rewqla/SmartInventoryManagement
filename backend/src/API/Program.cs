@@ -1,7 +1,10 @@
 using API;
 using API.Extensions;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.ConfigureRepositories();
 builder.ConfigureServices();

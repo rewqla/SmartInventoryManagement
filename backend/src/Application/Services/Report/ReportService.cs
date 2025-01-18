@@ -8,7 +8,6 @@ namespace Application.Services.Report;
 
 public class ReportService : IReportService
 {
-    // todo: move license
     // todo: separate document template
     // todo: enhance document template
     // todo: add page number, header padding
