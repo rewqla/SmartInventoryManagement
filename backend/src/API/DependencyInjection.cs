@@ -3,7 +3,9 @@ using API.GraphQL;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
+using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
+using Application.Services.Report;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using Infrastructure.Data;
@@ -24,10 +26,11 @@ public static class DependencyInjection
 
         services.AddSwagger();
         services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<IReportService, ReportService>();
 
         return builder;
     }
-    // todo: add healthchecks
+    // todo: add health checks
     public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -110,34 +113,34 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            var jwtSecurityScheme = new OpenApiSecurityScheme
-            {
-                BearerFormat = "JWT",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = JwtBearerDefaults.AuthenticationScheme,
-                Description = "Put Bearer [space] and then your token ",
-            };
-
-            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
-
-            var securityRequirement = new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = JwtBearerDefaults.AuthenticationScheme
-                        }
-                    },
-                    []
-                }
-            };
-
-            c.AddSecurityRequirement(securityRequirement);
+            // var jwtSecurityScheme = new OpenApiSecurityScheme
+            // {
+            //     BearerFormat = "JWT",
+            //     Name = "Authorization",
+            //     In = ParameterLocation.Header,
+            //     Type = SecuritySchemeType.ApiKey,
+            //     Scheme = JwtBearerDefaults.AuthenticationScheme,
+            //     Description = "Put Bearer [space] and then your token ",
+            // };
+            //
+            // c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+            //
+            // var securityRequirement = new OpenApiSecurityRequirement
+            // {
+            //     {
+            //         new OpenApiSecurityScheme
+            //         {
+            //             Reference = new OpenApiReference
+            //             {
+            //                 Type = ReferenceType.SecurityScheme,
+            //                 Id = JwtBearerDefaults.AuthenticationScheme
+            //             }
+            //         },
+            //         []
+            //     }
+            // };
+            //
+            // c.AddSecurityRequirement(securityRequirement);
         });
     }
 }

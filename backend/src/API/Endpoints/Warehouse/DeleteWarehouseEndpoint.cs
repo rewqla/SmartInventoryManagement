@@ -12,7 +12,7 @@ public static class DeleteWarehouseEndpoint
 
     public static IEndpointRouteBuilder MapDeleteWarehouse(this IEndpointRouteBuilder app)
     {
-        app.MapDelete(WarehouseEndpoints.Update,
+        app.MapDelete(WarehouseEndpoints.Delete,
                 async (Guid id, [FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
                 {
                     var result = await warehouseService.DeleteWarehouse(id, cancellationToken);

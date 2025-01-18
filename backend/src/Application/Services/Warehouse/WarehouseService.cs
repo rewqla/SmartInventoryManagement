@@ -2,6 +2,7 @@
 using Application.DTO;
 using Application.DTO.Warehouse;
 using Application.Exceptions;
+using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Application.Validation.Warehouse;
@@ -15,14 +16,16 @@ public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly WarehouseDTOValidator _warehouseDTOValidator;
+    private readonly IReportService _reportService;
     private readonly ILogger<WarehouseService> _logger;
 
     public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
-        WarehouseDTOValidator warehouseDtoValidator)
+        WarehouseDTOValidator warehouseDtoValidator, IReportService reportService)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
         _warehouseDTOValidator = warehouseDtoValidator;
+        _reportService = reportService;
     }
 
     public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
@@ -125,5 +128,13 @@ public class WarehouseService : IWarehouseService
         await _warehouseRepository.CompleteAsync();
 
         return Result<bool>.Success(true);
+    }
+
+    public async Task<Result<byte[]>> GenerateWarehousesReportAsync(CancellationToken cancellationToken = default)
+    {
+        var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
+
+        var report = _reportService.GenerateWarehouseReport(warehouses.Select(WarehouseMapper.ToDTO));
+        return Result<byte[]>.Success(report);
     }
 }

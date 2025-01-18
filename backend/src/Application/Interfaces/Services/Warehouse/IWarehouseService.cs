@@ -10,4 +10,5 @@ public interface IWarehouseService
     Task<Result<WarehouseDTO>> CreateWarehouseAsync(WarehouseDTO warehouseDto,CancellationToken cancellationToken = default);
     Task<Result<WarehouseDTO>> UpdateWarehouseAsync(WarehouseDTO warehouseDto,CancellationToken cancellationToken = default);
     Task<Result<bool>> DeleteWarehouse(Guid id, CancellationToken cancellationToken = default);
+    Task<Result<byte[]>> GenerateWarehousesReportAsync(CancellationToken cancellationToken = default);
 }
