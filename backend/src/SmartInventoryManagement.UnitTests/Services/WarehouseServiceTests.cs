@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.DTO.Warehouse;
+using Application.Services.Report;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentAssertions;
@@ -16,14 +17,16 @@ public class WarehouseServiceTests
     private readonly Mock<ILogger<WarehouseService>> _logger;
     private readonly WarehouseDTOValidator _warehouseValidator;
     private readonly Mock<IWarehouseRepository> _warehouseRepository;
+    private readonly ReportService _reportService;
 
     public WarehouseServiceTests()
     {
         _warehouseValidator = new WarehouseDTOValidator();
         _warehouseRepository = new Mock<IWarehouseRepository>();
         _logger = new Mock<ILogger<WarehouseService>>();
+        _reportService = new ReportService();
         _warehouseService =
-            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator);
+            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator, _reportService);
     }
 
     [Fact]
@@ -183,12 +186,12 @@ public class WarehouseServiceTests
         Guid warehouseId = Guid.NewGuid();
 
         // Act
-        var result =  await _warehouseService.GetWarehouseByIdAsync(warehouseId);
+        var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
 
         // Assert
         result.Error.Code.Should().Be("Warehouse.NotFound");
         result.Error.Description.Should().Be($"The warehouse with Id '{warehouseId}' was not found");
-        
+
         _logger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -229,7 +232,7 @@ public class WarehouseServiceTests
         result.Value.Should().BeEquivalentTo(expectedResult, options => options
             .Excluding(warehouse => warehouse.Id)
             .Excluding(warehouse => warehouse.Inventories));
-        
+
         _warehouseRepository.Verify(r => r.AddAsync(It.IsAny<Warehouse>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.CompleteAsync(), Times.Once);
     }
@@ -255,7 +258,8 @@ public class WarehouseServiceTests
 
         var errorDetails = result.Error.Errors;
         errorDetails.Should().Contain(x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
-        errorDetails.Should().Contain(x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
+        errorDetails.Should().Contain(x =>
+            x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
@@ -284,7 +288,7 @@ public class WarehouseServiceTests
             Name = "Test Warehouse",
             Location = "Test Location"
         };
-         
+
         // Act
         var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
@@ -316,14 +320,14 @@ public class WarehouseServiceTests
             Location = "Test Location"
         };
         // Act
-        var result =await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
+        var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Should().NotBeNull();
         result.Error.Code.Should().Be("Warehouse.NotFound");
         result.Error.Description.Should().Be($"The warehouse with Id '{warehouseId}' was not found");
-        
+
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.Update(It.IsAny<Warehouse>()), Times.Never);
     }
@@ -339,7 +343,7 @@ public class WarehouseServiceTests
         };
 
         // Act
-        var result =await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
+        var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -349,7 +353,8 @@ public class WarehouseServiceTests
 
         var errorDetails = result.Error.Errors;
         errorDetails.Should().Contain(x => x.PropertyName == "Name" && x.ErrorMessage == "Name is required");
-        errorDetails.Should().Contain(x => x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
+        errorDetails.Should().Contain(x =>
+            x.PropertyName == "Location" && x.ErrorMessage == "Location must be at least 3 characters long");
     }
 
     [Fact]
@@ -395,7 +400,7 @@ public class WarehouseServiceTests
         _warehouseRepository.Verify(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Once);
         _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Never);
     }
-    
+
     // #todo: write tests with inventories
     // #todo: write tests with CancellationToken
 }
