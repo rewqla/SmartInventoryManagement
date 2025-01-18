@@ -7,7 +7,6 @@ namespace Application.Reports;
 
 public class ReportService : IReportService
 {
-    // todo: separate document template
     // todo: enhance document template
     // todo: add page number, header padding
     // todo: write unit tests

@@ -32,7 +32,7 @@ public class ReportTemplate : IDocument
     //Change document title
     void ComposeHeader(IContainer container)
     {
-        container.AlignCenter().Text("Warehouses Report")
+        container.AlignCenter().ShowOnce().Text("Warehouses Report")
             .FontSize(28).Bold().Italic();
     }
     
