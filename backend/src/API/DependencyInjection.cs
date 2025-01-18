@@ -5,7 +5,7 @@ using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
-using Application.Services.Report;
+using Application.Reports;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using Infrastructure.Data;
