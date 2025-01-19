@@ -8,13 +8,17 @@ namespace Application.Reports;
 public class ReportService : IReportService
 {
     // todo: enhance document template
-    // todo: add page number, header padding
     // todo: write unit tests
     // todo: write integration tests
+    // todo: separate report for each instance and use enum to check report type
+    // optional todo: create report factory
     public byte[] GenerateWarehouseReport(IEnumerable<WarehouseDTO> warehouses)
     {
-        var template = new ReportTemplate(warehouses);
+        var report = new GeneralReportTemplate(container =>
+        {
+            WarehouseContent.Compose(container, warehouses);
+        });
 
-        return template.GeneratePdf();
+        return report.GeneratePdf();
     }
 }
