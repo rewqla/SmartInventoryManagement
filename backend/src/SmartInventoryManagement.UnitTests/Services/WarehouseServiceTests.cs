@@ -17,14 +17,14 @@ public class WarehouseServiceTests
     private readonly Mock<ILogger<WarehouseService>> _logger;
     private readonly WarehouseDTOValidator _warehouseValidator;
     private readonly Mock<IWarehouseRepository> _warehouseRepository;
-    private readonly ReportService _reportService;
+    private readonly WarehouseReportService _reportService;
 
     public WarehouseServiceTests()
     {
         _warehouseValidator = new WarehouseDTOValidator();
         _warehouseRepository = new Mock<IWarehouseRepository>();
         _logger = new Mock<ILogger<WarehouseService>>();
-        _reportService = new ReportService();
+        _reportService = new WarehouseReportService();
         _warehouseService =
             new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator, _reportService);
     }

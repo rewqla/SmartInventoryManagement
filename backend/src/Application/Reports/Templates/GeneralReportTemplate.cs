@@ -5,12 +5,12 @@ namespace Application.Reports.Templates;
 
 public class GeneralReportTemplate : IDocument
 {
-    private readonly string Title;
+    private readonly string _title;
     private readonly Action<IContainer> _composeContent;
 
     public GeneralReportTemplate(string title, Action<IContainer> composeContent)
     {
-        Title = title;
+        _title = title;
         _composeContent = composeContent;
     }
 
@@ -31,7 +31,7 @@ public class GeneralReportTemplate : IDocument
     //Change document title
     void ComposeHeader(IContainer container)
     {
-        container.AlignCenter().ShowOnce().Height(50).Text(Title)
+        container.AlignCenter().ShowOnce().Height(50).Text(_title)
             .FontSize(28).Bold().Italic();
     }
 

@@ -3,6 +3,7 @@ using API.GraphQL;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
+using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Reports;
@@ -26,7 +27,7 @@ public static class DependencyInjection
 
         services.AddSwagger();
         services.AddScoped<IWarehouseService, WarehouseService>();
-        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
 
         return builder;
     }

@@ -2,7 +2,7 @@
 
 namespace Application.Interfaces.Services.Report;
 
-public interface IReportService
+public interface IReportService <T>
 {
-    byte[] GenerateWarehouseReport(IEnumerable<WarehouseDTO> warehouses);
+    byte[] GenerateReport(IEnumerable<T> items);
 }

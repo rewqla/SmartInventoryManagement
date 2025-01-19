@@ -16,16 +16,16 @@ public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly WarehouseDTOValidator _warehouseDTOValidator;
-    private readonly IReportService _reportService;
     private readonly ILogger<WarehouseService> _logger;
+    private readonly IReportService<WarehouseDTO> _warehouseReportService;
 
     public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
-        WarehouseDTOValidator warehouseDtoValidator, IReportService reportService)
+        WarehouseDTOValidator warehouseDtoValidator, IReportService<WarehouseDTO> warehouseReportService)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
         _warehouseDTOValidator = warehouseDtoValidator;
-        _reportService = reportService;
+        _warehouseReportService = warehouseReportService;
     }
 
     public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
@@ -64,12 +64,12 @@ public class WarehouseService : IWarehouseService
 
         if (!validationResult.IsValid)
         {
-            var errorDetails = validationResult.Errors.Select(error => new  ErrorDetail
+            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
             {
                 PropertyName = error.PropertyName,
                 ErrorMessage = error.ErrorMessage
             }).ToList();
-            
+
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
@@ -82,7 +82,7 @@ public class WarehouseService : IWarehouseService
 
         return Result<WarehouseDTO>.Success(warehouseDto);
     }
-    
+
     // todo: add comments to the code
     public async Task<Result<WarehouseDTO>> UpdateWarehouseAsync(WarehouseDTO warehouseDto,
         CancellationToken cancellationToken = default)
@@ -90,12 +90,12 @@ public class WarehouseService : IWarehouseService
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
         if (!validationResult.IsValid)
         {
-            var errorDetails = validationResult.Errors.Select(error => new  ErrorDetail
+            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
             {
                 PropertyName = error.PropertyName,
                 ErrorMessage = error.ErrorMessage
             }).ToList();
-            
+
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
@@ -133,8 +133,10 @@ public class WarehouseService : IWarehouseService
     public async Task<Result<byte[]>> GenerateWarehousesReportAsync(CancellationToken cancellationToken = default)
     {
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
+        var warehousesDTO = warehouses.Select(WarehouseMapper.ToDTO);
+        
+        var report = _warehouseReportService.GenerateReport(warehousesDTO);
 
-        var report = _reportService.GenerateWarehouseReport(warehouses.Select(WarehouseMapper.ToDTO));
         return Result<byte[]>.Success(report);
     }
 }
