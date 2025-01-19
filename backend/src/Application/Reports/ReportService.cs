@@ -14,7 +14,9 @@ public class ReportService : IReportService
     // optional todo: create report factory
     public byte[] GenerateWarehouseReport(IEnumerable<WarehouseDTO> warehouses)
     {
-        var report = new GeneralReportTemplate(container =>
+        string title = "Warehouses Report";
+        
+        var report = new GeneralReportTemplate(title, container =>
         {
             WarehouseContent.Compose(container, warehouses);
         });
