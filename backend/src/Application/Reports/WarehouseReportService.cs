@@ -7,7 +7,7 @@ namespace Application.Reports;
 
 public class WarehouseReportService : IReportService<WarehouseDTO>
 {
-    // todo: write unit tests
+    // todo: write integration tests
     public byte[] GenerateReport(IEnumerable<WarehouseDTO> items)
     {
         string title = "Warehouses Report";

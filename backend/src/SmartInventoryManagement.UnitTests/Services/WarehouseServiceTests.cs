@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.DTO.Warehouse;
+using Application.Interfaces.Services.Report;
 using Application.Reports;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -17,16 +18,17 @@ public class WarehouseServiceTests
     private readonly Mock<ILogger<WarehouseService>> _logger;
     private readonly WarehouseDTOValidator _warehouseValidator;
     private readonly Mock<IWarehouseRepository> _warehouseRepository;
-    private readonly WarehouseReportService _reportService;
+    private readonly Mock<IReportService<WarehouseDTO>> _reportService;
 
     public WarehouseServiceTests()
     {
         _warehouseValidator = new WarehouseDTOValidator();
         _warehouseRepository = new Mock<IWarehouseRepository>();
         _logger = new Mock<ILogger<WarehouseService>>();
-        _reportService = new WarehouseReportService();
+        _reportService = new Mock<IReportService<WarehouseDTO>>();
         _warehouseService =
-            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator, _reportService);
+            new WarehouseService(_warehouseRepository.Object, _logger.Object, _warehouseValidator,
+                _reportService.Object);
     }
 
     [Fact]
@@ -401,6 +403,56 @@ public class WarehouseServiceTests
         _warehouseRepository.Verify(r => r.Delete(It.IsAny<Warehouse>()), Times.Never);
     }
 
+    [Fact]
+    public async Task GenerateWarehousesReportAsync_ShouldReturnReport_WhenWarehousesExist()
+    {
+        // Arrange
+        var warehouses = new List<Warehouse>
+        {
+            new Warehouse { Id = Guid.NewGuid(), Name = "Warehouse 1", Location = "Location 1" },
+            new Warehouse { Id = Guid.NewGuid(), Name = "Warehouse 2", Location = "Location 2" }
+        };
+
+        _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(warehouses);
+
+        var reportBytes = new byte[] { 1, 2, 3, 4, 5 };
+        _reportService.Setup(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()))
+            .Returns(reportBytes);
+
+        // Act
+        var result = await _warehouseService.GenerateWarehousesReportAsync(CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(reportBytes);
+
+        _reportService.Verify(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GenerateWarehousesReportAsync_ShouldReturnReport_WhenNoWarehouses()
+    {
+        // Arrange
+        var warehouses = new List<Warehouse>();  
+
+        _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(warehouses);
+
+        var reportBytes = new byte[] { 1, 2, 3, 4, 5 };  // Default report (non-empty)
+        _reportService.Setup(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()))
+            .Returns(reportBytes);
+
+        // Act
+        var result = await _warehouseService.GenerateWarehousesReportAsync(CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(reportBytes);  
+
+        _warehouseRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _reportService.Verify(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()), Times.Once);
+    }
     // #todo: write tests with inventories
     // #todo: write tests with CancellationToken
 }
