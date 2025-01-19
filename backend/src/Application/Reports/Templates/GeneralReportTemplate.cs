@@ -14,7 +14,6 @@ public class GeneralReportTemplate : IDocument
         _composeContent = composeContent;
     }
 
-    // todo: create report model wit title, report body and data
     public void Compose(IDocumentContainer container)
     {
         container
@@ -28,7 +27,6 @@ public class GeneralReportTemplate : IDocument
             });
     }
 
-    //Change document title
     void ComposeHeader(IContainer container)
     {
         container.AlignCenter().ShowOnce().Height(50).Text(_title)
