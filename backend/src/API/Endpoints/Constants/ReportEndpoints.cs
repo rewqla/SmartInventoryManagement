@@ -5,4 +5,5 @@ internal static class ReportEndpoints
     private const string BaseRoute = "api/reports";
     
     internal const string Warehouses = $"{BaseRoute}/warehouses";
+    internal const string Products = $"{BaseRoute}/products";
 }
