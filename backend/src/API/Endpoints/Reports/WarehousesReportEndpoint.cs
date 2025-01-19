@@ -15,9 +15,10 @@ public static class WarehousesReportEndpoint
                 async ([FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
                 {
                     var result = await warehouseService.GenerateWarehousesReportAsync(cancellationToken);
-                    // todo: change file name and write tests for that
+                    var fileName = $"WarehousesReport_{DateTime.UtcNow:yyyyMMdd_HHmm}.pdf";
                     
-                    return Results.File(result.Value!, "application/pdf", "WarehousesReport.pdf");
+                    // todo: write test for name
+                    return Results.File(result.Value!, "application/pdf", fileName);
                 })
             .WithName(Name)
             .WithTags("Reports");

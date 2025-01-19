@@ -1,6 +1,5 @@
 ﻿### Get warehouse report
-POST {{baseUrl}}/api/reports/warehouses
+GET {{baseUrl}}/api/reports/warehouses
 Content-Type: application/pdf
-
 
 ###

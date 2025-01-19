@@ -1,6 +1,6 @@
 ﻿using Application.Common;
 using Application.DTO.Warehouse;
-using Application.Services.Report;
+using Application.Reports;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using FluentAssertions;
