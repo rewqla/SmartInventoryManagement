@@ -17,7 +17,6 @@ public static class WarehousesReportEndpoint
                     var result = await warehouseService.GenerateWarehousesReportAsync(cancellationToken);
                     var fileName = $"WarehousesReport_{DateTime.UtcNow:yyyyMMdd_HHmm}.pdf";
                     
-                    // todo: write test for name
                     return Results.File(result.Value!, "application/pdf", fileName);
                 })
             .WithName(Name)
