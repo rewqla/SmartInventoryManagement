@@ -1,4 +1,5 @@
 ﻿using Application.DTO;
+using Application.DTO.Inventory;
 using Application.DTO.Warehouse;
 
 namespace Application.Mapping.Warehouse;
@@ -13,7 +14,13 @@ public static class WarehouseMapper
         {
             Id = warehouse.Id,
             Name = warehouse.Name,
-            Location = warehouse.Location
+            Location = warehouse.Location,
+            Inventories = warehouse.Inventories.Select(i => new InventoryDTO
+            {
+                ProductId = i.ProductId,
+                ProductName = i.Product.Name, 
+                Quantity = i.Quantity
+            }).ToList()
         };
     }
 

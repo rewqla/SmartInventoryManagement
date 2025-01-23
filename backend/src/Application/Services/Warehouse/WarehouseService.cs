@@ -139,4 +139,13 @@ public class WarehouseService : IWarehouseService
 
         return Result<byte[]>.Success(report);
     }
+
+    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesWithInventoriesAsync(CancellationToken cancellationToken = default)
+    {
+        var warehouses = await _warehouseRepository.GetWarehousesWithInventoriesAsync(cancellationToken);
+
+        var warehousesDTO = warehouses.Select(WarehouseMapper.ToDTO);
+
+        return Result<IEnumerable<WarehouseDTO>>.Success(warehousesDTO);
+    }
 }

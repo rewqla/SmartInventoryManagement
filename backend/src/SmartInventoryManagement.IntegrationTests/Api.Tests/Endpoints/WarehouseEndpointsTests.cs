@@ -10,9 +10,6 @@ using SmartInventoryManagement.IntegrationTests.Fixtures;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
-[TestCaseOrderer(
-    "SmartInventoryManagement.IntegrationTests.ExecutionOrder.PriorityOrderer",
-    "SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints")]
 public class WarehouseEndpointsTests :
     IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>, IDisposable
 {
