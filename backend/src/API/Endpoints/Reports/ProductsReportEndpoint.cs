@@ -18,7 +18,6 @@ public static class ProductsReportEndpoint
                     var result = await productService.GenerateProductReportAsync(cancellationToken);
                     var fileName = $"ProductsReport_{DateTime.UtcNow:yyyyMMdd_HHmm}.pdf";
                     
-                    // todo: write test for name
                     return Results.File(result.Value!, "application/pdf", fileName);
                 })
             .WithName(Name)

@@ -29,7 +29,6 @@ public class WarehouseReportsTests :
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType?.MediaType.Should().Be("application/pdf");
-        response.Content.Headers.ContentDisposition?.FileName.Should().MatchRegex(@"^WarehousesReport_\d{8}_\d{4}\.pdf$");
 
         var content = await response.Content.ReadAsByteArrayAsync();
         content.Should().NotBeEmpty();

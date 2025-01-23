@@ -1,0 +1,5 @@
+﻿### Get warehouse report
+GET {{baseUrl}}/api/reports/products
+Content-Type: application/pdf
+
+###
