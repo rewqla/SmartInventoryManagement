@@ -81,7 +81,8 @@ public static class DependencyInjection
             .AddSubscriptionType<WarehouseSubscriptions>()
             .AddInMemorySubscriptions()
             .AddFiltering()
-            .AddSorting();
+            .AddSorting()
+            .AddProjections();
 
         return builder;
     }

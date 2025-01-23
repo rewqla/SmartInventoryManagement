@@ -23,6 +23,11 @@ query {
       id
       name
       location
+      inventories{
+        productId
+        productName
+        quantity
+      }
     }
     pageInfo {
       hasNextPage

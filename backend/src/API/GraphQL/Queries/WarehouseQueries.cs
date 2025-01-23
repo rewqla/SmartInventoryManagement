@@ -7,14 +7,15 @@ namespace API.GraphQL.Queries;
 
 public sealed class WarehouseQueries
 {
-    [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 20, DefaultPageSize = 5)]
+    [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 30, DefaultPageSize = 5)]
+    [UseProjection]
     [UseFiltering(typeof(WarehouseFilterType))]
     [UseSorting(typeof(WarehouseSortType))]
     // todo: add projection
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService,
         CancellationToken cancellationToken)
     {
-        var result = await warehouseService.GetWarehousesAsync(cancellationToken);
+        var result = await warehouseService.GetWarehousesWithInventoriesAsync(cancellationToken);
 
         return result.Value!;
     }

@@ -454,5 +454,6 @@ public class WarehouseServiceTests
         _reportService.Verify(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()), Times.Once);
     }
     // #todo: write tests with inventories
+    // #todo: update tests also to check inventories
     // #todo: write tests with CancellationToken
 }
