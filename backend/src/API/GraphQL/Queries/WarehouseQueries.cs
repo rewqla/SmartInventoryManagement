@@ -5,13 +5,12 @@ using Application.Interfaces.Services.Warehouse;
 
 namespace API.GraphQL.Queries;
 
+[ExtendObjectType(typeof(Query))]
 public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 30, DefaultPageSize = 5)]
-    [UseProjection]
     [UseFiltering(typeof(WarehouseFilterType))]
     [UseSorting(typeof(WarehouseSortType))]
-    // todo: add projection
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService,
         CancellationToken cancellationToken)
     {
@@ -19,7 +18,7 @@ public sealed class WarehouseQueries
 
         return result.Value!;
     }
-
+    
     public async Task<WarehouseDTO?> GetWarehouseById(IWarehouseService warehouseService, Guid id,
         CancellationToken cancellationToken)
     {
