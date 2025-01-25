@@ -1,0 +1,21 @@
+﻿### Get warehouses from context query
+GRAPHQL {{baseUrl}}/graphql/
+
+query{
+  warehousesFromContext{
+    items{
+      name
+      location
+      inventories{
+        quantity
+        product{
+          name
+          unitPrice
+        }
+        id
+      }
+    }
+  }
+}
+
+###

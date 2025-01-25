@@ -1,0 +1,12 @@
+﻿### Get by id warehouse from context query
+GRAPHQL {{baseUrl}}/graphql/
+
+query{
+  warehouseByIdFromContext (id: "03913241-dc6a-498a-84d4-6d963d658388"){
+    id
+    name
+    location
+  }
+}
+
+###

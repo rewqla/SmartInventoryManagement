@@ -75,7 +75,9 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddGraphQLServer()
-            .AddQueryType<WarehouseQueries>()
+            .AddQueryType<Query>()
+            .AddTypeExtension<WarehouseQueries>()
+            .AddTypeExtension<WarehouseByContextQueries>()
             .AddMutationType<WarehouseMutations>()
             .AddMutationConventions()
             .AddSubscriptionType<WarehouseSubscriptions>()
