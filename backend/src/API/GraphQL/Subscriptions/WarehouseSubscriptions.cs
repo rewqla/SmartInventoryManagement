@@ -8,6 +8,7 @@ using Infrastructure.Entities;
 
 namespace API.GraphQL.Subscriptions;
 
+[SubscriptionType]
 public sealed class WarehouseSubscriptions
 {
     [Subscribe]
