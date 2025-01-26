@@ -3,7 +3,7 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
     updateWarehouse(input:  {
-       id: "996a8921-e8d9-410c-b161-21afd2906726",
+       id: "69e5a705-fb62-4057-9e25-d608aef868bb",
        name: "Secret Warehouse",
        location: "Vinnytsia"
     }){
@@ -12,7 +12,7 @@ mutation{
      id
      errors {
       __typename
-      ... on InvalidGuidError {
+      ... on EntityNotFoundError {
         message
       }
     }

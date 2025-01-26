@@ -3,12 +3,12 @@ GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
   deleteWarehouse(input:  {
-     warehouseId: "d21d4656-b0f9-4693-b01b-25f52a5c36b6"
+     warehouseId: "69e5a705-fb62-4057-9e25-d608aef868bb"
   }){
     boolean
     errors {
       __typename
-      ... on InvalidGuidError {
+      ... on EntityNotFoundError {
         message
       }
     }

@@ -16,6 +16,7 @@ using Infrastructure.Data;
 
 namespace API.GraphQL.Mutations;
 
+[MutationType]
 public sealed class WarehouseMutations
 {
     [Error(typeof(ValidationException))]

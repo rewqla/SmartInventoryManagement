@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.GraphQL.Queries;
 
-// [ExtendObjectType(typeof(Query))]
 // todo: pull schema.graphql
 [QueryType]
 public sealed class WarehouseByContextQueries
