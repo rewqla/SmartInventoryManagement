@@ -5,7 +5,7 @@ using Application.Interfaces.Services.Warehouse;
 
 namespace API.GraphQL.Queries;
 
-[ExtendObjectType(typeof(Query))]
+[QueryType]
 public sealed class WarehouseQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 30, DefaultPageSize = 5)]

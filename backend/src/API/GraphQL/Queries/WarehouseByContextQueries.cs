@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.GraphQL.Queries;
 
-[ExtendObjectType(typeof(Query))]
+// [ExtendObjectType(typeof(Query))]
+// todo: pull schema.graphql
+[QueryType]
 public sealed class WarehouseByContextQueries
 {
     [UseOffsetPaging(IncludeTotalCount = true, MaxPageSize = 30, DefaultPageSize = 5)]
@@ -23,6 +25,7 @@ public sealed class WarehouseByContextQueries
         return context.Warehouses;
     }
 
+    // todo: move from Warehouse to DTO from folder models
     public async Task<Warehouse?> GetWarehouseByIdFromContext([Service] InventoryContext context, Guid id,
         CancellationToken cancellationToken)
     {
