@@ -1,0 +1,297 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+interface Error {
+  message: String!
+}
+
+type Category {
+  name: String!
+  products: [Product!]!
+  id: UUID!
+}
+
+"Information about the offset pagination."
+type CollectionSegmentInfo {
+  "Indicates whether more items exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more items exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+}
+
+type CreateWarehousePayload {
+  id: UUID
+  name: String
+  location: String
+  errors: [CreateWarehouseError!]
+}
+
+type DeleteWarehousePayload {
+  boolean: Boolean
+  errors: [DeleteWarehouseError!]
+}
+
+type EntityNotFoundError implements Error {
+  message: String!
+}
+
+type Inventory {
+  productId: UUID!
+  product: Product!
+  warehouseId: UUID!
+  warehouse: Warehouse!
+  quantity: Int!
+  inventoryLogs: [InventoryLog!]!
+  id: UUID!
+}
+
+type InventoryDTO {
+  productId: UUID!
+  productName: String!
+  quantity: Int!
+}
+
+type InventoryLog {
+  inventoryId: UUID!
+  inventory: Inventory!
+  timestamp: DateTime!
+  quantityChanged: Int!
+  changeType: ChangeType!
+  id: UUID!
+}
+
+type KeyValuePairOfStringAndObject {
+  key: String!
+}
+
+type Mutation {
+  createWarehouse(input: CreateWarehouseInput!): CreateWarehousePayload! @cost(weight: "10")
+  updateWarehouse(input: UpdateWarehouseInput!): UpdateWarehousePayload! @cost(weight: "10")
+  deleteWarehouse(input: DeleteWarehouseInput!): DeleteWarehousePayload! @cost(weight: "10")
+}
+
+type Product {
+  name: String!
+  sku: String!
+  description: String
+  unitPrice: Float!
+  categoryId: UUID!
+  category: Category!
+  inventories: [Inventory!]!
+  id: UUID!
+}
+
+type Query {
+  warehouse(skip: Int take: Int where: WarehouseDTOFilterInput @cost(weight: "10") order: [WarehouseDTOSortInput!] @cost(weight: "10")): WarehouseCollectionSegment @listSize(assumedSize: 30, slicingArguments: [ "take" ], sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  warehouseById(id: UUID!): WarehouseDTO @cost(weight: "10")
+  warehousesFromContext(skip: Int take: Int where: WarehouseDTOFilterInput @cost(weight: "10") order: [WarehouseDTOSortInput!] @cost(weight: "10")): WarehousesFromContextCollectionSegment @listSize(assumedSize: 30, slicingArguments: [ "take" ], sizedFields: [ "items" ], requireOneSlicingArgument: false) @cost(weight: "10")
+  warehouseByIdFromContext(id: UUID!): Warehouse @cost(weight: "10")
+}
+
+type Subscription {
+  warehouseCreated: CreateWarehousePayload!
+  warehouseUpdated(warehouseId: UUID!): UpdateWarehousePayload! @cost(weight: "10")
+  warehouseMutated: WarehouseEventMessage!
+}
+
+type UpdateWarehousePayload {
+  id: UUID
+  name: String
+  location: String
+  errors: [UpdateWarehouseError!]
+}
+
+type ValidationError implements Error {
+  message: String!
+  errors: [ValidationFailure]
+}
+
+type ValidationFailure {
+  propertyName: String
+  errorMessage: String
+  severity: Severity!
+  errorCode: String
+  formattedMessagePlaceholderValues: [KeyValuePairOfStringAndObject!]
+}
+
+type Warehouse {
+  name: String!
+  location: String!
+  inventories: [Inventory!]!
+  id: UUID!
+}
+
+"A segment of a collection."
+type WarehouseCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [WarehouseDTO!]
+  totalCount: Int! @cost(weight: "10")
+}
+
+type WarehouseDTO {
+  id: UUID!
+  name: String!
+  location: String!
+  inventories: [InventoryDTO!]!
+}
+
+type WarehouseEventMessage {
+  eventType: EventType!
+  warehouse: WarehouseDTO!
+}
+
+"A segment of a collection."
+type WarehousesFromContextCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Warehouse!]
+  totalCount: Int! @cost(weight: "10")
+}
+
+union CreateWarehouseError = ValidationError
+
+union DeleteWarehouseError = EntityNotFoundError
+
+union UpdateWarehouseError = EntityNotFoundError | ValidationError
+
+input CreateWarehouseInput {
+  name: String!
+  location: String!
+}
+
+input CustomStringOperationFilterInput {
+  and: [CustomStringOperationFilterInput!]
+  or: [CustomStringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  startsWith: String @cost(weight: "10")
+  contains: String @cost(weight: "10")
+  in: String @cost(weight: "10")
+}
+
+input DeleteWarehouseInput {
+  warehouseId: UUID!
+}
+
+input IntOperationFilterInput {
+  eq: Int @cost(weight: "10")
+  neq: Int @cost(weight: "10")
+  in: [Int] @cost(weight: "10")
+  nin: [Int] @cost(weight: "10")
+  gt: Int @cost(weight: "10")
+  ngt: Int @cost(weight: "10")
+  gte: Int @cost(weight: "10")
+  ngte: Int @cost(weight: "10")
+  lt: Int @cost(weight: "10")
+  nlt: Int @cost(weight: "10")
+  lte: Int @cost(weight: "10")
+  nlte: Int @cost(weight: "10")
+}
+
+input InventoryDTOFilterInput {
+  and: [InventoryDTOFilterInput!]
+  or: [InventoryDTOFilterInput!]
+  productId: UuidOperationFilterInput
+  productName: StringOperationFilterInput
+  quantity: IntOperationFilterInput
+}
+
+input ListFilterInputTypeOfInventoryDTOFilterInput {
+  all: InventoryDTOFilterInput @cost(weight: "10")
+  none: InventoryDTOFilterInput @cost(weight: "10")
+  some: InventoryDTOFilterInput @cost(weight: "10")
+  any: Boolean @cost(weight: "10")
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+input UpdateWarehouseInput {
+  id: UUID!
+  name: String!
+  location: String!
+}
+
+input UuidOperationFilterInput {
+  eq: UUID @cost(weight: "10")
+  neq: UUID @cost(weight: "10")
+  in: [UUID] @cost(weight: "10")
+  nin: [UUID] @cost(weight: "10")
+  gt: UUID @cost(weight: "10")
+  ngt: UUID @cost(weight: "10")
+  gte: UUID @cost(weight: "10")
+  ngte: UUID @cost(weight: "10")
+  lt: UUID @cost(weight: "10")
+  nlt: UUID @cost(weight: "10")
+  lte: UUID @cost(weight: "10")
+  nlte: UUID @cost(weight: "10")
+}
+
+input WarehouseDTOFilterInput {
+  and: [WarehouseDTOFilterInput!]
+  or: [WarehouseDTOFilterInput!]
+  name: CustomStringOperationFilterInput
+  location: CustomStringOperationFilterInput
+  inventories: ListFilterInputTypeOfInventoryDTOFilterInput
+}
+
+input WarehouseDTOSortInput {
+  name: SortEnumType @cost(weight: "10")
+  location: SortEnumType @cost(weight: "10")
+}
+
+enum ChangeType {
+  ADDED
+  REMOVED
+  RELEASED
+  ADJUSTED
+}
+
+enum EventType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+enum Severity {
+  ERROR
+  WARNING
+  INFO
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy("The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types." url: String!) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")

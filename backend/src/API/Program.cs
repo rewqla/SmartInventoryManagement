@@ -21,4 +21,4 @@ app.ConfigureMiddlewares();
 app.MapEndpoints();
 app.ApplyMigrationsAndGenerateScripts();
 
-app.Run();
+app.RunWithGraphQLCommands(args);
