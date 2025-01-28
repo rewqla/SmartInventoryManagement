@@ -2,10 +2,15 @@
 GRAPHQL {{baseUrl}}/graphql/
 
 query{
-  warehouseByIdFromContext (id: "03913241-dc6a-498a-84d4-6d963d658388"){
+  warehouseByIdFromContext (id: "5d7dc7dc-a56f-4c4d-82a5-fa7ff4eb728d"){
     id
     name
     location
+    inventories{
+      productId
+      productName
+      quantity 
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 ﻿using API.GraphQL.Filters;
+using API.GraphQL.Queries.Models;
 using API.GraphQL.Sorting;
 using Application.DTO.Inventory;
 using Application.DTO.Warehouse;
@@ -23,10 +24,25 @@ public sealed class WarehouseByContextQueries
         return context.Warehouses;
     }
 
-    // todo: move from Warehouse to DTO from folder models
-    public async Task<Warehouse?> GetWarehouseByIdFromContext([Service] InventoryContext context, Guid id,
+    public async Task<WarehouseModelDTO?> GetWarehouseByIdFromContext([Service] InventoryContext context, Guid id,
         CancellationToken cancellationToken)
     {
-        return await context.Warehouses.FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+        return await context.Warehouses
+            .Include(w => w.Inventories)
+            .ThenInclude(i => i.Product)
+            .Where(w => w.Id == id)
+            .Select(w => new WarehouseModelDTO
+            {
+                Id = w.Id,
+                Name = w.Name,
+                Location = w.Location,
+                Inventories = w.Inventories.Select(i => new InventoryModelDTO
+                {
+                    ProductId = i.ProductId,
+                    ProductName = i.Product.Name, // Assuming Product has a Name property
+                    Quantity = i.Quantity
+                }).ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }
