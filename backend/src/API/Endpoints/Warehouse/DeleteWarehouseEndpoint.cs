@@ -21,12 +21,12 @@ public static class DeleteWarehouseEndpoint
                         onSuccess: value => Results.NoContent(),
                         onFailure: error =>
                         {
-                            if (error.Code == "Warehouse.NotFound")
+                            return error.Code switch
                             {
-                                return Results.NotFound(error);
-                            }
-
-                            return Results.BadRequest(error);
+                                "Warehouse.NotFound" => Results.NotFound(error),
+                                _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
+                                    statusCode: 500)
+                            };
                         });
                 })
             .WithName(Name)

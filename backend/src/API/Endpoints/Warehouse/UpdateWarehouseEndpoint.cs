@@ -23,13 +23,13 @@ public static class UpdateWarehouseEndpoint
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
                         {
-                            // todo: update return data of errors
-                            if (error.Code == "Warehouse.NotFound")
+                            return error.Code switch
                             {
-                                return Results.NotFound(error);
-                            }
-
-                            return Results.BadRequest(error);
+                                "Warehouse.NotFound" => Results.NotFound(error),
+                                "Warehouse.ValidationError" => Results.BadRequest(error),
+                                _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
+                                    statusCode: 500)
+                            };
                         });
                 })
             .WithName(Name)
