@@ -17,12 +17,16 @@ public static class ProductsReportEndpoint
                 {
                     var result = await productService.GenerateProductReportAsync(cancellationToken);
                     var fileName = $"ProductsReport_{DateTime.UtcNow:yyyyMMdd_HHmm}.pdf";
-                    
-                    return Results.File(result.Value!, "application/pdf", fileName);
+
+                    return result.Match(
+                        onSuccess: value => Results.File(result.Value!, "application/pdf", fileName),
+                        onFailure:
+                        error => Results.Problem(title: "Internal Server Error", detail: error.Description,
+                            statusCode: 500)
+                    );
                 })
             .WithName(Name)
             .WithTags("Reports");
-
         return app;
     }
 }
