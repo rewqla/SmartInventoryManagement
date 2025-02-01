@@ -5,6 +5,7 @@ using Application.Common;
 using Application.DTO.Warehouse;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using SharedKernel;
 using SmartInventoryManagement.IntegrationTests.ExecutionOrder;
 using SmartInventoryManagement.IntegrationTests.Fixtures;
 
@@ -130,7 +131,7 @@ public class WarehouseEndpointsTests :
     [Fact]
     public async Task UpdateWarehouse_ReturnsNotFound_WhenWarehouseDoesNotExist()
     {
-        var nonExistentId = Guid.NewGuid();
+        var nonExistentId = GuidV7.NewGuid();
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO();
 
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{nonExistentId}", warehouseDto);
@@ -170,7 +171,7 @@ public class WarehouseEndpointsTests :
     public async Task DeleteWarehouse_ReturnsNotFound_WhenWarehouseDoesNotExist()
     {
         // Arrange
-        var nonExistentId = Guid.NewGuid();
+        var nonExistentId = GuidV7.NewGuid();
 
         // Act
         var response = await _httpClient.DeleteAsync($"/api/warehouses/{nonExistentId}");

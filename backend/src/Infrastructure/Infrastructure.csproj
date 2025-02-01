@@ -23,4 +23,8 @@
       <Folder Include="Repositories\Warehouse\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SharedKernel\SharedKernel.csproj" />
+    </ItemGroup>
+
 </Project>

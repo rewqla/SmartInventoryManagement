@@ -9,6 +9,7 @@ using Application.Validation.Warehouse;
 using FluentValidation;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
+using SharedKernel;
 
 namespace Application.Services.Warehouse;
 
@@ -73,7 +74,8 @@ public class WarehouseService : IWarehouseService
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
-        warehouseDto.Id = Guid.NewGuid();
+        // todo: move to guid v7
+        warehouseDto.Id = GuidV7.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 
         // todo: add try catch to handle possible errors
