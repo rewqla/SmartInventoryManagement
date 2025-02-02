@@ -194,4 +194,6 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
     // #todo write tests for mutation update
 
     // #todo write tests subscription
+    
+    // #todo add global imports for tests
 }

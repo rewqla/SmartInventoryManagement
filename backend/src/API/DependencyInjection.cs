@@ -4,10 +4,12 @@ using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using Application.DTO.Warehouse;
+using Application.Interfaces;
 using Application.Interfaces.Services.Product;
 using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Reports;
+using Application.Services;
 using Application.Services.Product;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -31,6 +33,7 @@ public static class DependencyInjection
         services.AddSwagger();
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
 

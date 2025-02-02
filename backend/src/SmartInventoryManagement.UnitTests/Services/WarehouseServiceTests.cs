@@ -9,6 +9,7 @@ using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SharedKernel;
 
 namespace SmartInventoryManagement.Tests.Services;
 
@@ -54,7 +55,7 @@ public class WarehouseServiceTests
         // Arrange
         var rivneWarehouse = new Warehouse()
         {
-            Id = Guid.NewGuid(),
+            Id = GuidV7.NewGuid(),
             Name = "Main Warehouse",
             Location = "Rivne "
         };
@@ -102,7 +103,7 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldReturnWarehouse_WhenWarehouseExistsWithoutInventories()
     {
         // Arrange
-        Guid warehouseId = Guid.NewGuid();
+        Guid warehouseId = GuidV7.NewGuid();
         var expectedWarehouse = new Warehouse
         {
             Id = warehouseId,
@@ -128,7 +129,7 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldReturnFailureWithNotFoundError_WhenWarehouseNotFound()
     {
         // Arrange
-        var warehouseId = Guid.NewGuid();
+        var warehouseId = GuidV7.NewGuid();
 
         // Act
         var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
@@ -144,7 +145,7 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldLogMessages_WhenInvoked()
     {
         // Arrange
-        Guid warehouseId = Guid.NewGuid();
+        Guid warehouseId = GuidV7.NewGuid();
         var expectedWarehouse = new Warehouse
         {
             Id = warehouseId,
@@ -185,7 +186,7 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldLogMessages_WhenWarehouseNotFound()
     {
         // Arrange
-        Guid warehouseId = Guid.NewGuid();
+        Guid warehouseId = GuidV7.NewGuid();
 
         // Act
         var result = await _warehouseService.GetWarehouseByIdAsync(warehouseId);
@@ -268,7 +269,7 @@ public class WarehouseServiceTests
     public async Task UpdateWarehouseAsync_ShouldUpdateWarehouse_WhenObjectIsValid()
     {
         // Arrange
-        var warehouseId = Guid.NewGuid();
+        var warehouseId = GuidV7.NewGuid();
         var expectedResult = new Warehouse()
         {
             Id = warehouseId,
@@ -309,7 +310,7 @@ public class WarehouseServiceTests
     public async Task UpdateWarehouseAsync_ShouldReturnInvalidGuidError_WhenObjectIsNotFound()
     {
         // Arrange
-        var warehouseId = Guid.NewGuid();
+        var warehouseId = GuidV7.NewGuid();
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Warehouse)null)
@@ -363,7 +364,7 @@ public class WarehouseServiceTests
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsFound()
     {
         // Arrange
-        Guid warehouseId = Guid.NewGuid();
+        Guid warehouseId = GuidV7.NewGuid();
         var warehouse = new Warehouse { Id = warehouseId, Name = "Test Warehouse", Location = "Test Location" };
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -386,7 +387,7 @@ public class WarehouseServiceTests
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsNotFound()
     {
         // Arrange
-        Guid warehouseId = Guid.NewGuid();
+        Guid warehouseId = GuidV7.NewGuid();
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Warehouse)null)
@@ -409,8 +410,8 @@ public class WarehouseServiceTests
         // Arrange
         var warehouses = new List<Warehouse>
         {
-            new Warehouse { Id = Guid.NewGuid(), Name = "Warehouse 1", Location = "Location 1" },
-            new Warehouse { Id = Guid.NewGuid(), Name = "Warehouse 2", Location = "Location 2" }
+            new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse 1", Location = "Location 1" },
+            new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse 2", Location = "Location 2" }
         };
 
         _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
