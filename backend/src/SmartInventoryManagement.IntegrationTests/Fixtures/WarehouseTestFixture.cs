@@ -1,6 +1,4 @@
-﻿using Application.DTO.Warehouse;
-
-namespace SmartInventoryManagement.IntegrationTests.Fixtures;
+﻿namespace SmartInventoryManagement.IntegrationTests.Fixtures;
 
 public class WarehouseTestFixture
 {

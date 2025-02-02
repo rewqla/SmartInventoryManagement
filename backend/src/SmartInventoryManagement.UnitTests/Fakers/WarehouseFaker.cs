@@ -1,7 +1,4 @@
-﻿using Bogus;
-using Infrastructure.Entities;
-
-namespace SmartInventoryManagement.Tests.Fakers;
+﻿namespace SmartInventoryManagement.Tests.Fakers;
 
 public sealed class WarehouseFaker : Faker<Warehouse>
 {

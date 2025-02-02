@@ -1,12 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using API;
-using Application.Common;
-using Application.DTO.Warehouse;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
-using SmartInventoryManagement.IntegrationTests.ExecutionOrder;
-using SmartInventoryManagement.IntegrationTests.Fixtures;
+﻿using FluentAssertions;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Reports;
 

@@ -1,8 +1,4 @@
-﻿using HotChocolate;
-using HotChocolate.Execution;
-using Snapshooter.Xunit;
-
-namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
+﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
 public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
 {
@@ -190,6 +186,4 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
     // #todo projection tests
 
     // #todo write tests subscription
-    
-    // #todo add global imports for tests
 }

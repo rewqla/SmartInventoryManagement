@@ -1,18 +1,4 @@
-﻿using Application.Common;
-using Application.DTO.Warehouse;
-using Application.Interfaces.Services.Report;
-using Application.Reports;
-using Application.Services.Warehouse;
-using Application.Validation.Warehouse;
-using FluentAssertions;
-using Infrastructure.Entities;
-using Infrastructure.Interfaces.Repositories.Warehouse;
-using Microsoft.Extensions.Logging;
-using Moq;
-using SharedKernel;
-using SmartInventoryManagement.Tests.Fakers;
-
-namespace SmartInventoryManagement.Tests.Services;
+﻿namespace SmartInventoryManagement.Tests.Services;
 
 public class WarehouseServiceTests
 {

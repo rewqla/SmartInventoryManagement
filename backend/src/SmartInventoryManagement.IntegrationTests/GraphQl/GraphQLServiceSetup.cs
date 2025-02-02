@@ -1,23 +1,4 @@
-﻿using API.GraphQL.Mutations;
-using API.GraphQL.Queries;
-using API.GraphQL.Subscriptions;
-using Application.DTO.Warehouse;
-using Application.Interfaces.Services.Report;
-using Application.Interfaces.Services.Warehouse;
-using Application.Reports;
-using Application.Services.Warehouse;
-using Application.Validation.Warehouse;
-using HotChocolate.Execution;
-using Infrastructure.Data;
-using Infrastructure.Entities;
-using Infrastructure.Interfaces.Repositories.Warehouse;
-using Infrastructure.Repositories.Warehouse;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using SharedKernel;
-using Testcontainers.PostgreSql;
-
-namespace SmartInventoryManagement.IntegrationTests.GraphQl;
+﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl;
 
 public class GraphQLServiceSetup: IAsyncLifetime
 {
