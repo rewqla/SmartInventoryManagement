@@ -1,0 +1,22 @@
+﻿{
+  "data": {
+    "createWarehouse": {
+      "name": null,
+      "location": null,
+      "id": null,
+      "__typename": "CreateWarehousePayload",
+      "errors": [
+        {
+          "__typename": "ValidationError",
+          "message": "Validation errors occurred",
+          "errors": [
+            {
+              "propertyName": "Name",
+              "errorMessage": "Name is required"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

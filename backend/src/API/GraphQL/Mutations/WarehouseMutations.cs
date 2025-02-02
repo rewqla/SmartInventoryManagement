@@ -59,7 +59,8 @@ public sealed class WarehouseMutations
         {
             if (updatedWarehouse.Error.Code == "Warehouse.ValidationError")
             {
-                throw new ValidationException(updatedWarehouse.Error.Description);
+                var validationFailures = ValidationErrorMapper.MapToValidationFailures(updatedWarehouse.Error.Errors);
+                throw new ValidationException("Validation errors occurred", validationFailures);
             }
 
             if (updatedWarehouse.Error.Code == "Warehouse.NotFound")

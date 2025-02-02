@@ -1,0 +1,21 @@
+﻿{
+  "data": {
+    "updateWarehouse": {
+      "name": null,
+      "location": null,
+      "id": null,
+      "errors": [
+        {
+          "__typename": "ValidationError",
+          "message": "Validation errors occurred",
+          "errors": [
+            {
+              "propertyName": "Location",
+              "errorMessage": "Location must be at least 3 characters long"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
