@@ -1,0 +1,10 @@
+﻿{
+  "data": {
+    "updateWarehouse": {
+      "id": "b24ab279-1fd3-4fb0-9107-8563612aee1f",
+      "name": "Secret Warehouse",
+      "location": "Vinnytsia",
+      "errors": null
+    }
+  }
+}

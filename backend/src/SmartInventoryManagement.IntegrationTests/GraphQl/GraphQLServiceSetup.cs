@@ -64,6 +64,8 @@ public class GraphQLServiceSetup: IAsyncLifetime
         
         await SeedDataAsync(dbContext);
     }
+    // todo: add other seeds
+    // todo: add db fixture
     private async Task SeedDataAsync(InventoryContext dbContext)
     {
         if (!dbContext.Warehouses.Any())
@@ -71,7 +73,7 @@ public class GraphQLServiceSetup: IAsyncLifetime
             var warehouses = new List<Warehouse>
             {
                 new Warehouse { Id = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc"), Name = "Warehouse A", Location = "New York" },
-                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse B", Location = "Rivne" },
+                new Warehouse { Id = Guid.Parse("b24ab279-1fd3-4fb0-9107-8563612aee1f"), Name = "Warehouse B", Location = "Rivne" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse C", Location = "Berlin" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse D", Location = "Tokyo" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse E", Location = "London" },

@@ -13,8 +13,9 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
         _graphQlServiceSetup = graphQlServiceSetup;
     }
 
+    // todo: add validation error test
     [Fact]
-    public async Task GetWarehouses_FilterByLocation_ReturnsMatchingResults()
+    public async Task CreateWarehouse_ReturnsWarehouse_WhenObjectIsValid()
     {
         // Arrange & Act
         IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
@@ -42,4 +43,37 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
         // Assert
         result.ToJson().MatchSnapshot();
     }
+    
+    // todo: add validation error test
+    // todo: add not found error test
+    [Fact]
+    public async Task UpdateWarehouse_ReturnsUpdatedWarehouse_WhenInputIsValid()
+    {
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+               mutation{
+                   updateWarehouse(input:  {
+                      id: ""b24ab279-1fd3-4fb0-9107-8563612aee1f"",
+                      name: ""Secret Warehouse"",
+                      location: ""Vinnytsia""
+                   }){
+                    id
+                    name
+                    location
+                    errors {
+                     __typename
+                     ... on EntityNotFoundError {
+                       message
+                     }
+                   }
+                 }
+               }");
+
+        // Assert
+        result.ToJson().MatchSnapshot();
+    }
+    
+    // todo: add delete warehouse test
+    // todo: add not dound warehouse test
 }

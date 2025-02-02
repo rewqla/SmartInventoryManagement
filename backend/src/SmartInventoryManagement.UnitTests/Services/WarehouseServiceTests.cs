@@ -207,7 +207,7 @@ public class WarehouseServiceTests
     }
 
     [Fact]
-    public async Task CreateWarehouseAsync_ShouldCreateUser_WhenObjectIsValid()
+    public async Task CreateWarehouseAsync_ShouldCreateWarehouse_WhenObjectIsValid()
     {
         // Arrange
         var expectedResult = new Warehouse()
