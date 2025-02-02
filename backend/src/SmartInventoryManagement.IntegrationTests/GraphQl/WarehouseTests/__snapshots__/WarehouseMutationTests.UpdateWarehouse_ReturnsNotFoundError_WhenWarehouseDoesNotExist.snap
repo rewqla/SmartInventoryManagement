@@ -1,0 +1,15 @@
+﻿{
+  "data": {
+    "updateWarehouse": {
+      "name": null,
+      "location": null,
+      "id": null,
+      "errors": [
+        {
+          "__typename": "EntityNotFoundError",
+          "message": "The warehouse with Id '00000000-0000-0000-0000-000000000000' was not found"
+        }
+      ]
+    }
+  }
+}

@@ -206,6 +206,7 @@ public class WarehouseServiceTests
             Times.Once);
     }
 
+    //try to make faker with bogus
     [Fact]
     public async Task CreateWarehouseAsync_ShouldCreateWarehouse_WhenObjectIsValid()
     {
@@ -457,4 +458,5 @@ public class WarehouseServiceTests
     // #todo: write tests with inventories
     // #todo: update tests also to check inventories
     // #todo: write tests with CancellationToken
+    // #todo: try Bogus with fakers
 }

@@ -188,10 +188,6 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
     // #todo write pagination tests
     // #todo write query test with sorting, projection, filtering, pagination
     // #todo projection tests
-    
-    // #todo write tests for mutation create
-    // #todo write tests for mutation delete
-    // #todo write tests for mutation update
 
     // #todo write tests subscription
     

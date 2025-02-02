@@ -74,8 +74,6 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
       result.ToJson().MatchSnapshot();
     }
     
-    // todo: add validation error test
-    // todo: add not found error test
     [Fact]
     public async Task UpdateWarehouse_ReturnsValidationError_WhenLocationIsEmpty()
     {
@@ -138,7 +136,36 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
       result.ToJson().MatchSnapshot();
     }
     
-    // todo: add not found warehouse test
+    [Fact]
+    public async Task UpdateWarehouse_ReturnsNotFoundError_WhenWarehouseDoesNotExist()
+    {
+      // Arrange
+      var nonExistentId = "00000000-0000-0000-0000-000000000000";
+
+      // Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        $@"
+        mutation {{
+          updateWarehouse(input: {{
+            id: ""{nonExistentId}"",
+            name: ""Ghost Warehouse"",
+            location: ""Nowhere""
+          }}) {{
+            name
+            location
+            id
+            errors {{
+              __typename
+              ... on EntityNotFoundError {{
+                message
+              }}
+            }}
+          }}
+        }}");
+
+      result.ToJson().MatchSnapshot();
+    }
+    
     // todo: execute only after update
     [Fact]
     public async Task DeleteWarehouse_ReturnsTrue_WhenGuidIsFound()
@@ -162,5 +189,32 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
 
         // Assert
         result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task DeleteWarehouse_ReturnsNotFoundError_WhenWarehouseDoesNotExist()
+    {
+      // Arrange - Use a non-existent ID
+      var nonExistentId = "00000000-0000-0000-0000-000000000000";
+
+      // Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        $@"
+        mutation {{
+          deleteWarehouse(input: {{
+             warehouseId: ""{nonExistentId}""
+          }}) {{
+            boolean
+            errors {{
+              __typename
+              ... on EntityNotFoundError {{
+                message
+              }}
+            }}
+          }}
+        }}");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
     }
 }
