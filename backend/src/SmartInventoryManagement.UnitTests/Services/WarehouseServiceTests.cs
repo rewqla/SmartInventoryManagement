@@ -10,6 +10,7 @@ using Infrastructure.Interfaces.Repositories.Warehouse;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SharedKernel;
+using SmartInventoryManagement.Tests.Fakers;
 
 namespace SmartInventoryManagement.Tests.Services;
 
@@ -53,17 +54,10 @@ public class WarehouseServiceTests
     public async Task GetWarehousesAsync_ShouldReturnEnumerableWarehouses_WhenWarehousesExistWithoutInventories()
     {
         // Arrange
-        var rivneWarehouse = new Warehouse()
-        {
-            Id = GuidV7.NewGuid(),
-            Name = "Main Warehouse",
-            Location = "Rivne "
-        };
-
-        var expectedWarehouses = new[] { rivneWarehouse };
+        var warehouses = new WarehouseFaker().Generate(2);
 
         _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedWarehouses)
+            .ReturnsAsync(warehouses)
             .Verifiable();
 
         // Act
@@ -72,7 +66,7 @@ public class WarehouseServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Error.Should().Be(Error.None);
-        result.Value.Should().BeEquivalentTo(expectedWarehouses, options => options
+        result.Value.Should().BeEquivalentTo(warehouses, options => options
             .Excluding(warehouse => warehouse.Inventories));
     }
 
@@ -103,13 +97,8 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldReturnWarehouse_WhenWarehouseExistsWithoutInventories()
     {
         // Arrange
-        Guid warehouseId = GuidV7.NewGuid();
-        var expectedWarehouse = new Warehouse
-        {
-            Id = warehouseId,
-            Name = "Main Warehouse",
-            Location = "Rivne"
-        };
+        var expectedWarehouse = new WarehouseFaker().Generate();
+        var warehouseId = expectedWarehouse.Id;
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedWarehouse)
@@ -145,13 +134,8 @@ public class WarehouseServiceTests
     public async Task GetWarehouseByIdAsync_ShouldLogMessages_WhenInvoked()
     {
         // Arrange
-        Guid warehouseId = GuidV7.NewGuid();
-        var expectedWarehouse = new Warehouse
-        {
-            Id = warehouseId,
-            Name = "Main Warehouse",
-            Location = "Rivne"
-        };
+        var expectedWarehouse = new WarehouseFaker().Generate();
+        var warehouseId = expectedWarehouse.Id;
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedWarehouse)
@@ -206,16 +190,11 @@ public class WarehouseServiceTests
             Times.Once);
     }
 
-    //try to make faker with bogus
     [Fact]
     public async Task CreateWarehouseAsync_ShouldCreateWarehouse_WhenObjectIsValid()
     {
         // Arrange
-        var expectedResult = new Warehouse()
-        {
-            Name = "Test Warehouse",
-            Location = "Test Location"
-        };
+        var expectedResult = new WarehouseFaker().Generate();
 
         _warehouseRepository.Setup(r => r.AddAsync(It.IsAny<Warehouse>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult)
@@ -223,8 +202,8 @@ public class WarehouseServiceTests
 
         var warehouseDTO = new WarehouseDTO()
         {
-            Name = "Test Warehouse",
-            Location = "Test Location"
+            Name = expectedResult.Name,
+            Location = expectedResult.Location
         };
 
         // Act
@@ -270,13 +249,8 @@ public class WarehouseServiceTests
     public async Task UpdateWarehouseAsync_ShouldUpdateWarehouse_WhenObjectIsValid()
     {
         // Arrange
-        var warehouseId = GuidV7.NewGuid();
-        var expectedResult = new Warehouse()
-        {
-            Id = warehouseId,
-            Name = "Test Warehouse",
-            Location = "Test Location"
-        };
+        var expectedResult = new WarehouseFaker().Generate();
+        var warehouseId = expectedResult.Id;
 
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedResult)
@@ -289,8 +263,8 @@ public class WarehouseServiceTests
         var warehouseDTO = new WarehouseDTO()
         {
             Id = warehouseId,
-            Name = "Test Warehouse",
-            Location = "Test Location"
+            Name = expectedResult.Name,
+            Location = expectedResult.Location
         };
 
         // Act
@@ -365,9 +339,10 @@ public class WarehouseServiceTests
     public async Task DeleteWarehouse_ShouldDeleteWarehouse_WhenObjectIsFound()
     {
         // Arrange
-        Guid warehouseId = GuidV7.NewGuid();
-        var warehouse = new Warehouse { Id = warehouseId, Name = "Test Warehouse", Location = "Test Location" };
-
+        var warehouse = new WarehouseFaker().Generate();
+        var warehouseId = warehouse.Id;
+        
+        
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(warehouse)
             .Verifiable();
@@ -409,11 +384,7 @@ public class WarehouseServiceTests
     public async Task GenerateWarehousesReportAsync_ShouldReturnReport_WhenWarehousesExist()
     {
         // Arrange
-        var warehouses = new List<Warehouse>
-        {
-            new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse 1", Location = "Location 1" },
-            new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse 2", Location = "Location 2" }
-        };
+        var warehouses = new WarehouseFaker().Generate(5);
 
         _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(warehouses);
@@ -458,5 +429,4 @@ public class WarehouseServiceTests
     // #todo: write tests with inventories
     // #todo: update tests also to check inventories
     // #todo: write tests with CancellationToken
-    // #todo: try Bogus with fakers
 }
