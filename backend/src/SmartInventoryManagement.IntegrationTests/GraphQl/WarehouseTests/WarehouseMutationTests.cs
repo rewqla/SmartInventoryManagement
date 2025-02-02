@@ -75,5 +75,29 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
     }
     
     // todo: add delete warehouse test
-    // todo: add not dound warehouse test
+    // todo: add not found warehouse test
+    // todo: execute only after update
+    [Fact]
+    public async Task DeleteWarehouse_ReturnsTrue_WhenGuidIsFound()
+    {
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+              mutation{
+                deleteWarehouse(input:  {
+                   warehouseId: ""b24ab279-1fd3-4fb0-9107-8563612aee1f""
+                }){
+                  boolean
+                  errors {
+                    __typename
+                    ... on EntityNotFoundError {
+                      message
+                    }
+                  }
+                }
+              }");
+
+        // Assert
+        result.ToJson().MatchSnapshot();
+    }
 }
