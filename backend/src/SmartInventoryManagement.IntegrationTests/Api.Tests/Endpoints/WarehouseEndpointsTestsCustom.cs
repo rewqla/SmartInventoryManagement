@@ -2,16 +2,14 @@
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
-// Sends http requests to the Production db by WebApplicationFactory
-public class WarehouseEndpointsTests :
-    IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>, IDisposable
+// Sends http requests to the TestContainer by IntegrationTestWebAppFactory
+public class WarehouseEndpointsTestsCustom :
+    IClassFixture<IntegrationTestWebAppFactory>
 {
     private readonly HttpClient _httpClient;
-    private readonly WarehouseTestFixture _testFixture;
 
-    public WarehouseEndpointsTests(WebApplicationFactory<IApiMarker> appFactory, WarehouseTestFixture testFixture)
+    public WarehouseEndpointsTestsCustom(IntegrationTestWebAppFactory appFactory)
     {
-        _testFixture = testFixture;
         _httpClient = appFactory.CreateClient();
     }
 
@@ -32,8 +30,6 @@ public class WarehouseEndpointsTests :
         createdWarehouse!.Id.Should().NotBe(Guid.Empty);
         createdWarehouse.Name.Should().Be(warehouseDto.Name);
         createdWarehouse.Location.Should().Be(warehouseDto.Location);
-
-        _testFixture.CreatedWarehouseId = createdWarehouse.Id;
     }
 
     [Fact]
@@ -65,7 +61,7 @@ public class WarehouseEndpointsTests :
     public async Task GetById_ReturnsWarehouse_WhenWarehouseExists()
     {
         // Arrange
-        var warehouseId = _testFixture.CreatedWarehouseId;
+        var warehouseId = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc");
 
         // Act
         var response = await _httpClient
@@ -105,7 +101,7 @@ public class WarehouseEndpointsTests :
     public async Task UpdateWarehouse_ReturnsOk_WhenValidWarehouseIsProvided()
     {
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO("Updated Warehouse", "Updated Location");
-        warehouseDto.Id = _testFixture.CreatedWarehouseId;
+        warehouseDto.Id = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc");
 
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{warehouseDto.Id}", warehouseDto);
 
@@ -116,8 +112,6 @@ public class WarehouseEndpointsTests :
         updatedWarehouse!.Id.Should().Be(warehouseDto.Id);
         updatedWarehouse.Name.Should().Be(warehouseDto.Name);
         updatedWarehouse.Location.Should().Be(warehouseDto.Location);
-
-        _testFixture.isUpdated = true;
     }
 
     [Fact]
@@ -141,7 +135,7 @@ public class WarehouseEndpointsTests :
     {
         var warehouseDto = new WarehouseDTO
         {
-            Id = _testFixture.CreatedWarehouseId,
+            Id = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc"),
             Name = "",
             Location = "Updated Location"
         };
@@ -181,31 +175,12 @@ public class WarehouseEndpointsTests :
     public async Task DeleteWarehouse_ReturnsOk_WhenWarehouseExists()
     {
         // Arrange
-        var warehouseDto = WarehouseTestFixture.GetWarehouseDTO();
-
-        // Act
-        var createResponse = await _httpClient.PostAsJsonAsync("/api/warehouses", warehouseDto);
-        
-        // Assert
-        createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        
-        // Arrange
-
-        var createdWarehouse = await createResponse.Content.ReadFromJsonAsync<WarehouseDTO>();
-        var warehouseId = createdWarehouse?.Id;
+        var warehouseId = Guid.Parse("b24ab279-1fd3-4fb0-9107-8563612aee1f");
 
         // Act
         var response = await _httpClient.DeleteAsync($"/api/warehouses/{warehouseId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-    }
-
-    public async void Dispose()
-    {
-        if (_testFixture.isUpdated == false)
-            await Task.Delay(1000);
-
-        await _httpClient.DeleteAsync($"/api/warehouses/{_testFixture.CreatedWarehouseId}");
     }
 }

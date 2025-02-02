@@ -46,7 +46,6 @@ public class GraphQLServiceSetup: IAsyncLifetime
         await SeedDataAsync(dbContext);
     }
     // todo: add other seeds
-    // todo: add db fixture
     private async Task SeedDataAsync(InventoryContext dbContext)
     {
         if (!dbContext.Warehouses.Any())

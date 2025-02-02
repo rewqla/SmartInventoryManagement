@@ -2,6 +2,7 @@
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Reports;
 
+// Sends http requests to the Production db by WebApplicationFactory
 public class ProductReportsTests :
     IClassFixture<WebApplicationFactory<IApiMarker>>
 {
