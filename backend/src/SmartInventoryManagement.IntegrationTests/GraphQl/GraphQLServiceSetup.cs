@@ -57,6 +57,12 @@ public class GraphQLServiceSetup: IAsyncLifetime
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse C", Location = "Berlin" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse D", Location = "Tokyo" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse E", Location = "London" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse F", Location = "Paris" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse G", Location = "Madrid" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse H", Location = "Rome" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse I", Location = "Amsterdam" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse J", Location = "Toronto" },
+                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse K", Location = "Sydney" },
             };
 
             await dbContext.Warehouses.AddRangeAsync(warehouses);

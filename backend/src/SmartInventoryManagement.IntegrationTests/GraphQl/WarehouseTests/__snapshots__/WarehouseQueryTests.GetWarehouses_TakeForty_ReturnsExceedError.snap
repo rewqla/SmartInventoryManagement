@@ -1,0 +1,25 @@
+﻿{
+  "errors": [
+    {
+      "message": "The maximum allowed items per page were exceeded.",
+      "locations": [
+        {
+          "line": 3,
+          "column": 11
+        }
+      ],
+      "path": [
+        "warehouse"
+      ],
+      "extensions": {
+        "code": "HC0051",
+        "fieldCoordinate": "Query.warehouse",
+        "requestedItems": 40,
+        "maxAllowedItems": 30
+      }
+    }
+  ],
+  "data": {
+    "warehouse": null
+  }
+}

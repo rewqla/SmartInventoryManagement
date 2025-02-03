@@ -1,0 +1,49 @@
+﻿{
+  "data": {
+    "warehouse": {
+      "items": [
+        {
+          "name": "Warehouse A",
+          "location": "New York"
+        },
+        {
+          "name": "Warehouse B",
+          "location": "Rivne"
+        },
+        {
+          "name": "Warehouse C",
+          "location": "Berlin"
+        },
+        {
+          "name": "Warehouse D",
+          "location": "Tokyo"
+        },
+        {
+          "name": "Warehouse E",
+          "location": "London"
+        },
+        {
+          "name": "Warehouse F",
+          "location": "Paris"
+        },
+        {
+          "name": "Warehouse G",
+          "location": "Madrid"
+        },
+        {
+          "name": "Warehouse H",
+          "location": "Rome"
+        },
+        {
+          "name": "Warehouse I",
+          "location": "Amsterdam"
+        },
+        {
+          "name": "Warehouse J",
+          "location": "Toronto"
+        }
+      ],
+      "totalCount": 11
+    }
+  }
+}

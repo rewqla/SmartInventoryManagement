@@ -121,6 +121,7 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
       // Assert
       result.ToJson().MatchSnapshot();
     }
+    
     [Fact]
     public async Task GetWarehouses_NoResultsForFilter_ReturnsEmpty()
     {
@@ -140,6 +141,7 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
       // Assert
       result.ToJson().MatchSnapshot();
     }
+    
     [Fact]
     public async Task GetWarehouseById_ReturnWarehouse_WhenExists()
     {
@@ -181,8 +183,88 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         result.ToJson().MatchSnapshot();
     }
     
-    // #todo write pagination tests
-    // #todo write query test with sorting, projection, filtering, pagination
+    [Fact]
+    public async Task GetWarehouses_TakeForty_ReturnsExceedError()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 40) {
+            items {
+              name
+              location
+            }
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task GetWarehouses_TotalCount_ReturnsCorrectValue()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 20) {
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task GetWarehouses_TakeZero_ReturnsEmpty()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 0) {
+            items {
+              name
+              location
+            }
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task GetWarehouses_TakeTen_ReturnsRelevantCount()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 10,
+            order: [{ name: ASC }]) {
+            items {
+              name
+              location
+            }
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    //GetWarehouses_Pagination_TakeSkip_TotalCount_PageInfo_ReturnsCorrectResponse
+    //GetWarehouses_SkipFive_ReturnsCorrectSubset
+    //GetWarehouses_Pagination_ReturnsPageInfoCorrectly
+    
+    // #todo write query test with projection, pagination
     // #todo projection tests
 
     // #todo write tests subscription

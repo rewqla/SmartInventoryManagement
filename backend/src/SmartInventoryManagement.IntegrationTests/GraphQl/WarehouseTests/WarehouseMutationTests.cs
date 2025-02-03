@@ -79,7 +79,7 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
                      updateWarehouse(input:  {
                       id: ""b24ab279-1fd3-4fb0-9107-8563612aee1f"",
                       name: ""Secret Warehouse"",
-                       location: """"
+                      location: """"
                      }){
                         name
                         location
@@ -162,7 +162,6 @@ public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
       result.ToJson().MatchSnapshot();
     }
     
-    // todo: execute only after update
     [Fact]
     public async Task DeleteWarehouse_ReturnsTrue_WhenGuidIsFound()
     {
