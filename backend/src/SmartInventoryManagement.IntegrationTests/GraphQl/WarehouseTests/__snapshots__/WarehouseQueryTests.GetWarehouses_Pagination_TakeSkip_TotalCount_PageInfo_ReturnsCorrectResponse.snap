@@ -1,0 +1,37 @@
+﻿{
+  "data": {
+    "warehouse": {
+      "items": [
+        {
+          "name": "Warehouse F",
+          "location": "Paris"
+        },
+        {
+          "name": "Warehouse G",
+          "location": "Madrid"
+        },
+        {
+          "name": "Warehouse H",
+          "location": "Rome"
+        },
+        {
+          "name": "Warehouse I",
+          "location": "Amsterdam"
+        },
+        {
+          "name": "Warehouse J",
+          "location": "Toronto"
+        },
+        {
+          "name": "Warehouse K",
+          "location": "Sydney"
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": false,
+        "hasPreviousPage": true
+      },
+      "totalCount": 11
+    }
+  }
+}

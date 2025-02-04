@@ -1,0 +1,33 @@
+﻿{
+  "data": {
+    "warehouse": {
+      "items": [
+        {
+          "name": "Warehouse A",
+          "location": "New York"
+        },
+        {
+          "name": "Warehouse B",
+          "location": "Rivne"
+        },
+        {
+          "name": "Warehouse C",
+          "location": "Berlin"
+        },
+        {
+          "name": "Warehouse D",
+          "location": "Tokyo"
+        },
+        {
+          "name": "Warehouse E",
+          "location": "London"
+        }
+      ],
+      "pageInfo": {
+        "hasNextPage": true,
+        "hasPreviousPage": false
+      },
+      "totalCount": 11
+    }
+  }
+}

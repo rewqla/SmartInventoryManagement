@@ -260,11 +260,78 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
       result.ToJson().MatchSnapshot();
     }
     
-    //GetWarehouses_Pagination_TakeSkip_TotalCount_PageInfo_ReturnsCorrectResponse
-    //GetWarehouses_SkipFive_ReturnsCorrectSubset
-    //GetWarehouses_Pagination_ReturnsPageInfoCorrectly
     
-    // #todo write query test with projection, pagination
+    [Fact]
+    public async Task GetWarehouses_Pagination_ReturnsPageInfoCorrectly()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 5,
+            order: [{ name: ASC }]) {
+            items {
+              name
+              location
+            }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+            }
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task GetWarehouses_SkipFive_ReturnsCorrectSubset()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 10, skip: 5,
+            order: [{ name: ASC }]) {
+            items {
+              name
+              location
+            }
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task GetWarehouses_Pagination_TakeSkip_TotalCount_PageInfo_ReturnsCorrectResponse()
+    {
+      // Arrange & Act
+      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+        @"
+        query {
+          warehouse(take: 10, skip: 5,
+            order: [{ name: ASC }]) {
+            items {
+              name
+              location
+            }
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+            }
+            totalCount
+          }
+        }");
+
+      // Assert
+      result.ToJson().MatchSnapshot();
+    }
+    
+    // #todo write query test with projection, pagination, filter, sorting
     // #todo projection tests
 
     // #todo write tests subscription

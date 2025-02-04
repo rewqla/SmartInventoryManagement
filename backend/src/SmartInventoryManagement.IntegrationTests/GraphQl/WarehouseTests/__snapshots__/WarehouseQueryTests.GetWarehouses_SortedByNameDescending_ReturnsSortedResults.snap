@@ -3,27 +3,27 @@
     "warehouse": {
       "items": [
         {
-          "name": "Warehouse E",
-          "location": "London"
+          "name": "Warehouse K",
+          "location": "Sydney"
         },
         {
-          "name": "Warehouse D",
-          "location": "Tokyo"
+          "name": "Warehouse J",
+          "location": "Toronto"
         },
         {
-          "name": "Warehouse C",
-          "location": "Berlin"
+          "name": "Warehouse I",
+          "location": "Amsterdam"
         },
         {
-          "name": "Warehouse B",
-          "location": "Rivne"
+          "name": "Warehouse H",
+          "location": "Rome"
         },
         {
-          "name": "Warehouse A",
-          "location": "New York"
+          "name": "Warehouse G",
+          "location": "Madrid"
         }
       ],
-      "totalCount": 5
+      "totalCount": 11
     }
   }
 }
