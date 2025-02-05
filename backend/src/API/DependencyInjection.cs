@@ -1,5 +1,4 @@
 ﻿using API.Endpoints;
-using API.GraphQL;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
@@ -15,11 +14,10 @@ using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
 using Infrastructure.Data;
 using Infrastructure.Entities;
+using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Infrastructure.Repositories.Warehouse;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 namespace API;
 
@@ -37,6 +35,8 @@ public static class DependencyInjection
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
 
+        builder.Services.AddSingleton<IDbContextFactory, DbContextFactory>();
+        
         return builder;
     }
     // todo: add health checks
