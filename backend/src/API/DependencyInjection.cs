@@ -2,6 +2,7 @@
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
+using API.Health;
 using Application.DTO.Warehouse;
 using Application.Interfaces;
 using Application.Interfaces.Services.Product;
@@ -35,11 +36,24 @@ public static class DependencyInjection
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
 
-        builder.Services.AddSingleton<IDbContextFactory, DbContextFactory>();
+        services.AddSingleton<IDbConnectionFactory>(_ =>
+            new DbConnectionFactory(builder.Configuration.GetConnectionString("DefaultConnection")!));
+
         
         return builder;
     }
-    // todo: add health checks
+
+    public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("Database");
+        
+        return builder;
+    }
+    
     public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);

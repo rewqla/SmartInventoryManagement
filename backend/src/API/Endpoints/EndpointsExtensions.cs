@@ -9,6 +9,9 @@ public static class EndpointsExtensions
     {
         app.MapWarehouseEndpoints();
         app.MapReportEndpoints();
+        app.MapHealthChecks("/health")
+            .WithName("HealthCheck")
+            .WithTags("System");
 
         return app;
     }

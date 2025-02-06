@@ -1,0 +1,4 @@
+﻿### Get warehouse report
+GET {{baseUrl}}/health
+
+###

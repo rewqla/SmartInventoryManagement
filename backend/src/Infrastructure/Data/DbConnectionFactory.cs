@@ -4,11 +4,11 @@ using Npgsql;
 
 namespace Infrastructure.Data;
 
-public class DbContextFactory : IDbContextFactory
+public class DbConnectionFactory : IDbConnectionFactory
 {
     private readonly string _connectionString;
 
-    public DbContextFactory(string connectionString)
+    public DbConnectionFactory(string connectionString)
     {
         _connectionString = connectionString;
     }

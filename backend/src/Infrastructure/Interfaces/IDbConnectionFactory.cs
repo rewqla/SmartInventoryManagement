@@ -3,7 +3,7 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Interfaces;
 
-public interface IDbContextFactory
+public interface IDbConnectionFactory
 {
     Task<IDbConnection> CreateConnectionAsync(CancellationToken cancellationToken = default);
 }
