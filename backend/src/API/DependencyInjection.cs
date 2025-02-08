@@ -49,7 +49,8 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddHealthChecks()
-            .AddCheck<DatabaseHealthCheck>("Database");
+            // .AddCheck<DatabaseHealthCheck>("Database")
+            .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
         
         return builder;
     }
