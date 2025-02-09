@@ -1,4 +1,5 @@
-﻿using API.Endpoints;
+﻿using System.Diagnostics;
+using API.Endpoints;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
@@ -18,6 +19,7 @@ using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories.Warehouse;
 using Infrastructure.Repositories.Warehouse;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
@@ -30,6 +32,22 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddSwagger();
+        // todo: add ProblemExceptionHandler
+        // todo: update returning data not only for BadRequest (Validation, NotFound, Internal)
+        services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Instance =
+                    $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+
+                var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+                context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+            };
+        });
+
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
@@ -39,7 +57,7 @@ public static class DependencyInjection
         services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
-        
+
         return builder;
     }
 
@@ -51,10 +69,10 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("postgresql-custom-check")
             .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
-        
+
         return builder;
     }
-    
+
     public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);

@@ -24,9 +24,13 @@ public static class CreateWarehouseEndpoint
                         {
                             return error.Code switch
                             {
-                                "Warehouse.ValidationError" => Results.BadRequest(error),
+                                "Warehouse.ValidationError" => Results.Problem(type: "Bad Request",
+                                    title: error.Code,
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status400BadRequest),
                                 _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
                                     statusCode: 500)
+                                //todo: move from 500 to StatusCodes.Status500InternalServerError
                             };
                         });
                 })
