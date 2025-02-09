@@ -26,7 +26,14 @@ public static class UpdateWarehouseEndpoint
                             return error.Code switch
                             {
                                 "Warehouse.NotFound" => Results.NotFound(error),
-                                "Warehouse.ValidationError" => Results.BadRequest(error),
+                                "Warehouse.ValidationError" => Results.Problem(type: "Bad Request",
+                                    title: error.Code,
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status400BadRequest,
+                                    extensions: new Dictionary<string, object?>
+                                    {
+                                        { "errors", error.Errors } 
+                                    }),
                                 _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
                                     statusCode: 500)
                             };
