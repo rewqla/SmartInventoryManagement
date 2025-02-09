@@ -49,7 +49,7 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddHealthChecks()
-            // .AddCheck<DatabaseHealthCheck>("Database")
+            .AddCheck<DatabaseHealthCheck>("postgresql-custom-check")
             .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
         
         return builder;
