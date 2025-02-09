@@ -27,7 +27,11 @@ public static class CreateWarehouseEndpoint
                                 "Warehouse.ValidationError" => Results.Problem(type: "Bad Request",
                                     title: error.Code,
                                     detail: error.Description,
-                                    statusCode: StatusCodes.Status400BadRequest),
+                                    statusCode: StatusCodes.Status400BadRequest,
+                                    extensions: new Dictionary<string, object?>
+                                    {
+                                        { "errors", error.Errors } 
+                                    }),
                                 _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
                                     statusCode: 500)
                                 //todo: move from 500 to StatusCodes.Status500InternalServerError
