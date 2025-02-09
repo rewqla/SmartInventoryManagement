@@ -25,7 +25,12 @@ public static class UpdateWarehouseEndpoint
                         {
                             return error.Code switch
                             {
-                                "Warehouse.NotFound" => Results.NotFound(error),
+                                "Warehouse.NotFound" => Results.Problem(
+                                    type: "https://httpstatuses.com/404",
+                                    title: error.Code,
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status404NotFound
+                                ),
                                 "Warehouse.ValidationError" => Results.Problem(type: "Bad Request",
                                     title: error.Code,
                                     detail: error.Description,

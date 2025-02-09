@@ -23,7 +23,12 @@ public static class DeleteWarehouseEndpoint
                         {
                             return error.Code switch
                             {
-                                "Warehouse.NotFound" => Results.NotFound(error),
+                                "Warehouse.NotFound" => Results.Problem(
+                                    type: "https://httpstatuses.com/404",
+                                    title: error.Code,
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status404NotFound
+                                ),
                                 _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
                                     statusCode: 500)
                             };
