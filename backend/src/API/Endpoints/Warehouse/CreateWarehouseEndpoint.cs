@@ -32,9 +32,11 @@ public static class CreateWarehouseEndpoint
                                     {
                                         { "errors", error.Errors } 
                                     }),
-                                _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
-                                    statusCode: 500)
-                                //todo: move from 500 to StatusCodes.Status500InternalServerError
+                                _ => Results.Problem(
+                                    type: "https://httpstatuses.com/500",
+                                    title: "Internal Server Error",
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status500InternalServerError)
                             };
                         });
                 })

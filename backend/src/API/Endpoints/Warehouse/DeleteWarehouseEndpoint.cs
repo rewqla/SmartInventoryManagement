@@ -29,8 +29,11 @@ public static class DeleteWarehouseEndpoint
                                     detail: error.Description,
                                     statusCode: StatusCodes.Status404NotFound
                                 ),
-                                _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
-                                    statusCode: 500)
+                                _ => Results.Problem(
+                                    type: "https://httpstatuses.com/500",
+                                    title: "Internal Server Error",
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status500InternalServerError)
                             };
                         });
                 })

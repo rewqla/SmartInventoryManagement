@@ -21,8 +21,11 @@ public static class ProductsReportEndpoint
                     return result.Match(
                         onSuccess: value => Results.File(result.Value!, "application/pdf", fileName),
                         onFailure:
-                        error => Results.Problem(title: "Internal Server Error", detail: error.Description,
-                            statusCode: 500)
+                        error => Results.Problem(
+                            type: "https://httpstatuses.com/500",
+                            title: "Internal Server Error",
+                            detail: error.Description,
+                            statusCode: StatusCodes.Status500InternalServerError)
                     );
                 })
             .WithName(Name)

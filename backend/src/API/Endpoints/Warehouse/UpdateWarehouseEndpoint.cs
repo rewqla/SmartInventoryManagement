@@ -39,8 +39,11 @@ public static class UpdateWarehouseEndpoint
                                     {
                                         { "errors", error.Errors } 
                                     }),
-                                _ => Results.Problem(title: "Internal Server Error", detail: error.Description,
-                                    statusCode: 500)
+                                _ => Results.Problem(
+                                    type: "https://httpstatuses.com/500",
+                                    title: "Internal Server Error",
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status500InternalServerError)
                             };
                         });
                 })

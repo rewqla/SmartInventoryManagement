@@ -19,7 +19,11 @@ public static class GetWarehousesEndpoint
                     return result.Match(
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
-                            Results.Problem(title: "Internal Server Error", detail: error.Description, statusCode: 500)
+                            Results.Problem(
+                                type: "https://httpstatuses.com/500",
+                                title: "Internal Server Error",
+                                detail: error.Description,
+                                statusCode: StatusCodes.Status500InternalServerError)
                     );
                 })
             .WithName(Name)
