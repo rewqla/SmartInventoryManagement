@@ -1,6 +1,6 @@
 ﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseSubscriptionTests: IClassFixture<GraphQLServiceSetup>
+public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
 {
     private readonly GraphQLServiceSetup _graphQlServiceSetup;
 
@@ -9,12 +9,12 @@ public class WarehouseSubscriptionTests: IClassFixture<GraphQLServiceSetup>
         _graphQlServiceSetup = graphQlServiceSetup;
     }
 
-    
+
     [Fact]
     public async Task WarehouseCreated_SubscriptionReceivesEvent()
     {
         // Arrange & Act
-        
+
         using var cts = new CancellationTokenSource(1_000);
         await using var result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
@@ -24,7 +24,7 @@ public class WarehouseSubscriptionTests: IClassFixture<GraphQLServiceSetup>
                     location
                   }
                 }");
-        
+
         await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
                 mutation{
@@ -46,12 +46,12 @@ public class WarehouseSubscriptionTests: IClassFixture<GraphQLServiceSetup>
                       }
                     }
                   }");
-        
+
         var items = new List<object>();
         var count = 0;
 
-        await foreach(var item in result.ExpectResponseStream()
-                          .ReadResultsAsync().WithCancellation(cts.Token))
+        await foreach (var item in result.ExpectResponseStream()
+                           .ReadResultsAsync().WithCancellation(cts.Token))
         {
             items.Add(item.Data);
             count++;
@@ -60,7 +60,61 @@ public class WarehouseSubscriptionTests: IClassFixture<GraphQLServiceSetup>
                 break;
             }
         }
-        
+
+        // Assert
+        items.MatchSnapshot();
+    }
+
+    [Fact]
+    public async Task WarehouseUpdated_SubscriptionReceivesEvent()
+    {
+        // Arrange & Act
+
+        using var cts = new CancellationTokenSource(1_000);
+        await using var result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                subscription{
+                  warehouseUpdated(warehouseId: ""4e9ae812-9308-41e7-aaa5-32379c4c2b3d""){
+                    name
+                    location
+                    id
+                  }
+                }");
+
+        await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                mutation{
+                    updateWarehouse(input:  {
+                       id: ""4e9ae812-9308-41e7-aaa5-32379c4c2b3d"",
+                       name: ""Secret Warehouse"",
+                       location: ""Vinnytsia""
+                    }){
+                     name
+                     location
+                     id
+                     errors {
+                      __typename
+                      ... on EntityNotFoundError {
+                        message
+                      }
+                    }
+                  }
+                }");
+
+        var items = new List<object>();
+        var count = 0;
+
+        await foreach (var item in result.ExpectResponseStream()
+                           .ReadResultsAsync().WithCancellation(cts.Token))
+        {
+            items.Add(item.Data);
+            count++;
+            if (count == 2)
+            {
+                break;
+            }
+        }
+
         // Assert
         items.MatchSnapshot();
     }

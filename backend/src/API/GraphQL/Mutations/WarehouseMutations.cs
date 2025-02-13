@@ -68,15 +68,15 @@ public sealed class WarehouseMutations
                 throw new EntityNotFoundException(updatedWarehouse.Error.Description);
             }
         }
-        
-        string updateWarehouseTopic = $"{updatedWarehouse.Value!.Id}_{nameof(WarehouseSubscriptions.WarehouseUpdated)}";
-        await sender.SendAsync(updateWarehouseTopic, updatedWarehouse.Value, cancellationToken);
 
         await sender.SendAsync(WarehouseTopics.Mutated, new WarehouseEventMessage(EventType.Updated, warehouseDTO),
             cancellationToken);
 
         var warehouseResult = WarehouseMapper.ToUpdatePayload(updatedWarehouse.Value);
 
+        string updateWarehouseTopic = $"{updatedWarehouse.Value!.Id}_{nameof(WarehouseSubscriptions.WarehouseUpdated)}";
+        await sender.SendAsync(updateWarehouseTopic, warehouseResult, cancellationToken);
+        
         return warehouseResult;
     }
 
