@@ -1,26 +1,22 @@
-﻿### Update warehouse
+﻿### Create warehouse
 GRAPHQL {{baseUrl}}/graphql/
 
 mutation{
-  updateWarehouse(input:  {
-   id: "69e5a705-fb62-4057-9e25-d608aef868bb",
-   name: "Secret Warehouse",
-    location: "Vinnytsia"
-  }){
-     name
-     location
-     id
-     errors {
-      __typename
+    createWarehouse(input:  {
+       name: "Normal Warehouse",
+       location: "Lutsk"
+    }){
+    name
+    location
+    id
+    __typename
+    errors{
       ...on ValidationError{
         message
         errors{
           propertyName
           errorMessage
         }
-      }
-      ... on EntityNotFoundError {
-        message
       }
     }
   }
