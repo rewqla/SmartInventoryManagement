@@ -69,7 +69,6 @@ public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
     public async Task WarehouseUpdated_SubscriptionReceivesEvent()
     {
         // Arrange & Act
-
         using var cts = new CancellationTokenSource(1_000);
         await using var result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
             @"
@@ -100,6 +99,63 @@ public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
                     }
                   }
                 }");
+
+        var items = new List<object>();
+        var count = 0;
+
+        await foreach (var item in result.ExpectResponseStream()
+                           .ReadResultsAsync().WithCancellation(cts.Token))
+        {
+            items.Add(item.Data);
+            count++;
+            if (count == 2)
+            {
+                break;
+            }
+        }
+
+        // Assert
+        items.MatchSnapshot();
+    }
+    
+    [Fact]
+    public async Task WarehouseMutated_SubscriptionReceivesEvent_OnWarehouseCreate()
+    {
+        // Arrange & Act
+        using var cts = new CancellationTokenSource(1_000);
+        await using var result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                subscription{
+                  warehouseMutated{
+                    eventType
+                    warehouse{
+                      name
+                      location
+                    }
+                  }
+                }");
+
+        await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                mutation{
+                  createWarehouse(input:  {
+                         name: ""Normal Warehouse"",
+                         location: ""Lutskiy""
+                      }){
+                      name
+                      location
+                      __typename
+                      errors{
+                        ...on ValidationError{
+                          message
+                          errors{
+                            propertyName
+                            errorMessage
+                          }
+                        }
+                      }
+                    }
+                  }");
 
         var items = new List<object>();
         var count = 0;

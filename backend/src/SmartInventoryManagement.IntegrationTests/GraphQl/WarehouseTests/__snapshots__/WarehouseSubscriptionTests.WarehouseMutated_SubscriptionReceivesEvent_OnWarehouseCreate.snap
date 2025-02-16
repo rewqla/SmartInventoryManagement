@@ -1,0 +1,11 @@
+﻿[
+  {
+    "warehouseMutated": {
+      "eventType": "CREATED",
+      "warehouse": {
+        "name": "Normal Warehouse",
+        "location": "Lutskiy"
+      }
+    }
+  }
+]
