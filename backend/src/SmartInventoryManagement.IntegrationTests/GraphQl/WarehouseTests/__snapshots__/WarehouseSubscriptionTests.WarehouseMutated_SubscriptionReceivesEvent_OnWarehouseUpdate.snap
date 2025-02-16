@@ -1,0 +1,11 @@
+﻿[
+  {
+    "warehouseMutated": {
+      "eventType": "UPDATED",
+      "warehouse": {
+        "name": "Secret Warehouse",
+        "location": "Vinnytsia"
+      }
+    }
+  }
+]
