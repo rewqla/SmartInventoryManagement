@@ -74,7 +74,6 @@ public class WarehouseService : IWarehouseService
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
 
-        // todo: move to guid v7
         warehouseDto.Id = GuidV7.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 

@@ -32,8 +32,6 @@ public static class DependencyInjection
         var services = builder.Services;
 
         services.AddSwagger();
-        // todo: add ProblemExceptionHandler
-        // todo: update returning data not only for BadRequest (Validation, NotFound, Internal)
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>

@@ -330,9 +330,5 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
       // Assert
       result.ToJson().MatchSnapshot();
     }
-    
-    // #todo write query test with projection, pagination, filter, sorting
-    // #todo projection tests
-
-    // #todo write tests subscription
+    // #todo write projection tests
 }
