@@ -57,7 +57,7 @@ public class GraphQLServiceSetup: IAsyncLifetime
                 new Warehouse { Id = Guid.Parse("b24ab279-1fd3-4fb0-9107-8563612aee1f"), Name = "Warehouse B", Location = "Rivne" },
                 new Warehouse { Id = Guid.Parse("4e9ae812-9308-41e7-aaa5-32379c4c2b3d"), Name = "Warehouse C", Location = "Berlin" },
                 new Warehouse { Id = Guid.Parse("862038bf-9363-4552-92e8-2f05e9b2fe9e"), Name = "Warehouse D", Location = "Tokyo" },
-                new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse E", Location = "London" },
+                new Warehouse { Id = Guid.Parse("697f1876-2cbd-4c1e-a075-7554fe1977bc"), Name = "Warehouse E", Location = "London" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse F", Location = "Paris" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse G", Location = "Madrid" },
                 new Warehouse { Id = GuidV7.NewGuid(), Name = "Warehouse H", Location = "Rome" },

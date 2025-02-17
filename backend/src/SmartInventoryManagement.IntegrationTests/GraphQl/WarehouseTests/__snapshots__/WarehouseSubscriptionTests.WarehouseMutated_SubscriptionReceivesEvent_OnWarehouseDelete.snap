@@ -1,0 +1,11 @@
+﻿[
+  {
+    "warehouseMutated": {
+      "eventType": "DELETED",
+      "warehouse": {
+        "name": "Warehouse E",
+        "location": "London"
+      }
+    }
+  }
+]

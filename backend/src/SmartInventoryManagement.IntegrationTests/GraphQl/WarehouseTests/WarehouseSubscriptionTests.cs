@@ -230,5 +230,54 @@ public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
         items.MatchSnapshot();
     }
     
-    //todo: add delete subscription test
+    [Fact]
+    public async Task WarehouseMutated_SubscriptionReceivesEvent_OnWarehouseDelete()
+    {
+        // Arrange & Act
+        using var cts = new CancellationTokenSource(1_000);
+        await using var result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                subscription{
+                  warehouseMutated{
+                    eventType
+                    warehouse{
+                      name
+                      location
+                    }
+                  }
+                }");
+
+        await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
+                 mutation{
+                   deleteWarehouse(input:  {
+                      warehouseId: ""697f1876-2cbd-4c1e-a075-7554fe1977bc""
+                   }){
+                     boolean
+                     errors {
+                       __typename
+                       ... on EntityNotFoundError {
+                         message
+                       }
+                     }
+                   }
+                 }");
+
+        var items = new List<object>();
+        var count = 0;
+
+        await foreach (var item in result.ExpectResponseStream()
+                           .ReadResultsAsync().WithCancellation(cts.Token))
+        {
+            items.Add(item.Data);
+            count++;
+            if (count == 2)
+            {
+                break;
+            }
+        }
+
+        // Assert
+        items.MatchSnapshot();
+    }
 }
