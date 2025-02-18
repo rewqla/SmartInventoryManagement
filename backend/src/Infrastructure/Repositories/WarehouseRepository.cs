@@ -1,13 +1,12 @@
 ﻿using Infrastructure.Data;
-using Infrastructure.Interfaces.Repositories.Warehouse;
+using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories.Warehouse;
+namespace Infrastructure.Repositories;
 
 public class WarehouseRepository : GenericRepository<Entities.Warehouse>, IWarehouseRepository
 {
-    // todo: add Product repository
     private readonly InventoryContext _dbContext;
     public WarehouseRepository(InventoryContext dbContext) : base(dbContext)
     {

@@ -17,8 +17,8 @@ using Application.Validation.Warehouse;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
-using Infrastructure.Interfaces.Repositories.Warehouse;
-using Infrastructure.Repositories.Warehouse;
+using Infrastructure.Interfaces.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,8 +86,8 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
 
-        services
-            .AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
 
         return builder;
     }

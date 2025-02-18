@@ -19,8 +19,6 @@
     <ItemGroup>
       <Folder Include="Data\Migrations\" />
       <Folder Include="Data\Scripts\" />
-      <Folder Include="Interfaces\Repositories\Warehouse\" />
-      <Folder Include="Repositories\Warehouse\" />
     </ItemGroup>
 
     <ItemGroup>

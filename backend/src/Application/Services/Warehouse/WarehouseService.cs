@@ -6,8 +6,7 @@ using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Application.Validation.Warehouse;
-using FluentValidation;
-using Infrastructure.Interfaces.Repositories.Warehouse;
+using Infrastructure.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
