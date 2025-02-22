@@ -30,7 +30,8 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-
+        var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
+        
         services.AddSwagger();
         services.AddProblemDetails(options =>
         {
@@ -53,7 +54,7 @@ public static class DependencyInjection
         services.AddScoped<IReportService<Product>, ProductReportService>();
 
         services.AddSingleton<IDbConnectionFactory>(_ =>
-            new DbConnectionFactory(builder.Configuration.GetConnectionString("DefaultConnection")!));
+            new DbConnectionFactory(connectionString));
 
 
         return builder;
@@ -63,10 +64,11 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-
+        var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
+        
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("postgresql-custom-check")
-            .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!);
+            .AddNpgSql(connectionString);
 
         return builder;
     }
@@ -96,9 +98,10 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-
+        var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
+        
         services.AddDbContext<InventoryContext>(
-            options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options => options.UseNpgsql(connectionString));
 
         return builder;
     }
