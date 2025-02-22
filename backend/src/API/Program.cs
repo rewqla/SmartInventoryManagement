@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 QuestPDF.Settings.License = LicenseType.Community;
 
+//todo: add general try catch
+
 builder.ConfigureRepositories();
 builder.ConfigureServices();
 builder.ConfigureValidators();
@@ -22,11 +24,14 @@ var app = builder.Build();
 app.ConfigureMiddlewares();
 app.MapEndpoints();
 
-var applyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations");
+// todo: move to config.GetValue
+app.ApplyMigrations();
 
-if (applyMigrations)
+var generateScripts = builder.Configuration.GetValue<bool>("GenerateMigrationScripts");
+
+if (generateScripts)
 {
-    app.ApplyMigrationsAndGenerateScripts();
+    app.GenerateMigrationScripts();
 }
 
 app.RunWithGraphQLCommands(args);
