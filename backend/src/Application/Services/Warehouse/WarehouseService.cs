@@ -76,7 +76,6 @@ public class WarehouseService : IWarehouseService
         warehouseDto.Id = GuidV7.NewGuid();
         var warehouse = WarehouseMapper.ToEntity(warehouseDto);
 
-        // todo: add try catch to handle possible errors
         await _warehouseRepository.AddAsync(warehouse, cancellationToken);
         await _warehouseRepository.CompleteAsync();
 
