@@ -4,12 +4,12 @@ namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
 // Sends http requests to the Production db by WebApplicationFactory
 public class WarehouseEndpointsTests :
-    IClassFixture<WebApplicationFactory<IApiMarker>>, IClassFixture<WarehouseTestFixture>, IDisposable
+    IClassFixture<WebApplicationFactory<ISmartInventoryHost>>, IClassFixture<WarehouseTestFixture>, IDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly WarehouseTestFixture _testFixture;
 
-    public WarehouseEndpointsTests(WebApplicationFactory<IApiMarker> appFactory, WarehouseTestFixture testFixture)
+    public WarehouseEndpointsTests(WebApplicationFactory<ISmartInventoryHost> appFactory, WarehouseTestFixture testFixture)
     {
         _testFixture = testFixture;
         _httpClient = appFactory.CreateClient();

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests;
 
 public class IntegrationTestWebAppFactory
-    : WebApplicationFactory<IApiMarker>,
+    : WebApplicationFactory<ISmartInventoryHost>,
         IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()

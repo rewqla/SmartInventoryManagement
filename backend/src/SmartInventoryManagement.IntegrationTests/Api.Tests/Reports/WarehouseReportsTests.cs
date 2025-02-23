@@ -2,11 +2,11 @@
 
 // Sends http requests to the Production db by WebApplicationFactory
 public class WarehouseReportsTests :
-    IClassFixture<WebApplicationFactory<IApiMarker>>
+    IClassFixture<WebApplicationFactory<ISmartInventoryHost>>
 {
     private readonly HttpClient _httpClient;
 
-    public WarehouseReportsTests(WebApplicationFactory<IApiMarker> appFactory)
+    public WarehouseReportsTests(WebApplicationFactory<ISmartInventoryHost> appFactory)
     {
         _httpClient = appFactory.CreateClient();
     }
