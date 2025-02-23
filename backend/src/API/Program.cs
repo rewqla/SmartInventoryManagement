@@ -2,36 +2,45 @@ using API;
 using API.Extensions;
 using QuestPDF.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+    
+    builder.ConfigureRepositories();
+    builder.ConfigureServices();
+    builder.ConfigureValidators();
+    builder.ConfigureDatabase();
+    builder.AddHealthChecks();
+    builder.ConfigureGraphQL();
 
-QuestPDF.Settings.License = LicenseType.Community;
-
-//todo: add general try catch
-
-builder.ConfigureRepositories();
-builder.ConfigureServices();
-builder.ConfigureValidators();
-builder.ConfigureDatabase();
-builder.AddHealthChecks();
-builder.ConfigureGraphQL();
+    QuestPDF.Settings.License = LicenseType.Community;
 
 // todo: add serilog and magnify logging
 // todo: add request middleware for logging urls and methods
 // todo: add appsettings.Production.json 
 
-var app = builder.Build();
+    var app = builder.Build();
 
-app.ConfigureMiddlewares();
-app.MapEndpoints();
+    app.ConfigureMiddlewares();
+    app.MapEndpoints();
 
-// todo: move to config.GetValue
-app.ApplyMigrations();
+    app.ApplyMigrations();
 
-var generateScripts = builder.Configuration.GetValue<bool>("GenerateMigrationScripts");
+    var generateScripts = builder.Configuration.GetValue<bool>("GenerateMigrationScripts");
 
-if (generateScripts)
-{
-    app.GenerateMigrationScripts();
+    if (generateScripts)
+    {
+        app.GenerateMigrationScripts();
+    }
+
+    await app.RunAsync();
+    // app.RunWithGraphQLCommands(args);
 }
-
-app.RunWithGraphQLCommands(args);
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+    throw;
+}
+finally
+{
+}
