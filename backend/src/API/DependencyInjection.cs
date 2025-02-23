@@ -1,16 +1,17 @@
-﻿using System.Diagnostics;
-using API.Endpoints;
+﻿using API.Endpoints;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using API.Health;
 using Application.DTO.Warehouse;
 using Application.Interfaces;
+using Application.Interfaces.Authentication;
 using Application.Interfaces.Services.Product;
 using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Reports;
 using Application.Services;
+using Application.Services.Authentication;
 using Application.Services.Product;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -53,6 +54,7 @@ public static class DependencyInjection
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
 
+        services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(connectionString));
 
