@@ -1,4 +1,5 @@
-﻿namespace SmartInventoryManagement.Tests.Services;
+﻿
+namespace SmartInventoryManagement.Tests.Services;
 
 public class WarehouseServiceTests
 {

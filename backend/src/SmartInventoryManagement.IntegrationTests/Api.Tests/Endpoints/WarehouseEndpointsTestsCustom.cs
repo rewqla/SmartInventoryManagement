@@ -1,4 +1,5 @@
-﻿using Error = Application.Common.Error;
+﻿using SmartInventoryManagement.IntegrationTests.Common;
+using Error = Application.Common.Error;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
@@ -48,10 +49,10 @@ public class WarehouseEndpointsTestsCustom :
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
         errorResponse.Should().NotBeNull();
-        errorResponse!.Code.Should().Be("Warehouse.ValidationError");
-        errorResponse.Description.Should().Contain("Some validation problem occured");
+        errorResponse.Title.Should().Be("Warehouse.ValidationError");
+        errorResponse.Detail.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
         errorResponse.Errors.Should()
             .Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
@@ -88,13 +89,13 @@ public class WarehouseEndpointsTestsCustom :
             .GetAsync($"/api/warehouses/{id}");
 
         // Assert
-        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         errorResponse.Should().NotBeNull();
-        errorResponse!.Code.Should().Be("Warehouse.NotFound");
-        errorResponse!.Description.Should().Be($"The warehouse with Id '{id}' was not found");
+        errorResponse!.Title.Should().Be("Warehouse.NotFound");
+        errorResponse!.Detail.Should().Be($"The warehouse with Id '{id}' was not found");
     }
 
     [Fact]
@@ -124,10 +125,10 @@ public class WarehouseEndpointsTestsCustom :
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
         errorResponse.Should().NotBeNull();
-        errorResponse!.Code.Should().Be("Warehouse.NotFound");
-        errorResponse.Description.Should().Be($"The warehouse with Id '{nonExistentId}' was not found");
+        errorResponse!.Title.Should().Be("Warehouse.NotFound");
+        errorResponse.Detail.Should().Be($"The warehouse with Id '{nonExistentId}' was not found");
     }
 
     [Fact]
@@ -144,10 +145,10 @@ public class WarehouseEndpointsTestsCustom :
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
         errorResponse.Should().NotBeNull();
-        errorResponse!.Code.Should().Be("Warehouse.ValidationError");
-        errorResponse.Description.Should().Contain("Some validation problem occured");
+        errorResponse!.Title.Should().Be("Warehouse.ValidationError");
+        errorResponse.Detail.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
         errorResponse.Errors.Should()
             .Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
@@ -165,10 +166,10 @@ public class WarehouseEndpointsTestsCustom :
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<Error>();
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
         errorResponse.Should().NotBeNull();
-        errorResponse!.Code.Should().Be("Warehouse.NotFound");
-        errorResponse.Description.Should().Be($"The warehouse with Id '{nonExistentId}' was not found");
+        errorResponse!.Title.Should().Be("Warehouse.NotFound");
+        errorResponse.Detail.Should().Be($"The warehouse with Id '{nonExistentId}' was not found");
     }
 
     [Fact]

@@ -15,12 +15,12 @@ public static class WarehouseMapper
             Id = warehouse.Id,
             Name = warehouse.Name,
             Location = warehouse.Location,
-            Inventories = warehouse.Inventories.Select(i => new InventoryDTO
-            {
-                ProductId = i.ProductId,
-                ProductName = i.Product.Name, 
-                Quantity = i.Quantity
-            }).ToList()
+            // Inventories = warehouse.Inventories.Select(i => new InventoryDTO
+            // {
+            //     ProductId = i.ProductId,
+            //     ProductName = i.Product.Name, 
+            //     Quantity = i.Quantity
+            // }).ToList()
         };
     }
 

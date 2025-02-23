@@ -9,6 +9,6 @@ global using Application.Interfaces.Services.Report;
 global using Application.Services.Warehouse;
 global using Application.Validation.Warehouse;
 global using Infrastructure.Entities;
-global using Infrastructure.Interfaces.Repositories.Warehouse;
+global using Infrastructure.Interfaces.Repositories;
 global using SharedKernel;
 global using SmartInventoryManagement.Tests.Fakers;

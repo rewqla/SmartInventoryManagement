@@ -1,4 +1,5 @@
-﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl;
+﻿
+namespace SmartInventoryManagement.IntegrationTests.GraphQl;
 
 public class GraphQLServiceSetup: IAsyncLifetime
 {
