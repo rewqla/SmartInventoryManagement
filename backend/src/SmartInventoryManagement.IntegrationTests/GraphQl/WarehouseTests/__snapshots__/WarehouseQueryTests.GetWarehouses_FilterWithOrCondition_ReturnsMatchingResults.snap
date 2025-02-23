@@ -3,12 +3,12 @@
     "warehouse": {
       "items": [
         {
-          "name": "Warehouse A",
-          "location": "New York"
+          "name": "Warehouse I",
+          "location": "Amsterdam"
         },
         {
-          "name": "Warehouse B",
-          "location": "Rivne"
+          "name": "Warehouse K",
+          "location": "Sydney"
         }
       ],
       "totalCount": 2

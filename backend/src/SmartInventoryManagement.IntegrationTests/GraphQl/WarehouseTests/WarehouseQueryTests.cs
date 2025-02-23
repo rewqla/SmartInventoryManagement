@@ -1,13 +1,14 @@
 ﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
+[Collection("GraphQLServiceCollection")]
+public class WarehouseQueryTests
 {
-  private readonly GraphQLServiceSetup _graphQlServiceSetup;
+    private readonly GraphQLServiceSetup _graphQlServiceSetup;
 
-  public WarehouseQueryTests(GraphQLServiceSetup graphQlServiceSetup)
-  {
-    _graphQlServiceSetup = graphQlServiceSetup;
-  }
+    public WarehouseQueryTests(GraphQLServiceSetup graphQlServiceSetup)
+    {
+        _graphQlServiceSetup = graphQlServiceSetup;
+    }
 
     [Fact]
     public async Task GetWarehouses_FilterByLocation_ReturnsMatchingResults()
@@ -28,6 +29,7 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         // Assert
         result.ToJson().MatchSnapshot();
     }
+
     [Fact]
     public async Task GetWarehouses_FilterWithOrCondition_ReturnsMatchingResults()
     {
@@ -38,8 +40,8 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           warehouse(
             where: {
               or: [
-                { name: { contains: ""Warehouse A"" } },
-                { location: { eq: ""Rivne"" } }
+                { name: { contains: ""Warehouse K"" } },
+                { location: { eq: ""Amsterdam"" } }
               ]
             }
           ) {
@@ -54,6 +56,7 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         // Assert
         result.ToJson().MatchSnapshot();
     }
+
     [Fact]
     public async Task GetWarehouses_FilterWithAndCondition_ReturnsMatchingResults()
     {
@@ -63,9 +66,9 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         query {
           warehouse(
             where: {
-              or: [
-                { name: { contains: ""Warehouse B"" } },
-                { location: { eq: ""Rivne"" } }
+              and: [
+                { name: { contains: ""Warehouse K"" } },
+                { location: { eq: ""Sydney"" } }
               ]
             }
           ) {
@@ -80,12 +83,13 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         // Assert
         result.ToJson().MatchSnapshot();
     }
+
     [Fact]
     public async Task GetWarehouses_SortedByNameDescending_ReturnsSortedResults()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(order: [{ name: DESC }]) {
             items {
@@ -96,15 +100,16 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
+
     [Fact]
     public async Task GetWarehouses_FilteredAndSorted_ReturnsFilteredAndSortedResults()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(
             where: { location: { eq: ""London"" } },
@@ -118,16 +123,16 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_NoResultsForFilter_ReturnsEmpty()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(where: { location: { eq: ""NonExistentLocation"" } }) {
             items {
@@ -138,10 +143,10 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouseById_ReturnWarehouse_WhenExists()
     {
@@ -160,7 +165,7 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
         // Assert
         result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouseById_ReturnsNull_WhenNotExists()
     {
@@ -178,17 +183,17 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
               }}
             }}
         ");
-        
+
         // Assert
         result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_TakeForty_ReturnsExceedError()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 40) {
             items {
@@ -199,32 +204,32 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_TotalCount_ReturnsCorrectValue()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 20) {
             totalCount
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_TakeZero_ReturnsEmpty()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 0) {
             items {
@@ -235,16 +240,16 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_TakeTen_ReturnsRelevantCount()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 10,
             order: [{ name: ASC }]) {
@@ -256,17 +261,17 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
-    
+
+
     [Fact]
     public async Task GetWarehouses_Pagination_ReturnsPageInfoCorrectly()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 5,
             order: [{ name: ASC }]) {
@@ -282,16 +287,16 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_SkipFive_ReturnsCorrectSubset()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 10, skip: 5,
             order: [{ name: ASC }]) {
@@ -302,16 +307,16 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
-    
+
     [Fact]
     public async Task GetWarehouses_Pagination_TakeSkip_TotalCount_PageInfo_ReturnsCorrectResponse()
     {
-      // Arrange & Act
-      IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
-        @"
+        // Arrange & Act
+        IExecutionResult result = await _graphQlServiceSetup.RequestExecutor.ExecuteAsync(
+            @"
         query {
           warehouse(take: 10, skip: 5,
             order: [{ name: ASC }]) {
@@ -327,8 +332,8 @@ public class WarehouseQueryTests: IClassFixture<GraphQLServiceSetup>
           }
         }");
 
-      // Assert
-      result.ToJson().MatchSnapshot();
+        // Assert
+        result.ToJson().MatchSnapshot();
     }
     // #todo write projection tests
 }

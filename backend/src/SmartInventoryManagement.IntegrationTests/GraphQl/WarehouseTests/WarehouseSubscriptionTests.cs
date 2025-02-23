@@ -1,6 +1,7 @@
 ﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
+[Collection("GraphQLServiceCollection")]
+public class WarehouseSubscriptionTests
 {
     private readonly GraphQLServiceSetup _graphQlServiceSetup;
 
@@ -8,7 +9,6 @@ public class WarehouseSubscriptionTests : IClassFixture<GraphQLServiceSetup>
     {
         _graphQlServiceSetup = graphQlServiceSetup;
     }
-
 
     [Fact]
     public async Task WarehouseCreated_SubscriptionReceivesEvent()

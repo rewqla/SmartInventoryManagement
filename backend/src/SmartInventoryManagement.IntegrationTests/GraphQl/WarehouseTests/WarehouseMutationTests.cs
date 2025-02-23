@@ -1,6 +1,7 @@
 ﻿namespace SmartInventoryManagement.IntegrationTests.GraphQl.WarehouseTests;
 
-public class WarehouseMutationTests: IClassFixture<GraphQLServiceSetup>
+[Collection("GraphQLServiceCollection")]
+public class WarehouseMutationTests
 {
     private readonly GraphQLServiceSetup _graphQlServiceSetup;
 
