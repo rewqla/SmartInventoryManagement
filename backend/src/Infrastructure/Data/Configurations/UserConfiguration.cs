@@ -26,5 +26,9 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.HasIndex(p => p.Phone)
             .IsUnique();
+        
+        builder.HasMany(e => e.RefreshTokens)
+            .WithOne(o=>o.User)
+            .HasForeignKey(f => f.UserId);
     }
 }

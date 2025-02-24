@@ -12,4 +12,6 @@ public sealed class User : BaseEntity
 
     public Guid RoleId { get; set; }
     public Role Role { get; set; } = null!;
+    
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>(); 
 }
