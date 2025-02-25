@@ -26,7 +26,7 @@ try
 
     app.ApplyMigrations();
 
-    var generateScripts = builder.Configuration.GetValue<bool>("GenerateMigrationScripts");
+    var generateScripts = builder.Configuration.GetValue<bool>("Database:GenerateMigrationScripts");
 
     if (generateScripts)
     {
