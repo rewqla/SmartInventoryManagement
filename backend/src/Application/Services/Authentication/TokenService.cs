@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
@@ -54,6 +55,6 @@ public class TokenService : ITokenService
 
     public string GenerateRefreshToken()
     {
-        throw new NotImplementedException();
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }
