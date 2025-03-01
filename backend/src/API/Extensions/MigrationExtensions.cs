@@ -19,6 +19,15 @@ internal static class MigrationExtensions
         if (pendingMigrations.Count != 0)
         {
             dbContext.Database.Migrate();
+            
+            var generateScripts = app.ApplicationServices.GetRequiredService<IConfiguration>()
+                .GetValue<bool>("Database:GenerateMigrationScripts");
+
+            if (generateScripts)
+            {
+                GenerateMigrationScripts(dbContext);
+            }
+            
             Console.WriteLine("Migrations applied to the database.");
         }
         else
@@ -27,11 +36,8 @@ internal static class MigrationExtensions
         }
     }
 
-    internal static void GenerateMigrationScripts(this IApplicationBuilder app)
+    internal static void GenerateMigrationScripts(InventoryContext dbContext)
     {
-        using IServiceScope scope = app.ApplicationServices.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<InventoryContext>();
-
         var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
         
         if (appliedMigrations.Count < 2)
