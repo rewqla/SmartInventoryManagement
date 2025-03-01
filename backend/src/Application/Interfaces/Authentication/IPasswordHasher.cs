@@ -1,6 +1,6 @@
 ﻿namespace Application.Interfaces.Authentication;
 
-internal interface IPasswordHasher
+public interface IPasswordHasher
 {
     string Hash(string password);
 

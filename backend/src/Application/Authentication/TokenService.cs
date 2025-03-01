@@ -20,10 +20,13 @@ public class TokenService : ITokenService
 
     public string GenerateJwtToken(User user)
     {
+        //todo: make issuer, audience optional
+        //todo: add secretKey check at least 32 bytes
         var secretKey = _configuration["Jwt:Secret"];
         var issuer = _configuration["Jwt:Issuer"];
         var audience = _configuration["Jwt:Audience"];
  
+        //todo: add AccessTokenLifetime check if not null
         var accessTokenLifetime = TimeSpan.Parse(_configuration["Jwt:AccessTokenLifetime"]);
         var expirationTime = DateTime.UtcNow.Add(accessTokenLifetime); 
 

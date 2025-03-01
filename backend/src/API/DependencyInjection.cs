@@ -3,6 +3,7 @@ using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using API.Health;
+using Application.Authentication;
 using Application.DTO.Warehouse;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
@@ -51,8 +52,10 @@ public static class DependencyInjection
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IDbConnectionFactory>(_ =>
