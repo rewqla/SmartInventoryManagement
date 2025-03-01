@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Reports;
+﻿using API.Endpoints.Auth;
+using API.Endpoints.Reports;
 using API.Endpoints.Warehouse;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -11,6 +12,8 @@ public static class EndpointsExtensions
     {
         app.MapWarehouseEndpoints();
         app.MapReportEndpoints();
+        app.MapAuthEndpoints();
+        
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
