@@ -12,12 +12,14 @@ public class AuthenticationService : IAuthenticationService
     private readonly IUserRepository _userRepository; 
     private readonly IPasswordHasher _passwordHasher; 
     private readonly ITokenService _tokenService;
-
-    public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher, IUserRepository userRepository)
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    
+    public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
         _userRepository = userRepository;
+        _refreshTokenRepository = refreshTokenRepository;
     }
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
@@ -39,8 +41,10 @@ public class AuthenticationService : IAuthenticationService
 
         var accessToken = _tokenService.GenerateJwtToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken(user);
+        
         //todo: finish adding refresh token
-
+        await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
+        
         //todo: store refresh tokens in the db
         //todo: add role check for endpoints
         //todo: delete old revoke tokens from the db
