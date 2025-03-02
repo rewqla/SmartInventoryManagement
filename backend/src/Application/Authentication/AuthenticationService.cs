@@ -3,6 +3,7 @@ using Application.DTO.Authentication;
 using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using SharedKernel;
 
 namespace Application.Authentication;
@@ -45,7 +46,7 @@ public class AuthenticationService : IAuthenticationService
         //todo: finish adding refresh token
         await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
         
-        //todo: store refresh tokens in the db
+        //todo: add unit tests
         //todo: add role check for endpoints
         //todo: delete old revoke tokens from the db
 
@@ -53,6 +54,39 @@ public class AuthenticationService : IAuthenticationService
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken.Token
+        };
+
+        return Result<AuthenticationDTO>.Success(response);
+    }
+
+    public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
+    {
+        var existingRefreshToken = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken);
+        
+        if (existingRefreshToken == null || existingRefreshToken.ExpiresOnUtc < DateTime.UtcNow)
+        {
+            //todo: update Error code
+            return Result<AuthenticationDTO>.Failure(new Error("InvalidToken", "Refresh token is invalid or expired."));
+        }
+
+        var user = await _userRepository.GetByIdWithRoles(existingRefreshToken.UserId);
+        if (user == null)
+        {
+            //todo: update Error code
+            return Result<AuthenticationDTO>.Failure(new Error("User.NotFound", "User not found."));
+        }
+
+        var accessToken = _tokenService.GenerateJwtToken(user);
+        var newRefreshToken = _tokenService.GenerateRefreshToken(user);
+
+        await _refreshTokenRepository.SaveRefreshTokenAsync(newRefreshToken);
+
+        //todo: remove expired refresh tokens
+        
+        var response = new AuthenticationDTO
+        {
+            AccessToken = accessToken,
+            RefreshToken = newRefreshToken.Token
         };
 
         return Result<AuthenticationDTO>.Success(response);
