@@ -42,7 +42,8 @@ public class AuthenticationService : IAuthenticationService
 
         var accessToken = _tokenService.GenerateJwtToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken(user);
-        
+
+        await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
         //todo: finish adding refresh token
         await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
         
@@ -79,6 +80,7 @@ public class AuthenticationService : IAuthenticationService
         var accessToken = _tokenService.GenerateJwtToken(user);
         var newRefreshToken = _tokenService.GenerateRefreshToken(user);
 
+        await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
         await _refreshTokenRepository.SaveRefreshTokenAsync(newRefreshToken);
 
         //todo: remove expired refresh tokens

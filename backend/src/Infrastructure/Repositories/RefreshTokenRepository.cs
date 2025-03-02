@@ -21,12 +21,16 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task RemoveOldRefreshTokensAsync(Guid userId)
+    public async Task DeleteByUserIdAsync(Guid userId)
     {
-        var oldTokens = _context.RefreshTokens.Where(rt => rt.UserId == userId);
-        _context.RefreshTokens.RemoveRange(oldTokens);
-        
-        await _context.SaveChangesAsync();
+        var tokens = _context.RefreshTokens.Where(rt => rt.UserId == userId);
+       
+        if (tokens.Any())
+        {
+            _context.RefreshTokens.RemoveRange(tokens);
+            await _context.SaveChangesAsync();
+
+        }
     }
 
     public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
