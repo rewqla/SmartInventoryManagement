@@ -3,6 +3,7 @@ using Application.DTO.Authentication;
 using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
+using SharedKernel;
 
 namespace Application.Authentication;
 
@@ -37,17 +38,17 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var accessToken = _tokenService.GenerateJwtToken(user);
-        
+        var refreshToken = _tokenService.GenerateRefreshToken(user);
         //todo: finish adding refresh token
-        var refreshToken = _tokenService.GenerateRefreshToken();
 
         //todo: store refresh tokens in the db
         //todo: add role check for endpoints
+        //todo: delete old revoke tokens from the db
 
         var response = new AuthenticationDTO
         {
             AccessToken = accessToken,
-            RefreshToken = null
+            RefreshToken = refreshToken.Token
         };
 
         return Result<AuthenticationDTO>.Success(response);

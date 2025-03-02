@@ -6,6 +6,7 @@ using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SharedKernel;
 
 namespace Application.Services.Authentication;
 
@@ -56,8 +57,15 @@ public class TokenService : ITokenService
         return handler.WriteToken(token);
     }
 
-    public string GenerateRefreshToken()
+    public RefreshToken  GenerateRefreshToken(User user)
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        //todo: add RefreshTokenLifetime check if not null
+        return new RefreshToken
+        {
+            Id = GuidV7.NewGuid(),
+            UserId = user.Id,
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)),
+            ExpiresOnUtc = DateTime.UtcNow.Add(TimeSpan.Parse(_configuration["Jwt:RefreshTokenLifetime"]))
+        };
     }
 }

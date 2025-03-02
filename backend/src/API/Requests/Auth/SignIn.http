@@ -3,7 +3,7 @@ POST {{baseUrl}}/api/auth/signin
 Content-Type: application/json
 
 {
-  "emailOrPhone": "09827654321",
+  "emailOrPhone": "0987654321",
   "password": "123456"
 }
 
