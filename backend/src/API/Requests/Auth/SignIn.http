@@ -1,4 +1,10 @@
-﻿### Refresh token
-POST {{baseUrl}}/api/auth/refresh-token?refreshToken=noNEnnVIBZUCr78D5Ffo/LOyYzETYNbSqVo55eigQGE=
+﻿### Sign In
+POST {{baseUrl}}/api/auth/signin
+Content-Type: application/json
+
+{
+  "emailOrPhone": "0987654321",
+  "password": "123456"
+}
 
 ###

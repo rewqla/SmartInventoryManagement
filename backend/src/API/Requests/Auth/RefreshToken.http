@@ -1,0 +1,5 @@
+﻿### Refresh token
+POST {{baseUrl}}/api/auth/refresh-token?refreshToken=7UGLRpFRa39rQ1IWSL7PAahmLeA3XypOrIP4rw6zFUg=
+
+
+###
