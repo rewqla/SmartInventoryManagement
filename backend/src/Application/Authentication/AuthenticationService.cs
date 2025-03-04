@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.DTO.Authentication;
+using Application.Exceptions;
 using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
@@ -10,12 +11,13 @@ namespace Application.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly IUserRepository _userRepository; 
-    private readonly IPasswordHasher _passwordHasher; 
+    private readonly IUserRepository _userRepository;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    
-    public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
+
+    public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
+        IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
@@ -30,8 +32,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (user == null)
         {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("User.NotFound", "User not found"));
+            return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
         if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
@@ -41,15 +42,23 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var accessToken = _tokenService.GenerateJwtToken(user);
-        var refreshToken = _tokenService.GenerateRefreshToken(user);
+
+        RefreshToken refreshToken;
+        try
+        {
+            refreshToken = _tokenService.GenerateRefreshToken(user);
+        }
+        catch (Exception ex)
+        {
+            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
+                $"Failed to generate refresh token: {ex.Message}"));
+        }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
-        //todo: finish adding refresh token
         await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
-        
+
         //todo: add unit tests
         //todo: add role check for endpoints
-        //todo: delete old revoke tokens from the db
 
         var response = new AuthenticationDTO
         {
@@ -63,7 +72,7 @@ public class AuthenticationService : IAuthenticationService
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken);
-        
+
         if (existingRefreshToken == null || existingRefreshToken.ExpiresOnUtc < DateTime.UtcNow)
         {
             //todo: update Error code
@@ -73,18 +82,25 @@ public class AuthenticationService : IAuthenticationService
         var user = await _userRepository.GetByIdWithRoles(existingRefreshToken.UserId);
         if (user == null)
         {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("User.NotFound", "User not found."));
+            return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
         var accessToken = _tokenService.GenerateJwtToken(user);
-        var newRefreshToken = _tokenService.GenerateRefreshToken(user);
+
+        RefreshToken newRefreshToken;
+        try
+        {
+            newRefreshToken = _tokenService.GenerateRefreshToken(user);
+        }
+        catch (Exception ex)
+        {
+            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
+                $"Failed to generate refresh token: {ex.Message}"));
+        }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
         await _refreshTokenRepository.SaveRefreshTokenAsync(newRefreshToken);
 
-        //todo: remove expired refresh tokens
-        
         var response = new AuthenticationDTO
         {
             AccessToken = accessToken,

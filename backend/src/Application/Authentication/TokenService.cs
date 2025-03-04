@@ -26,10 +26,10 @@ public class TokenService : ITokenService
         var secretKey = _configuration["Jwt:Secret"];
         var issuer = _configuration["Jwt:Issuer"];
         var audience = _configuration["Jwt:Audience"];
- 
-        //todo: add AccessTokenLifetime check if not null
+
+        //todo: add AccessTokenLifetime check if not null, parse, if bigger than 0
         var accessTokenLifetime = TimeSpan.Parse(_configuration["Jwt:AccessTokenLifetime"]);
-        var expirationTime = DateTime.UtcNow.Add(accessTokenLifetime); 
+        var expirationTime = DateTime.UtcNow.Add(accessTokenLifetime);
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
@@ -41,7 +41,7 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Role, user.Role.Name),
         };
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
@@ -50,22 +50,38 @@ public class TokenService : ITokenService
             Audience = audience,
             SigningCredentials = credentials
         };
-        
+
         var handler = new JwtSecurityTokenHandler();
         var token = handler.CreateToken(tokenDescriptor);
-        
+
         return handler.WriteToken(token);
     }
 
-    public RefreshToken  GenerateRefreshToken(User user)
+    public RefreshToken GenerateRefreshToken(User user)
     {
-        //todo: add RefreshTokenLifetime check if not null
+        var refreshTokenLifetimeStr = _configuration["Jwt:RefreshTokenLifetime"];
+    
+        if (string.IsNullOrWhiteSpace(refreshTokenLifetimeStr))
+        {
+            throw new InvalidOperationException("RefreshTokenLifetime is not configured properly.");
+        }
+
+        if (!TimeSpan.TryParse(refreshTokenLifetimeStr, out var refreshTokenLifetime))
+        {
+            throw new FormatException("RefreshTokenLifetime has an invalid format.");
+        }
+        
+        if (refreshTokenLifetime <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(refreshTokenLifetime), "RefreshTokenLifetime must be greater than zero.");
+        }
+
         return new RefreshToken
         {
             Id = GuidV7.NewGuid(),
             UserId = user.Id,
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)),
-            ExpiresOnUtc = DateTime.UtcNow.Add(TimeSpan.Parse(_configuration["Jwt:RefreshTokenLifetime"]))
+            ExpiresOnUtc = DateTime.UtcNow.Add(refreshTokenLifetime)
         };
     }
 }
