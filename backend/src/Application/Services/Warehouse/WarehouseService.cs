@@ -37,7 +37,7 @@ public class WarehouseService : IWarehouseService
         if (warehouse == null)
         {
             _logger.LogError($"Warehouse with id {id} not found");
-            return Result<WarehouseDTO>.Failure(CommonErrors.NotFound("warehouse", id));
+            return Result<WarehouseDTO>.Failure(CommonErrors.NotFoundById("warehouse", id));
         }
 
         _logger.LogInformation("Warehouse with id " + id + " retrieved");
@@ -102,7 +102,7 @@ public class WarehouseService : IWarehouseService
 
         if (warehouse == null)
         {
-            return Result<WarehouseDTO>.Failure(CommonErrors.NotFound("Warehouse", warehouseDto.Id));
+            return Result<WarehouseDTO>.Failure(CommonErrors.NotFoundById("Warehouse", warehouseDto.Id));
         }
 
         warehouse.Name = warehouseDto.Name;
@@ -120,7 +120,7 @@ public class WarehouseService : IWarehouseService
 
         if (warehouse == null)
         {
-            return Result<bool>.Failure(CommonErrors.NotFound("warehouse", id));
+            return Result<bool>.Failure(CommonErrors.NotFoundById("warehouse", id));
         }
 
         _warehouseRepository.Delete(warehouse);
