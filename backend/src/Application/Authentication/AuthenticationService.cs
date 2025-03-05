@@ -41,8 +41,19 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(new Error("InvalidCredentials", "Incorrect password"));
         }
 
-        var accessToken = _tokenService.GenerateJwtToken(user);
+        string accessToken;
+        try
+        {
+            accessToken = _tokenService.GenerateJwtToken(user);
+        }
+        catch (Exception ex)
+        {
+            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
+                $"Failed to generate access token: {ex.Message}"));
+        }
 
+        //todo: write unit tests for timespan
+        
         RefreshToken refreshToken;
         try
         {
@@ -85,8 +96,17 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
-        var accessToken = _tokenService.GenerateJwtToken(user);
-
+        string accessToken;
+        try
+        {
+            accessToken = _tokenService.GenerateJwtToken(user);
+        }
+        catch (Exception ex)
+        {
+            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
+                $"Failed to generate access token: {ex.Message}"));
+        }
+        
         RefreshToken newRefreshToken;
         try
         {

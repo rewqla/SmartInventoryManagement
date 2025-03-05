@@ -14,4 +14,5 @@ internal static class AuthEndpoints
 
 //todo: add user endpoints: edit-user, update user role...
 
-//todo: expiration, refresh, issuer, audience as env variable
+//todo: finish endpoints
+

@@ -22,17 +22,28 @@ public class TokenService : ITokenService
     public string GenerateJwtToken(User user)
     {
         //todo: make issuer, audience optional
-        //todo: add secretKey check at least 32 bytes
         var secretKey = _configuration["Jwt:Secret"];
         var issuer = _configuration["Jwt:Issuer"];
         var audience = _configuration["Jwt:Audience"];
-
-        //todo: add AccessTokenLifetime check if not null, parse, if bigger than 0
-        var accessTokenLifetime = TimeSpan.Parse(_configuration["Jwt:AccessTokenLifetime"]);
+        var accessTokenLifetimeStr = _configuration["Jwt:AccessTokenLifetime"];
+        
+        if (string.IsNullOrWhiteSpace(secretKey) || Encoding.UTF8.GetByteCount(secretKey) < 32)
+        {
+            throw new InvalidOperationException("Secret key must be at least 32 bytes long.");
+        }
+        
+        if (!TimeSpan.TryParse(accessTokenLifetimeStr, out var accessTokenLifetime) )
+        {
+            throw new InvalidOperationException("AccessTokenLifetime must be a valid TimeSpan.");
+        }
+        
+        if (accessTokenLifetime <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(accessTokenLifetimeStr), "AccessTokenLifetime must be greater than zero.");
+        }
+        
         var expirationTime = DateTime.UtcNow.Add(accessTokenLifetime);
-
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -61,11 +72,6 @@ public class TokenService : ITokenService
     {
         var refreshTokenLifetimeStr = _configuration["Jwt:RefreshTokenLifetime"];
     
-        if (string.IsNullOrWhiteSpace(refreshTokenLifetimeStr))
-        {
-            throw new InvalidOperationException("RefreshTokenLifetime is not configured properly.");
-        }
-
         if (!TimeSpan.TryParse(refreshTokenLifetimeStr, out var refreshTokenLifetime))
         {
             throw new FormatException("RefreshTokenLifetime has an invalid format.");
