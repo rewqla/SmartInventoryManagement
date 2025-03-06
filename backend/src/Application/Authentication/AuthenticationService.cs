@@ -27,18 +27,23 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
     {
-        //todo: add user validation
         var user = await _userRepository.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone);
 
         if (user == null)
         {
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
-
+        
         if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
         {
             //todo: update Error code
             return Result<AuthenticationDTO>.Failure(new Error("InvalidCredentials", "Incorrect password"));
+        }
+        
+        if (user.Role is null)
+        {
+            //todo: update Error code
+            return Result<AuthenticationDTO>.Failure(new Error("UserHasNoRole", "User must have a valid role."));
         }
 
         string accessToken;
@@ -52,8 +57,8 @@ public class AuthenticationService : IAuthenticationService
                 $"Failed to generate access token: {ex.Message}"));
         }
 
-        //todo: write unit tests for timespan
-        
+        //todo: write unit tests for timespan 
+
         RefreshToken refreshToken;
         try
         {
@@ -96,6 +101,12 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
+        if (user.Role is null)
+        {
+            //todo: update Error code
+            return Result<AuthenticationDTO>.Failure(new Error("UserHasNoRole", "User must have a valid role."));
+        }
+        
         string accessToken;
         try
         {
@@ -106,7 +117,7 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
                 $"Failed to generate access token: {ex.Message}"));
         }
-        
+
         RefreshToken newRefreshToken;
         try
         {
