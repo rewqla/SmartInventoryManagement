@@ -60,7 +60,36 @@ public class AuthenticationServiceTests
         result.Error.Code.Should().Be("User.NotFound");
     }
     
-  
+    [Fact]
+    public async Task SignInAsync_PasswordVerificationFails_ReturnsInvalidCredentialsError()
+    {
+        // Arrange
+        var user = new UserFaker().Generate(); 
+        var signInDTO = new SignInDTO 
+        { 
+            EmailOrPhone = user.Email, 
+            Password = "wrongPassword"
+        };
+
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone))
+            .ReturnsAsync(user);
+
+        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash))
+            .Returns(false); 
+
+        // Act
+        var result = await _authenticationService.SignInAsync(signInDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.InvalidCredentials");
+        result.Error.Description.Should().Be("Incorrect password");
+    
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
+        _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Never);
+    }
+
     
     //todo:  write tests for token service
 }
