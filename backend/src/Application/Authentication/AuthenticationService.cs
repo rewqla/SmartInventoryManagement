@@ -3,9 +3,7 @@ using Application.DTO.Authentication;
 using Application.Exceptions;
 using Application.Interfaces.Authentication;
 using Infrastructure.Entities;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
-using SharedKernel;
 
 namespace Application.Authentication;
 
@@ -33,17 +31,10 @@ public class AuthenticationService : IAuthenticationService
         {
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
-        
+
         if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
         {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("InvalidCredentials", "Incorrect password"));
-        }
-        
-        if (user.Role is null)
-        {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("UserHasNoRole", "User must have a valid role."));
+            return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
         }
 
         string accessToken;
@@ -53,8 +44,7 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
-                $"Failed to generate access token: {ex.Message}"));
+            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
         }
 
         //todo: write unit tests for timespan 
@@ -66,8 +56,7 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
-                $"Failed to generate refresh token: {ex.Message}"));
+            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("refresh", ex.Message));
         }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
@@ -91,8 +80,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (existingRefreshToken == null || existingRefreshToken.ExpiresOnUtc < DateTime.UtcNow)
         {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("InvalidToken", "Refresh token is invalid or expired."));
+            return Result<AuthenticationDTO>.Failure(TokenErrors.InvalidOrExpiredRefreshToken());
         }
 
         var user = await _userRepository.GetByIdWithRoles(existingRefreshToken.UserId);
@@ -101,12 +89,6 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
-        if (user.Role is null)
-        {
-            //todo: update Error code
-            return Result<AuthenticationDTO>.Failure(new Error("UserHasNoRole", "User must have a valid role."));
-        }
-        
         string accessToken;
         try
         {
@@ -114,8 +96,7 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
-                $"Failed to generate access token: {ex.Message}"));
+            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
         }
 
         RefreshToken newRefreshToken;
@@ -125,8 +106,7 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(new Error("TokenGenerationError",
-                $"Failed to generate refresh token: {ex.Message}"));
+            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("refresh", ex.Message));
         }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
@@ -141,3 +121,5 @@ public class AuthenticationService : IAuthenticationService
         return Result<AuthenticationDTO>.Success(response);
     }
 }
+
+//todo: add job that will clear expired tokens once a day  
