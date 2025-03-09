@@ -284,6 +284,7 @@ public class WarehouseServiceTests
             Name = "Test Warehouse",
             Location = "Test Location"
         };
+        
         // Act
         var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
