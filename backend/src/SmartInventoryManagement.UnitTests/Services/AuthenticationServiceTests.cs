@@ -24,26 +24,6 @@ public class AuthenticationServiceTests
                 _refreshTokenRepository.Object);
     }
 
-    // [Fact]
-    public async Task SignInAsync_Success_ReturnsAuthenticationDTO()
-    {
-        // Arrange
-        var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO { EmailOrPhone = "user@example.com", Password = "password" };
-        var refreshToken = new RefreshToken { Token = "refreshToken", ExpiresOnUtc = DateTime.UtcNow.AddDays(30) };
-        
-        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
-        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
-
-        _refreshTokenRepository.Setup(x => x.DeleteByUserIdAsync(user.Id)).Returns(Task.CompletedTask);
-        
-        // Act
-        var result = await _authenticationService.SignInAsync(signInDTO);
-        
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-    }
-
     [Fact]
     public async Task SignInAsync_UserNotFound_ReturnsFailure()
     {
@@ -117,5 +97,64 @@ public class AuthenticationServiceTests
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
     }
     
+    [Fact]
+    public async Task SignInAsync_RefreshTokenGenerationFails_ReturnsTokenGenerationError()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
 
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
+        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
+        _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("validAccessToken");
+        _tokenService.Setup(x => x.GenerateRefreshToken(user))
+            .Throws(new Exception("Unexpected error during refresh token generation"));
+        
+        // Act
+        var result = await _authenticationService.SignInAsync(signInDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.TokenGenerationError");
+        result.Error.Description.Should().Contain("Unexpected error during refresh token generation");
+
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
+        _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
+        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task SignInAsync_Success_ReturnsAuthenticationDTO()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
+        var refreshToken = new RefreshToken { Token = "refreshToken", ExpiresOnUtc = DateTime.UtcNow.AddDays(30) };
+
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
+        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
+        _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("accessToken");
+        _tokenService.Setup(x => x.GenerateRefreshToken(user)).Returns(refreshToken);
+        _refreshTokenRepository.Setup(x => x.DeleteByUserIdAsync(user.Id)).Returns(Task.CompletedTask);
+        _refreshTokenRepository.Setup(x => x.SaveRefreshTokenAsync(refreshToken)).Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _authenticationService.SignInAsync(signInDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.AccessToken.Should().Be("accessToken");
+        result.Value!.RefreshToken.Should().Be("refreshToken");
+
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
+        _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
+        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
+        _refreshTokenRepository.Verify(x => x.DeleteByUserIdAsync(user.Id), Times.Once);
+        _refreshTokenRepository.Verify(x => x.SaveRefreshTokenAsync(refreshToken), Times.Once);
+    }
+    
+    //todo: write tests for the refresh method
 }
