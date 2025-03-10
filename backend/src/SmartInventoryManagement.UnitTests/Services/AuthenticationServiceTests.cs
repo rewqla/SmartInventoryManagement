@@ -156,5 +156,21 @@ public class AuthenticationServiceTests
         _refreshTokenRepository.Verify(x => x.SaveRefreshTokenAsync(refreshToken), Times.Once);
     }
     
-    //todo: write tests for the refresh method
+    [Fact]
+    public async Task RefreshTokenAsync_TokenDoesNotExist_ReturnsFailure()
+    {
+        // Arrange
+        var refreshToken = "invalidToken";
+        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken))
+            .ReturnsAsync((RefreshToken)null);
+
+        // Act
+        var result = await _authenticationService.RefreshTokenAsync(refreshToken);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.InvalidRefreshToken");
+
+        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken), Times.Once);
+    }
 }
