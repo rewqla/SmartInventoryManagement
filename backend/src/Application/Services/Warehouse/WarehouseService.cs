@@ -16,17 +16,17 @@ namespace Application.Services.Warehouse;
 public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
-    private readonly IValidator<WarehouseDTO> _warehouseDTOValidator;
+    private readonly WarehouseDTOValidator _warehouseDTOValidator;
     private readonly ILogger<WarehouseService> _logger;
     private readonly IReportService<WarehouseDTO> _warehouseReportService;
 
     public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
-        IReportService<WarehouseDTO> warehouseReportService, IValidator<WarehouseDTO> warehouseDTOValidator)
+        WarehouseDTOValidator warehouseDtoValidator, IReportService<WarehouseDTO> warehouseReportService)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
+        _warehouseDTOValidator = warehouseDtoValidator;
         _warehouseReportService = warehouseReportService;
-        _warehouseDTOValidator = warehouseDTOValidator;
     }
 
     public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
