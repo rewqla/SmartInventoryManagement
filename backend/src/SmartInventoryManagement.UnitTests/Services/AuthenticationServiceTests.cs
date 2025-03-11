@@ -173,4 +173,42 @@ public class AuthenticationServiceTests
 
         _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken), Times.Once);
     }
+    
+    [Fact]
+    public async Task RefreshTokenAsync_TokenIsExpired_ReturnsFailure()
+    {
+        // Arrange
+        var expiredRefreshToken = new RefreshToken { Token = "expiredToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(-5) };
+        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token))
+            .ReturnsAsync(expiredRefreshToken);
+
+        // Act
+        var result = await _authenticationService.RefreshTokenAsync(expiredRefreshToken.Token);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.InvalidRefreshToken");
+
+        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token), Times.Once);
+    }
+    
+    [Fact]
+    public async Task RefreshTokenAsync_UserNotFound_ReturnsFailure()
+    {
+        // Arrange
+        var refreshToken = new RefreshToken { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
+        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
+        _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync((User)null);
+
+        // Act
+        var result = await _authenticationService.RefreshTokenAsync(refreshToken.Token);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("User.NotFound");
+
+        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken.Token), Times.Once);
+        _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
+    }
+
 }
