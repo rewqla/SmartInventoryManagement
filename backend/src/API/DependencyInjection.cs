@@ -1,4 +1,5 @@
-﻿using API.Endpoints;
+﻿using System.Reflection;
+using API.Endpoints;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
@@ -16,6 +17,7 @@ using Application.Services.Authentication;
 using Application.Services.Product;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
+using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
@@ -60,8 +62,9 @@ public static class DependencyInjection
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(connectionString));
-
-
+        
+        services.AddValidatorsFromAssembly(typeof(WarehouseDTOValidator).Assembly);
+        
         return builder;
     }
 
@@ -74,16 +77,6 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("postgresql-custom-check")
             .AddNpgSql(connectionString);
-
-        return builder;
-    }
-
-    public static WebApplicationBuilder ConfigureValidators(this WebApplicationBuilder builder)
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-        var services = builder.Services;
-
-        services.AddScoped<WarehouseDTOValidator>();
 
         return builder;
     }

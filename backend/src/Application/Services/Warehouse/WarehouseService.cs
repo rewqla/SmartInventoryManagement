@@ -6,6 +6,7 @@ using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
 using Application.Validation.Warehouse;
+using FluentValidation;
 using Infrastructure.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
@@ -15,17 +16,17 @@ namespace Application.Services.Warehouse;
 public class WarehouseService : IWarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
-    private readonly WarehouseDTOValidator _warehouseDTOValidator;
+    private readonly IValidator<WarehouseDTO> _warehouseDTOValidator;
     private readonly ILogger<WarehouseService> _logger;
     private readonly IReportService<WarehouseDTO> _warehouseReportService;
 
     public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
-        WarehouseDTOValidator warehouseDtoValidator, IReportService<WarehouseDTO> warehouseReportService)
+        IReportService<WarehouseDTO> warehouseReportService, IValidator<WarehouseDTO> warehouseDTOValidator)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
-        _warehouseDTOValidator = warehouseDtoValidator;
         _warehouseReportService = warehouseReportService;
+        _warehouseDTOValidator = warehouseDTOValidator;
     }
 
     public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
@@ -87,6 +88,7 @@ public class WarehouseService : IWarehouseService
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
+        
         if (!validationResult.IsValid)
         {
             var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
@@ -133,13 +135,14 @@ public class WarehouseService : IWarehouseService
     {
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
         var warehousesDTO = warehouses.Select(WarehouseMapper.ToDTO);
-        
+
         var report = _warehouseReportService.GenerateReport(warehousesDTO);
 
         return Result<byte[]>.Success(report);
     }
 
-    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesWithInventoriesAsync(CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesWithInventoriesAsync(
+        CancellationToken cancellationToken = default)
     {
         var warehouses = await _warehouseRepository.GetWarehousesWithInventoriesAsync(cancellationToken);
 

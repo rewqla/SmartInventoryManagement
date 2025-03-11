@@ -8,7 +8,6 @@ try
     
     builder.ConfigureRepositories();
     builder.ConfigureServices();
-    builder.ConfigureValidators();
     builder.ConfigureDatabase();
     builder.AddHealthChecks();
     builder.ConfigureGraphQL();
