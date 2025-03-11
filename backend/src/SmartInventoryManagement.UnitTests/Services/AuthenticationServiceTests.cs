@@ -39,15 +39,15 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("User.NotFound");
     }
-    
+
     [Fact]
     public async Task SignInAsync_PasswordVerificationFails_ReturnsInvalidCredentialsError()
     {
         // Arrange
-        var user = new UserFaker().Generate(); 
-        var signInDTO = new SignInDTO 
-        { 
-            EmailOrPhone = user.Email, 
+        var user = new UserFaker().Generate();
+        var signInDTO = new SignInDTO
+        {
+            EmailOrPhone = user.Email,
             Password = "wrongPassword"
         };
 
@@ -55,7 +55,7 @@ public class AuthenticationServiceTests
             .ReturnsAsync(user);
 
         _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash))
-            .Returns(false); 
+            .Returns(false);
 
         // Act
         var result = await _authenticationService.SignInAsync(signInDTO);
@@ -64,7 +64,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.InvalidCredentials");
         result.Error.Description.Should().Be("Incorrect password");
-    
+
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
         _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Never);
@@ -81,7 +81,7 @@ public class AuthenticationServiceTests
         _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
 
         _tokenService.Setup(x => x.GenerateJwtToken(user))
-            .Throws(new InvalidOperationException("Secret key must be at least 32 bytes long.")); 
+            .Throws(new InvalidOperationException("Secret key must be at least 32 bytes long."));
 
         // Act
         var result = await _authenticationService.SignInAsync(signInDTO);
@@ -96,7 +96,7 @@ public class AuthenticationServiceTests
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
     }
-    
+
     [Fact]
     public async Task SignInAsync_RefreshTokenGenerationFails_ReturnsTokenGenerationError()
     {
@@ -109,7 +109,7 @@ public class AuthenticationServiceTests
         _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("validAccessToken");
         _tokenService.Setup(x => x.GenerateRefreshToken(user))
             .Throws(new Exception("Unexpected error during refresh token generation"));
-        
+
         // Act
         var result = await _authenticationService.SignInAsync(signInDTO);
 
@@ -155,7 +155,7 @@ public class AuthenticationServiceTests
         _refreshTokenRepository.Verify(x => x.DeleteByUserIdAsync(user.Id), Times.Once);
         _refreshTokenRepository.Verify(x => x.SaveRefreshTokenAsync(refreshToken), Times.Once);
     }
-    
+
     [Fact]
     public async Task RefreshTokenAsync_TokenDoesNotExist_ReturnsFailure()
     {
@@ -173,12 +173,13 @@ public class AuthenticationServiceTests
 
         _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken), Times.Once);
     }
-    
+
     [Fact]
     public async Task RefreshTokenAsync_TokenIsExpired_ReturnsFailure()
     {
         // Arrange
-        var expiredRefreshToken = new RefreshToken { Token = "expiredToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(-5) };
+        var expiredRefreshToken = new RefreshToken
+            { Token = "expiredToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(-5) };
         _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token))
             .ReturnsAsync(expiredRefreshToken);
 
@@ -191,12 +192,13 @@ public class AuthenticationServiceTests
 
         _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token), Times.Once);
     }
-    
+
     [Fact]
     public async Task RefreshTokenAsync_UserNotFound_ReturnsFailure()
     {
         // Arrange
-        var refreshToken = new RefreshToken { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
+        var refreshToken = new RefreshToken
+            { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
         _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
         _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync((User)null);
 
@@ -211,4 +213,31 @@ public class AuthenticationServiceTests
         _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
     }
 
+    [Fact]
+    public async Task RefreshTokenAsync_JwtTokenGenerationFails_ReturnsTokenGenerationError()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        var refreshToken = new RefreshToken
+            { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
+        
+        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
+        _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync(user);
+
+        _tokenService.Setup(x => x.GenerateJwtToken(user))
+            .Throws(new InvalidOperationException("Secret key must be at least 32 bytes long."));
+
+        // Act
+        var result = await _authenticationService.RefreshTokenAsync(refreshToken.Token);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.TokenGenerationError");
+        result.Error.Description.Should().Contain("Secret key must be at least 32 bytes long.");
+
+        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken.Token), Times.Once);
+        _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
+        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
+    }
 }
