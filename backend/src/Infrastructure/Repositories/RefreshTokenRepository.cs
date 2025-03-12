@@ -38,4 +38,10 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         return await _context.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.Token == token);
     }
+
+    public async Task DeleteTokensAsync(List<RefreshToken> expiredTokens)
+    {
+        _context.RefreshTokens.RemoveRange(expiredTokens);
+        await _context.SaveChangesAsync();
+    }
 }
