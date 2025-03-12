@@ -8,4 +8,5 @@ public interface  IRefreshTokenRepository
     Task DeleteByUserIdAsync(Guid userId);
     Task<RefreshToken?> GetRefreshTokenAsync(string token);
     Task DeleteTokensAsync(List<RefreshToken> expiredTokens);
+    Task<List<RefreshToken>> GetExpiredTokensAsync();
 }

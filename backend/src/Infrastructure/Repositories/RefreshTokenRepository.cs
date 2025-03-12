@@ -33,6 +33,7 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         }
     }
 
+    //todo: rename method
     public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
     {
         return await _context.RefreshTokens
@@ -43,5 +44,13 @@ public class RefreshTokenRepository: IRefreshTokenRepository
     {
         _context.RefreshTokens.RemoveRange(expiredTokens);
         await _context.SaveChangesAsync();
+    }
+    
+    //todo: add to shared kernel utc now provider
+    public async Task<List<RefreshToken>> GetExpiredTokensAsync()
+    {
+        return await _context.RefreshTokens
+            .Where(rt => rt.ExpiresOnUtc < DateTime.UtcNow)
+            .ToListAsync();
     }
 }
