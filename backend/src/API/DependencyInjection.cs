@@ -5,6 +5,7 @@ using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using API.Health;
 using Application.Authentication;
+using Application.BackgroundJobs;
 using Application.DTO.Warehouse;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
@@ -17,6 +18,7 @@ using Application.Services.Authentication;
 using Application.Services.Product;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
+using Coravel;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.Entities;
@@ -37,6 +39,7 @@ public static class DependencyInjection
         var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
         
         services.AddSwagger();
+        services.AddScheduler();
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -51,6 +54,10 @@ public static class DependencyInjection
             };
         });
 
+        services.AddSingleton<ITokenService, TokenService>();
+        services.AddSingleton<IDbConnectionFactory>(_ =>
+            new DbConnectionFactory(connectionString));
+        
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
@@ -58,10 +65,8 @@ public static class DependencyInjection
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-
-        services.AddSingleton<ITokenService, TokenService>();
-        services.AddSingleton<IDbConnectionFactory>(_ =>
-            new DbConnectionFactory(connectionString));
+        
+        services.AddTransient<CleanupExpiredTokensJob>(); 
         
         services.AddValidatorsFromAssembly(typeof(WarehouseDTOValidator).Assembly);
         
@@ -94,6 +99,16 @@ public static class DependencyInjection
         return builder;
     }
 
+    public static WebApplication ConfigureScheduler(this WebApplication app)
+    {
+        app.Services.UseScheduler(scheduler =>
+        {
+            scheduler.Schedule<CleanupExpiredTokensJob>()
+                .DailyAt(2,00);
+        });
+        return app;
+    }
+    
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
