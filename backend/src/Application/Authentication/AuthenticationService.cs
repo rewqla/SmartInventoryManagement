@@ -62,7 +62,6 @@ public class AuthenticationService : IAuthenticationService
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
         await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
 
-        //todo: add unit tests
         //todo: add role check for endpoints
 
         var response = new AuthenticationDTO
@@ -74,6 +73,8 @@ public class AuthenticationService : IAuthenticationService
         return Result<AuthenticationDTO>.Success(response);
     }
 
+    //todo: write some integration tests for refresh tokens
+    
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
