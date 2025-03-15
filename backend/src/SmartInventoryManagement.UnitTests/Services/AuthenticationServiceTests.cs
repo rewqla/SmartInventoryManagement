@@ -161,7 +161,7 @@ public class AuthenticationServiceTests
     {
         // Arrange
         var refreshToken = "invalidToken";
-        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken))
+        _refreshTokenRepository.Setup(x => x.GetByTokenAsync(refreshToken))
             .ReturnsAsync((RefreshToken)null);
 
         // Act
@@ -171,7 +171,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.InvalidRefreshToken");
 
-        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken), Times.Once);
+        _refreshTokenRepository.Verify(x => x.GetByTokenAsync(refreshToken), Times.Once);
     }
 
     [Fact]
@@ -180,7 +180,7 @@ public class AuthenticationServiceTests
         // Arrange
         var expiredRefreshToken = new RefreshToken
             { Token = "expiredToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(-5) };
-        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token))
+        _refreshTokenRepository.Setup(x => x.GetByTokenAsync(expiredRefreshToken.Token))
             .ReturnsAsync(expiredRefreshToken);
 
         // Act
@@ -190,7 +190,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.InvalidRefreshToken");
 
-        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(expiredRefreshToken.Token), Times.Once);
+        _refreshTokenRepository.Verify(x => x.GetByTokenAsync(expiredRefreshToken.Token), Times.Once);
     }
 
     [Fact]
@@ -199,7 +199,7 @@ public class AuthenticationServiceTests
         // Arrange
         var refreshToken = new RefreshToken
             { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
-        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
+        _refreshTokenRepository.Setup(x => x.GetByTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
         _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync((User)null);
 
         // Act
@@ -209,7 +209,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("User.NotFound");
 
-        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken.Token), Times.Once);
+        _refreshTokenRepository.Verify(x => x.GetByTokenAsync(refreshToken.Token), Times.Once);
         _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
     }
 
@@ -220,8 +220,8 @@ public class AuthenticationServiceTests
         var user = new UserFaker().Generate();
         var refreshToken = new RefreshToken
             { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
-        
-        _refreshTokenRepository.Setup(x => x.GetRefreshTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
+
+        _refreshTokenRepository.Setup(x => x.GetByTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
         _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync(user);
 
         _tokenService.Setup(x => x.GenerateJwtToken(user))
@@ -235,9 +235,43 @@ public class AuthenticationServiceTests
         result.Error.Code.Should().Be("Authentication.TokenGenerationError");
         result.Error.Description.Should().Contain("Secret key must be at least 32 bytes long.");
 
-        _refreshTokenRepository.Verify(x => x.GetRefreshTokenAsync(refreshToken.Token), Times.Once);
+        _refreshTokenRepository.Verify(x => x.GetByTokenAsync(refreshToken.Token), Times.Once);
         _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
+    }
+
+
+    [Fact]
+    public async Task RefreshTokenAsync_RefreshTokenGenerationFails_ReturnsTokenGenerationError()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        var refreshToken = new RefreshToken
+            { Token = "validToken", ExpiresOnUtc = DateTime.UtcNow.AddMinutes(30), UserId = Guid.NewGuid() };
+
+        _refreshTokenRepository.Setup(x => x.GetByTokenAsync(refreshToken.Token)).ReturnsAsync(refreshToken);
+        _userRepository.Setup(x => x.GetByIdWithRoles(refreshToken.UserId)).ReturnsAsync(user);
+
+        _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("validAccessToken");
+
+        _tokenService.Setup(x => x.GenerateRefreshToken(user))
+            .Throws(new InvalidOperationException("Failed to generate a refresh token."));
+
+        // Act
+        var result = await _authenticationService.RefreshTokenAsync(refreshToken.Token);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.TokenGenerationError");
+        result.Error.Description.Should().Contain("Failed to generate a refresh token.");
+
+        _refreshTokenRepository.Verify(x => x.GetByTokenAsync(refreshToken.Token), Times.Once);
+        _userRepository.Verify(x => x.GetByIdWithRoles(refreshToken.UserId), Times.Once);
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
+        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
+
+        _refreshTokenRepository.Verify(x => x.DeleteByUserIdAsync(It.IsAny<Guid>()), Times.Never);
+        _refreshTokenRepository.Verify(x => x.SaveRefreshTokenAsync(It.IsAny<RefreshToken>()), Times.Never);
     }
 }
