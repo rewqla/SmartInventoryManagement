@@ -21,6 +21,7 @@ try
     var app = builder.Build();
 
     app.ConfigureMiddlewares();
+    app.ConfigureScheduler();
     app.MapEndpoints();
 
     app.ApplyMigrations();

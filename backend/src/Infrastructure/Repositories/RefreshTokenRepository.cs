@@ -33,8 +33,7 @@ public class RefreshTokenRepository: IRefreshTokenRepository
         }
     }
 
-    //todo: rename method
-    public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
+    public async Task<RefreshToken?> GetByTokenAsync(string token)
     {
         return await _context.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.Token == token);

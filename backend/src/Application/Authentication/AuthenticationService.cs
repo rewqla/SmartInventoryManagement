@@ -76,7 +76,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
-        var existingRefreshToken = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken);
+        var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
         if (existingRefreshToken == null || existingRefreshToken.ExpiresOnUtc < DateTime.UtcNow)
         {
@@ -121,5 +121,3 @@ public class AuthenticationService : IAuthenticationService
         return Result<AuthenticationDTO>.Success(response);
     }
 }
-
-//todo: add job that will clear expired tokens once a day  
