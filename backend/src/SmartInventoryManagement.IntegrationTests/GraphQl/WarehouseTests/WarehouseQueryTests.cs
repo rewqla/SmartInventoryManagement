@@ -44,6 +44,9 @@ public class WarehouseQueryTests
                 { location: { eq: ""Amsterdam"" } }
               ]
             }
+            order: [ {
+               name: ASC
+            }]
           ) {
             items {
               name
