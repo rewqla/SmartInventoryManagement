@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Auth;
 
+//todo: move to another namespace ot add contract layer
+public class RefreshTokenRequest
+{
+    public string RefreshToken { get; set; } = string.Empty;
+}
+
 public static class RefreshTokenEndpoint
 {
     private const string Name = "RefreshToken";
@@ -13,10 +19,11 @@ public static class RefreshTokenEndpoint
     public static IEndpointRouteBuilder MapRefreshToken(this IEndpointRouteBuilder app)
     {
         app.MapPost(AuthEndpoints.Refresh,
-                async ([FromServices] IAuthenticationService authenticationService, string refreshToken,
+                async ([FromServices] IAuthenticationService authenticationService,
+                    [FromBody] RefreshTokenRequest request,
                     CancellationToken cancellationToken) =>
                 {
-                    var result = await authenticationService.RefreshTokenAsync(refreshToken);
+                    var result = await authenticationService.RefreshTokenAsync(request.RefreshToken);
 
                     return result.Match(
                         onSuccess: value => Results.Ok(value),
