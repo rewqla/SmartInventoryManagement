@@ -31,6 +31,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace API;
 
@@ -218,39 +219,37 @@ public static class DependencyInjection
 
     private static void AddSwagger(this IServiceCollection services)
     {
-        //todo: update swagger to allow use jwt in requests
-        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            // var jwtSecurityScheme = new OpenApiSecurityScheme
-            // {
-            //     BearerFormat = "JWT",
-            //     Name = "Authorization",
-            //     In = ParameterLocation.Header,
-            //     Type = SecuritySchemeType.ApiKey,
-            //     Scheme = JwtBearerDefaults.AuthenticationScheme,
-            //     Description = "Put Bearer [space] and then your token ",
-            // };
-            //
-            // c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
-            //
-            // var securityRequirement = new OpenApiSecurityRequirement
-            // {
-            //     {
-            //         new OpenApiSecurityScheme
-            //         {
-            //             Reference = new OpenApiReference
-            //             {
-            //                 Type = ReferenceType.SecurityScheme,
-            //                 Id = JwtBearerDefaults.AuthenticationScheme
-            //             }
-            //         },
-            //         []
-            //     }
-            // };
-            //
-            // c.AddSecurityRequirement(securityRequirement);
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Put Bearer [space] and then your token ",
+            };
+            
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
+            
+            var securityRequirement = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = JwtBearerDefaults.AuthenticationScheme
+                        }
+                    },
+                    []
+                }
+            };
+            
+            c.AddSecurityRequirement(securityRequirement);
         });
     }
 }
