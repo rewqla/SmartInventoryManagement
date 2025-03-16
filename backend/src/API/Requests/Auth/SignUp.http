@@ -1,0 +1,12 @@
+﻿### Sign Up
+POST {{baseUrl}}/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "phoneNumber": "80987654321",
+  "fullName": "John Doe",
+  "password": "Securepassword123"
+}
+
+###

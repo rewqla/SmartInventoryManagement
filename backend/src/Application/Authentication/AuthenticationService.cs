@@ -92,7 +92,7 @@ public class AuthenticationService : IAuthenticationService
 
         string passwordHash = _passwordHasher.Hash(signUpDTO.Password);
 
-        var defaultRole = await _roleRepository.GetByNameAsync("User");
+        var defaultRole = await _roleRepository.GetByNameAsync("Worker");
         if (defaultRole == null)
         {
             return Result<IdleUnit>.Failure(CommonErrors.NotFound("role"));
