@@ -22,26 +22,27 @@ public class TokenService : ITokenService
     public string GenerateJwtToken(User user)
     {
         //todo: make issuer, audience optional
-        var secretKey = _configuration["Jwt:Secret"];
+        var secretKey = _configuration["Jwt:SecretKey"];
         var issuer = _configuration["Jwt:Issuer"];
         var audience = _configuration["Jwt:Audience"];
         var accessTokenLifetimeStr = _configuration["Jwt:AccessTokenLifetime"];
-        
+
         if (string.IsNullOrWhiteSpace(secretKey) || Encoding.UTF8.GetByteCount(secretKey) < 32)
         {
             throw new InvalidOperationException("Secret key must be at least 32 bytes long.");
         }
-        
-        if (!TimeSpan.TryParse(accessTokenLifetimeStr, out var accessTokenLifetime) )
+
+        if (!TimeSpan.TryParse(accessTokenLifetimeStr, out var accessTokenLifetime))
         {
             throw new InvalidOperationException("AccessTokenLifetime must be a valid TimeSpan.");
         }
-        
+
         if (accessTokenLifetime <= TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(accessTokenLifetimeStr), "AccessTokenLifetime must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(accessTokenLifetimeStr),
+                "AccessTokenLifetime must be greater than zero.");
         }
-        
+
         var expirationTime = DateTime.UtcNow.Add(accessTokenLifetime);
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -71,15 +72,16 @@ public class TokenService : ITokenService
     public RefreshToken GenerateRefreshToken(User user)
     {
         var refreshTokenLifetimeStr = _configuration["Jwt:RefreshTokenLifetime"];
-    
+
         if (!TimeSpan.TryParse(refreshTokenLifetimeStr, out var refreshTokenLifetime))
         {
             throw new FormatException("RefreshTokenLifetime has an invalid format.");
         }
-        
+
         if (refreshTokenLifetime <= TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(refreshTokenLifetime), "RefreshTokenLifetime must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(refreshTokenLifetime),
+                "RefreshTokenLifetime must be greater than zero.");
         }
 
         return new RefreshToken

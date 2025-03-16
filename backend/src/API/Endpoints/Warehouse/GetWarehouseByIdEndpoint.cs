@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Services.Warehouse;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,8 @@ public static class GetWarehouseByIdEndpoint
                         ));
                 })
             .WithName(Name)
-            .WithTags("Warehouse");
+            .WithTags("Warehouse")
+            .RequireAuthorization(PolicyRoles.Admin);
 
         return app;
     }

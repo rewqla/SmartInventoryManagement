@@ -9,6 +9,7 @@ try
     builder.ConfigureRepositories();
     builder.ConfigureServices();
     builder.ConfigureDatabase();
+    builder.ConfigureAuth();
     builder.AddHealthChecks();
     builder.ConfigureGraphQL();
 

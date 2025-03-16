@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Text;
+using API.Authorization;
 using API.Endpoints;
 using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
@@ -25,8 +27,10 @@ using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API;
 
@@ -37,7 +41,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
         var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
-        
+
         services.AddSwagger();
         services.AddScheduler();
         services.AddProblemDetails(options =>
@@ -57,7 +61,7 @@ public static class DependencyInjection
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(connectionString));
-        
+
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
@@ -65,10 +69,50 @@ public static class DependencyInjection
         services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
         services.AddScoped<IReportService<Product>, ProductReportService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        
-        services.AddTransient<CleanupExpiredTokensJob>(); 
-        
+
+        services.AddTransient<CleanupExpiredTokensJob>();
+
         services.AddValidatorsFromAssembly(typeof(WarehouseDTOValidator).Assembly);
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder ConfigureAuth(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
+                };
+            });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(PolicyRoles.Admin, policy =>
+                policy.RequireRole(PolicyRoles.Admin));
+            options.AddPolicy(PolicyRoles.Manager, policy =>
+                policy.RequireRole(PolicyRoles.Manager));
+
+            options.AddPolicy(PolicyRoles.Worker, policy =>
+                policy.RequireRole(PolicyRoles.Worker));
+        });
         
         return builder;
     }
@@ -78,7 +122,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
         var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
-        
+
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("postgresql-custom-check")
             .AddNpgSql(connectionString);
@@ -96,7 +140,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        
+
         return builder;
     }
 
@@ -105,17 +149,17 @@ public static class DependencyInjection
         app.Services.UseScheduler(scheduler =>
         {
             scheduler.Schedule<CleanupExpiredTokensJob>()
-                .DailyAt(2,00);
+                .DailyAt(2, 00);
         });
         return app;
     }
-    
+
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
         var connectionString = builder.Configuration.GetValue<string>("Database:ConnectionStrings")!;
-        
+
         services.AddDbContext<InventoryContext>(
             options => options.UseNpgsql(connectionString));
 
@@ -156,8 +200,8 @@ public static class DependencyInjection
 
         app.UseWebSockets();
 
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         return app;
     }

@@ -85,6 +85,7 @@ public class AuthenticationService : IAuthenticationService
         var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
         var existingPhoneUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber);
 
+        //todo: separate check for email and phone number
         if (existingUser != null || existingPhoneUser != null)
         {
             return Result<IdleUnit>.Failure(AuthenticationErrors.UserAlreadyExists());
