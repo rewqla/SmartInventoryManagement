@@ -10,17 +10,19 @@ namespace Application.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
 
     public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
-        IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
+        IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
+        _roleRepository = roleRepository;
     }
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
@@ -32,6 +34,7 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
+        //todo: add custom lock ut for users
         if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
         {
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
@@ -73,8 +76,45 @@ public class AuthenticationService : IAuthenticationService
         return Result<AuthenticationDTO>.Success(response);
     }
 
+    public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
+    {
+        //todo: add user validation
+        //todo: write unit tests
+        //todo: одумати чи потрібно повертати 500 помилку 🤔
+
+        var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
+        var existingPhoneUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber);
+
+        if (existingUser != null || existingPhoneUser != null)
+        {
+            return Result<IdleUnit>.Failure(AuthenticationErrors.UserAlreadyExists());
+        }
+
+        string passwordHash = _passwordHasher.Hash(signUpDTO.Password);
+
+        var defaultRole = await _roleRepository.GetByNameAsync("User");
+        if (defaultRole == null)
+        {
+            return Result<IdleUnit>.Failure(CommonErrors.NotFound("role"));
+        }
+
+        var newUser = new User
+        {
+            Email = signUpDTO.Email,
+            Phone = signUpDTO.PhoneNumber,
+            Name = signUpDTO.FullName,
+            PasswordHash = passwordHash,
+            Role = defaultRole
+        };
+
+        // Save the user to the database
+        await _userRepository.AddAsync(newUser);
+
+        return Result<IdleUnit>.Success(IdleUnit.Value);
+    }
+
     //todo: write some integration tests for refresh tokens
-    
+
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);

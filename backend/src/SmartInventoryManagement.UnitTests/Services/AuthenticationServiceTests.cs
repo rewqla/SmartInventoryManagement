@@ -9,6 +9,7 @@ public class AuthenticationServiceTests
     private readonly AuthenticationService _authenticationService;
     private readonly Mock<IRefreshTokenRepository> _refreshTokenRepository;
     private readonly Mock<IUserRepository> _userRepository;
+    private readonly Mock<IRoleRepository> _roleRepository;
     private readonly Mock<ITokenService> _tokenService;
     private readonly Mock<IPasswordHasher> _passwordHasher;
 
@@ -18,10 +19,11 @@ public class AuthenticationServiceTests
         _refreshTokenRepository = new Mock<IRefreshTokenRepository>();
         _userRepository = new Mock<IUserRepository>();
         _tokenService = new Mock<ITokenService>();
+        _roleRepository = new Mock<IRoleRepository>();
 
         _authenticationService =
             new AuthenticationService(_tokenService.Object, _passwordHasher.Object, _userRepository.Object,
-                _refreshTokenRepository.Object);
+                _refreshTokenRepository.Object, _roleRepository.Object);
     }
 
     [Fact]
@@ -273,7 +275,7 @@ public class AuthenticationServiceTests
         _refreshTokenRepository.Verify(x => x.DeleteByUserIdAsync(It.IsAny<Guid>()), Times.Never);
         _refreshTokenRepository.Verify(x => x.SaveRefreshTokenAsync(It.IsAny<RefreshToken>()), Times.Never);
     }
-    
+
     [Fact]
     public async Task RefreshTokenAsync_ValidRefreshToken_ReturnsSuccess()
     {
