@@ -7,6 +7,6 @@ Content-Type: application/json
   "password": "123456"
 }
 
+> {% client.global.set("accessToken", response.body.accessToken); %}
 ###
 
-//todo: save access token after sign in in env variables

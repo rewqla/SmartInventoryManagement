@@ -218,6 +218,8 @@ public static class DependencyInjection
 
     private static void AddSwagger(this IServiceCollection services)
     {
+        //todo: update swagger to allow use jwt in requests
+        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {

@@ -1,6 +1,6 @@
 ﻿### Retrieve warehouse by id 
 GET {{baseUrl}}/api/warehouses/78c29401-13e6-a67c-98ab-2866987222e5
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFkbWluIFVzZXIiLCJuYW1laWQiOiI1ZGE2YTc5OS00YWY2LTQ1YTAtYTk0OS01MTEyZDI5ZjcwMzgiLCJyb2xlIjoiQWRtaW4iLCJuYmYiOjE3NDIxMTQ5NjksImV4cCI6MTc0MjIwMTM2OSwiaWF0IjoxNzQyMTE0OTY5LCJpc3MiOiJTaGliYWthIiwiYXVkIjoiU2hpYmFraWFuaWFuIn0.0j6J-fAQrxpWV65oL7508XfuBcREAS57FZg3svkNf8Y
+Authorization: Bearer {{accessToken}}
 
 ###
 
