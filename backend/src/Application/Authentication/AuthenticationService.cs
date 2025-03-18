@@ -83,14 +83,17 @@ public class AuthenticationService : IAuthenticationService
         //todo: одумати чи потрібно повертати 500 помилку 🤔
 
         var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
-        var existingPhoneUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber);
-
-        //todo: separate check for email and phone number
-        if (existingUser != null || existingPhoneUser != null)
+        if (existingUser != null)
         {
-            return Result<IdleUnit>.Failure(AuthenticationErrors.UserAlreadyExists());
+            return Result<IdleUnit>.Failure(AuthenticationErrors.EmailAlreadyExists());
         }
 
+        var existingPhoneUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber);
+        if (existingPhoneUser != null)
+        {
+            return Result<IdleUnit>.Failure(AuthenticationErrors.PhoneAlreadyExists());
+        }
+        
         string passwordHash = _passwordHasher.Hash(signUpDTO.Password);
 
         var defaultRole = await _roleRepository.GetByNameAsync("Worker");
@@ -108,14 +111,12 @@ public class AuthenticationService : IAuthenticationService
             Role = defaultRole
         };
 
-        // Save the user to the database
         await _userRepository.AddAsync(newUser);
 
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
     //todo: write some integration tests for refresh tokens
-
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
