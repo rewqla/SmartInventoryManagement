@@ -8,6 +8,7 @@ using Application.Mapping.Warehouse;
 using Application.Validation.Warehouse;
 using FluentValidation;
 using Infrastructure.Interfaces.Repositories;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
@@ -88,7 +89,6 @@ public class WarehouseService : IWarehouseService
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
-        
         if (!validationResult.IsValid)
         {
             var errorDetails = validationResult.Errors.Select(error => new ErrorDetail

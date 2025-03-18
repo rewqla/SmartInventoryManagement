@@ -38,12 +38,7 @@ public static class UpdateWarehouseEndpoint
                                     extensions: new Dictionary<string, object?>
                                     {
                                         { "errors", error.Errors } 
-                                    }),
-                                _ => Results.Problem(
-                                    type: "https://httpstatuses.com/500",
-                                    title: "Internal Server Error",
-                                    detail: error.Description,
-                                    statusCode: StatusCodes.Status500InternalServerError)
+                                    })
                             };
                         });
                 })

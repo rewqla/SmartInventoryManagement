@@ -17,15 +17,7 @@ public static class WarehousesReportEndpoint
                     var result = await warehouseService.GenerateWarehousesReportAsync(cancellationToken);
                     var fileName = $"WarehousesReport_{DateTime.UtcNow:yyyyMMdd_HHmm}.pdf";
 
-                    return result.Match(
-                        onSuccess: value => Results.File(result.Value!, "application/pdf", fileName),
-                        onFailure:
-                        error => Results.Problem(
-                            type: "https://httpstatuses.com/500",
-                            title: "Internal Server Error",
-                            detail: error.Description,
-                            statusCode: StatusCodes.Status500InternalServerError)
-                    );
+                    return Results.File(result.Value!, "application/pdf", fileName);
                 })
             .WithName(Name)
             .WithTags("Reports");

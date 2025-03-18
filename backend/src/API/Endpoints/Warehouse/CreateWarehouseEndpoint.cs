@@ -30,7 +30,7 @@ public static class CreateWarehouseEndpoint
                                     statusCode: StatusCodes.Status400BadRequest,
                                     extensions: new Dictionary<string, object?>
                                     {
-                                        { "errors", error.Errors } 
+                                        { "errors", error.Errors }
                                     }),
                                 _ => Results.Problem(
                                     type: "https://httpstatuses.com/500",

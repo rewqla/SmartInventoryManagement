@@ -16,15 +16,7 @@ public static class GetWarehousesEndpoint
                 {
                     var result = await warehouseService.GetWarehousesAsync(cancellationToken);
 
-                    return result.Match(
-                        onSuccess: value => Results.Ok(value),
-                        onFailure: error =>
-                            Results.Problem(
-                                type: "https://httpstatuses.com/500",
-                                title: "Internal Server Error",
-                                detail: error.Description,
-                                statusCode: StatusCodes.Status500InternalServerError)
-                    );
+                    return Results.Ok(result.Value);
                 })
             .WithName(Name)
             .WithTags("Warehouse");
