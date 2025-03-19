@@ -80,7 +80,6 @@ public class AuthenticationService : IAuthenticationService
     {
         //todo: add user validation
         //todo: write unit tests
-        //todo: одумати чи потрібно повертати 500 помилку 🤔
 
         var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
         if (existingUser != null)

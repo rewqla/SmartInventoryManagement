@@ -307,4 +307,56 @@ public class AuthenticationServiceTests
         result.Value.AccessToken.Should().Be("validAccessToken");
         result.Value.RefreshToken.Should().Be("newValidToken");
     }
+
+    [Fact]
+    public async Task SignUpAsync_UserAlreadyExists_ReturnsFailure()
+    {
+        // Arrange
+        var signUpDTO = new SignUpDTO
+        {
+            Email = "existing@example.com",
+            PhoneNumber = "+123456789",
+            FullName = "Existing User",
+            Password = "SecurePassword123!"
+        };
+
+        var existingUser = new UserFaker().Generate();
+        existingUser.Email = signUpDTO.Email;
+
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email))
+            .ReturnsAsync(existingUser);
+
+        // Act
+        var result = await _authenticationService.SignUpAsync(signUpDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.EmailAlreadyExists");
+    }
+    
+    [Fact]
+    public async Task SignUpAsync_PhoneAlreadyExists_ReturnsFailure()
+    {
+        // Arrange
+        var signUpDTO = new SignUpDTO
+        {
+            Email = "existing@example.com",
+            PhoneNumber = "+123456789",
+            FullName = "Existing User",
+            Password = "SecurePassword123!"
+        };
+
+        var existingUser = new UserFaker().Generate();
+        existingUser.Phone = signUpDTO.PhoneNumber;
+
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber))
+            .ReturnsAsync(existingUser);
+
+        // Act
+        var result = await _authenticationService.SignUpAsync(signUpDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.EmailAlreadyExists");
+    }
 }
