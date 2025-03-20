@@ -357,6 +357,35 @@ public class AuthenticationServiceTests
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("Authentication.EmailAlreadyExists");
+        result.Error.Code.Should().Be("Authentication.PhoneAlreadyExists");
+    }
+    
+    [Fact]
+    public async Task SignUpAsync_RoleNotFound_ReturnsFailure()
+    {
+        // Arrange
+        var signUpDTO = new SignUpDTO
+        {
+            Email = "newuser@example.com",
+            PhoneNumber = "+123456789",
+            FullName = "New User",
+            Password = "SecurePassword123!"
+        };
+    
+        var existingUser = (User)null;
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email))
+            .ReturnsAsync(existingUser);
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber))
+            .ReturnsAsync(existingUser);
+        _roleRepository.Setup(x => x.GetByNameAsync("Worker"))
+            .ReturnsAsync((Role)null);
+
+        // Act
+        var result = await _authenticationService.SignUpAsync(signUpDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Role.NotFound");
+        result.Error.Description.Should().Be("The role was not found");
     }
 }
