@@ -79,7 +79,6 @@ public class AuthenticationService : IAuthenticationService
     public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
     {
         //todo: add user validation
-        //todo: write unit tests
 
         var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
         if (existingUser != null)

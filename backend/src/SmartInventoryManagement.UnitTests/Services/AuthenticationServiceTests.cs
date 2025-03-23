@@ -388,4 +388,40 @@ public class AuthenticationServiceTests
         result.Error.Code.Should().Be("Role.NotFound");
         result.Error.Description.Should().Be("The role was not found");
     }
+    
+    [Fact]
+    public async Task SignUpAsync_ValidInput_ReturnsSuccess()
+    {
+        // Arrange
+        var signUpDTO = new SignUpDTO
+        {
+            Email = "newuser@example.com",
+            PhoneNumber = "+123456789",
+            FullName = "New User",
+            Password = "SecurePassword123!"
+        };
+
+        var existingUser = (User)null;
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email))
+            .ReturnsAsync(existingUser);
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber))
+            .ReturnsAsync(existingUser);
+
+        var defaultRole = new Role { Name = "Worker" };
+        _roleRepository.Setup(x => x.GetByNameAsync("Worker"))
+            .ReturnsAsync(defaultRole);
+
+        _passwordHasher.Setup(x => x.Hash(signUpDTO.Password))
+            .Returns("hashedpassword");
+
+        _userRepository.Setup(x => x.AddAsync(It.IsAny<User>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _authenticationService.SignUpAsync(signUpDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(IdleUnit.Value);
+    }
 }
