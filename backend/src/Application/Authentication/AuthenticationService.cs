@@ -2,6 +2,7 @@
 using Application.DTO.Authentication;
 using Application.Exceptions;
 using Application.Interfaces.Authentication;
+using Application.Validation.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories;
 
@@ -78,7 +79,20 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
     {
-        //todo: add user validation
+        var validator = new SignUpDTOValidator();
+        var validationResult = await validator.ValidateAsync(signUpDTO);
+
+        if (!validationResult.IsValid)
+        {
+            //todo: write unit tests for validation
+            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
+            {
+                PropertyName = error.PropertyName,
+                ErrorMessage = error.ErrorMessage
+            }).ToList();
+
+            return Result<IdleUnit>.Failure(CommonErrors.ValidationError("SignUpDTO", errorDetails));
+        }
 
         var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
         if (existingUser != null)
@@ -91,7 +105,7 @@ public class AuthenticationService : IAuthenticationService
         {
             return Result<IdleUnit>.Failure(AuthenticationErrors.PhoneAlreadyExists());
         }
-        
+
         string passwordHash = _passwordHasher.Hash(signUpDTO.Password);
 
         var defaultRole = await _roleRepository.GetByNameAsync("Worker");
