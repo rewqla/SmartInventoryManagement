@@ -1,6 +1,5 @@
 ﻿using Application.Authentication;
 using Application.Interfaces.Authentication;
-using Application.Services.Authentication;
 using Microsoft.Extensions.Configuration;
 
 namespace SmartInventoryManagement.Tests.Services;
@@ -20,7 +19,7 @@ public class TokenServiceTests
         _configurationMock.Setup(c => c["Jwt:AccessTokenLifetime"]).Returns("00:30:00");
         _configurationMock.Setup(c => c["Jwt:RefreshTokenLifetime"]).Returns("7.00:00:00");
 
-        _tokenService = new TokenService(_configurationMock.Object);
+        // _tokenService = new TokenService(_configurationMock.Object);
 
         // _testUser = new User
         // {

@@ -16,7 +16,6 @@ using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Reports;
 using Application.Services;
-using Application.Services.Authentication;
 using Application.Services.Product;
 using Application.Services.Warehouse;
 using Application.Validation.Warehouse;
@@ -114,6 +113,9 @@ public static class DependencyInjection
             options.AddPolicy(PolicyRoles.Worker, policy =>
                 policy.RequireRole(PolicyRoles.Worker));
         });
+        
+        services.Configure<JwtOptions>(
+            builder.Configuration.GetSection("Jwt"));
         
         return builder;
     }
