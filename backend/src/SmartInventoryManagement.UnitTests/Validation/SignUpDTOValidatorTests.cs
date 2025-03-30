@@ -18,10 +18,39 @@ public class SignUpDTOValidatorTests
     {
         var model = new SignUpDTO { FullName = "" };
         var result = _validator.TestValidate(model);
-        
+
         result.ShouldHaveValidationErrorFor(x => x.FullName)
             .WithErrorMessage("Full name is required");
     }
+
+    [Fact]
+    public void Should_HaveError_When_FullNameExceedsMaxLength()
+    {
+        var model = new SignUpDTO { FullName = new string('a', 51) };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.FullName)
+            .WithErrorMessage("Full name must be at most 50 characters");
+    }
+
+    [Fact]
+    public void Should_HaveError_When_EmailIsEmpty()
+    {
+        var model = new SignUpDTO { Email = "" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Email)
+            .WithErrorMessage("Email is required");
+    }
+
+    [Fact]
+    public void Should_HaveError_When_EmailIsInvalid()
+    {
+        var model = new SignUpDTO { Email = "invalid-email" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Email)
+            .WithErrorMessage("Invalid email format");
+    }
+
+   
 
     [Fact]
     public void Should_NotHaveError_When_AllFieldsAreValid()
