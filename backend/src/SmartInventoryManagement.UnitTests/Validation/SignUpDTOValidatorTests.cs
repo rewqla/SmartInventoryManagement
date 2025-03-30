@@ -46,42 +46,19 @@ public class SignUpDTOValidatorTests
             .WithErrorMessage(expectedError);
     }
 
-    [Fact]
-    public void Should_HaveError_When_PasswordIsEmpty()
+    [Theory]
+    [InlineData("", "Password is required")]
+    [InlineData("weak", "Password must be at least 8 characters long")]
+    [InlineData("short1A", "Password must be at least 8 characters long")]
+    [InlineData("nouppercase1!", "Password must contain at least one uppercase letter")]
+    [InlineData("NOLOWERCASE1!", "Password must contain at least one lowercase letter")]
+    [InlineData("NoSpecialChar1", "Password must contain at least one special character")]
+    public void Should_HaveError_When_PasswordIsInvalid(string password, string expectedError)
     {
-        var model = new SignUpDTO { Password = "" };
+        var model = new SignUpDTO { Password = password };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password is required");
-    }
-
-    [Fact]
-    public void Should_HaveError_When_PasswordDoesNotMeetRequirements()
-    {
-        var model = new SignUpDTO { Password = "weak" };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password must be at least 8 characters long");
-
-        model.Password = "short1A";
-        result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password must be at least 8 characters long");
-
-        model.Password = "nouppercase1!";
-        result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password must contain at least one uppercase letter");
-
-        model.Password = "NOLOWERCASE1!";
-        result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password must contain at least one lowercase letter");
-
-        model.Password = "NoSpecialChar1";
-        result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.Password)
-            .WithErrorMessage("Password must contain at least one special character");
+            .WithErrorMessage(expectedError);
     }
     
     [Fact]
