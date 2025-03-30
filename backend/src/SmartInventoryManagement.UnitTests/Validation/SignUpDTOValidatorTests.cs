@@ -23,6 +23,18 @@ public class SignUpDTOValidatorTests
             .WithErrorMessage("Full name is required");
     }
 
-    
-    
+    [Fact]
+    public void Should_NotHaveError_When_AllFieldsAreValid()
+    {
+        var model = new SignUpDTO
+        {
+            FullName = "John Doe",
+            Email = "johndoe@example.com",
+            PhoneNumber = "+380923291424",
+            Password = "ValidPassword1!"
+        };
+
+        var result = _validator.TestValidate(model);
+        result.ShouldNotHaveAnyValidationErrors();
+    }
 }
