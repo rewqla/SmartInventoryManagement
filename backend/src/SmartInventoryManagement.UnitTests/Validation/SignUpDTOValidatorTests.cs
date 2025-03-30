@@ -69,6 +69,44 @@ public class SignUpDTOValidatorTests
     }
 
     [Fact]
+    public void Should_HaveError_When_PasswordIsEmpty()
+    {
+        var model = new SignUpDTO { Password = "" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password is required");
+    }
+
+    [Fact]
+    public void Should_HaveError_When_PasswordDoesNotMeetRequirements()
+    {
+        var model = new SignUpDTO { Password = "weak" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password must be at least 8 characters long");
+
+        model.Password = "short1A";
+        result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password must be at least 8 characters long");
+
+        model.Password = "nouppercase1!";
+        result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password must contain at least one uppercase letter");
+
+        model.Password = "NOLOWERCASE1!";
+        result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password must contain at least one lowercase letter");
+
+        model.Password = "NoSpecialChar1";
+        result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Password)
+            .WithErrorMessage("Password must contain at least one special character");
+    }
+
+    [Fact]
     public void Should_NotHaveError_When_AllFieldsAreValid()
     {
         var model = new SignUpDTO
