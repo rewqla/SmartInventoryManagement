@@ -38,7 +38,15 @@ public static class SignUpEndpoint
                                     title = error.Code,
                                     detail = error.Description,
                                     statusCode = StatusCodes.Status404NotFound
-                                })
+                                }),
+                                "SignUpDTO.ValidationError" => Results.Problem(type: "Bad Request",
+                                    title: error.Code,
+                                    detail: error.Description,
+                                    statusCode: StatusCodes.Status400BadRequest,
+                                    extensions: new Dictionary<string, object?>
+                                    {
+                                        { "errors", error.Errors }
+                                    })
                             };
                         });
                 })
