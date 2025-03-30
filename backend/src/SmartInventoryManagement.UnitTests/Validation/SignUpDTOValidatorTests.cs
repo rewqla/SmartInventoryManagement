@@ -35,22 +35,15 @@ public class SignUpDTOValidatorTests
             .WithErrorMessage(expectedError);
     }
 
-    [Fact]
-    public void Should_HaveError_When_PhoneNumberIsEmpty()
+    [Theory]
+    [InlineData("", "Phone number is required")]
+    [InlineData("12345", "Invalid phone number format")]
+    public void Should_HaveError_When_PhoneNumberIsInvalid(string phoneNumber, string expectedError)
     {
-        var model = new SignUpDTO { PhoneNumber = "" };
+        var model = new SignUpDTO { PhoneNumber = phoneNumber };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.PhoneNumber)
-            .WithErrorMessage("Phone number is required");
-    }
-
-    [Fact]
-    public void Should_HaveError_When_PhoneNumberIsInvalid()
-    {
-        var model = new SignUpDTO { PhoneNumber = "12345" };
-        var result = _validator.TestValidate(model);
-        result.ShouldHaveValidationErrorFor(x => x.PhoneNumber)
-            .WithErrorMessage("Invalid phone number format");
+            .WithErrorMessage(expectedError);
     }
 
     [Fact]
@@ -90,7 +83,7 @@ public class SignUpDTOValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.Password)
             .WithErrorMessage("Password must contain at least one special character");
     }
-
+    
     [Fact]
     public void Should_NotHaveError_When_AllFieldsAreValid()
     {

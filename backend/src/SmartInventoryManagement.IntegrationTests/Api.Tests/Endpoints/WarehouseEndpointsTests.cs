@@ -80,11 +80,13 @@ public class WarehouseEndpointsTests :
         warehouse.Location.Should().NotBeNullOrEmpty();
     }
 
+    //todo: update test for get by id to overcome unauthorized and send requests with token
+    //todo: add test for unauthorized
     [Fact]
     public async Task GetById_ReturnsNotFound_WhenWarehouseNotFound()
     {
         // Arrange
-        var id = Guid.Empty;
+        var id = Guid.NewGuid();
 
         // Act
         var response = await _httpClient
