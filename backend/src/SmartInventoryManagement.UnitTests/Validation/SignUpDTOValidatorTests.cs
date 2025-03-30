@@ -50,7 +50,23 @@ public class SignUpDTOValidatorTests
             .WithErrorMessage("Invalid email format");
     }
 
-   
+    [Fact]
+    public void Should_HaveError_When_PhoneNumberIsEmpty()
+    {
+        var model = new SignUpDTO { PhoneNumber = "" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.PhoneNumber)
+            .WithErrorMessage("Phone number is required");
+    }
+
+    [Fact]
+    public void Should_HaveError_When_PhoneNumberIsInvalid()
+    {
+        var model = new SignUpDTO { PhoneNumber = "12345" };
+        var result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.PhoneNumber)
+            .WithErrorMessage("Invalid phone number format");
+    }
 
     [Fact]
     public void Should_NotHaveError_When_AllFieldsAreValid()
