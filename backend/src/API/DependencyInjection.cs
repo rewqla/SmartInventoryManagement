@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using System.Threading.RateLimiting;
 using API.Authorization;
 using API.Endpoints;
 using API.GraphQL.Mutations;
@@ -28,6 +29,7 @@ using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -113,10 +115,30 @@ public static class DependencyInjection
             options.AddPolicy(PolicyRoles.Worker, policy =>
                 policy.RequireRole(PolicyRoles.Worker));
         });
-        
+
         services.Configure<JwtOptions>(
             builder.Configuration.GetSection("Jwt"));
-        
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder ConfigureRateLimiter(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+            {
+                options.PermitLimit = 10;
+                options.Window = TimeSpan.FromSeconds(10);
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                options.QueueLimit = 0;
+            });
+        });
+
         return builder;
     }
 
@@ -233,9 +255,9 @@ public static class DependencyInjection
                 Scheme = JwtBearerDefaults.AuthenticationScheme,
                 Description = "Put Bearer [space] and then your token ",
             };
-            
+
             c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecurityScheme);
-            
+
             var securityRequirement = new OpenApiSecurityRequirement
             {
                 {
@@ -250,7 +272,7 @@ public static class DependencyInjection
                     []
                 }
             };
-            
+
             c.AddSecurityRequirement(securityRequirement);
         });
     }

@@ -38,7 +38,8 @@ public static class RefreshTokenEndpoint
                         });
                 })
             .WithName(Name)
-            .WithTags("Auth");
+            .WithTags("Auth")
+            .RequireRateLimiting("fixed");
 
         //todo: make tag as separate variable
 
