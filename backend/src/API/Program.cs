@@ -5,12 +5,13 @@ using QuestPDF.Infrastructure;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
     builder.ConfigureRepositories();
     builder.ConfigureServices();
     builder.ConfigureDatabase();
     builder.ConfigureAuth();
     builder.AddHealthChecks();
+    builder.ConfigureRateLimiter();
     builder.ConfigureGraphQL();
 
     QuestPDF.Settings.License = LicenseType.Community;
@@ -24,6 +25,9 @@ try
     app.ConfigureMiddlewares();
     app.ConfigureScheduler();
     app.MapEndpoints();
+    
+    app.UseRateLimiter();
+    
 
     app.ApplyMigrations();
 

@@ -17,7 +17,15 @@ public static class GetWarehouseByIdEndpoint
                 {
                     var result = await warehouseService.GetWarehouseByIdAsync(id, cancellationToken);
                     
-                    return Results.Ok(result.Value);
+                     return result.Match(
+                        onSuccess: value => Results.Ok(value),
+                        onFailure: error => Results.Problem(
+                            type: "https://httpstatuses.com/404",
+                            title: error.Code,
+                            detail: error.Description,
+                            statusCode: StatusCodes.Status404NotFound
+                        )
+                    );
                 })
             .WithName(Name)
             .WithTags("Warehouse")
