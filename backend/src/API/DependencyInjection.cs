@@ -33,6 +33,8 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
+
 
 namespace API;
 
@@ -126,17 +128,18 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-
+ 
         services.AddRateLimiter(rateLimiterOptions =>
         {
             rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-            rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
-            {
-                options.PermitLimit = 10;
-                options.Window = TimeSpan.FromSeconds(10);
-                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                options.QueueLimit = 0;
-            });
+            rateLimiterOptions.AddPolicy("fixed", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.User.Identity?.Name?.ToString(),
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(1)
+                    }));
         });
 
         return builder;
