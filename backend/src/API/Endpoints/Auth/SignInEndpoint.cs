@@ -22,12 +22,17 @@ public static class SignInEndpoint
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
                         {
-                            //todo: update returning data
-                            return Results.Problem(
-                                type: "https://httpstatuses.com/500",
-                                title: "Internal Server Error",
-                                detail: error.Description,
-                                statusCode: StatusCodes.Status500InternalServerError);
+                            return error.Code switch
+                            {
+                                "User.NotFound" => Results.NotFound(new
+                                {
+                                    type = "https://httpstatuses.com/404",
+                                    title = error.Code,
+                                    detail = error.Description,
+                                    statusCode = StatusCodes.Status404NotFound
+                                }),
+                                "Authentication.InvalidCredentials" => Results.Unauthorized()
+                            };
                         });
                 })
             .WithName(Name)

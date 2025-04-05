@@ -19,7 +19,7 @@ public class TokenService : ITokenService
         _options = options.Value ?? throw new ArgumentNullException(nameof(options));
     }
 
-  public string GenerateJwtToken(User user)
+    public string GenerateJwtToken(User user)
     {
         if (string.IsNullOrWhiteSpace(_options.SecretKey) || Encoding.UTF8.GetByteCount(_options.SecretKey) < 32)
         {
@@ -52,8 +52,8 @@ public class TokenService : ITokenService
         {
             Subject = new ClaimsIdentity(claims),
             Expires = expirationTime,
-            Issuer = _options.Issuer ?? null, 
-            Audience = _options.Audience ?? null, 
+            Issuer = _options.Issuer ?? null,
+            Audience = _options.Audience ?? null,
             SigningCredentials = credentials
         };
 
