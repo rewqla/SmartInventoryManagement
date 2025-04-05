@@ -1,4 +1,5 @@
-﻿using Application.DTO.Authentication;
+﻿using System.Collections;
+using Application.DTO.Authentication;
 using Application.Validation.Authentication;
 using FluentValidation.TestHelper;
 
@@ -23,7 +24,7 @@ public class SignUpDTOValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.FullName)
             .WithErrorMessage(expectedError);
     }
-    
+
     [Theory]
     [InlineData("invalid-email", "Invalid email format")]
     [InlineData("", "Email is required")]
@@ -47,12 +48,7 @@ public class SignUpDTOValidatorTests
     }
 
     [Theory]
-    [InlineData("", "Password is required")]
-    [InlineData("weak", "Password must be at least 8 characters long")]
-    [InlineData("short1A", "Password must be at least 8 characters long")]
-    [InlineData("nouppercase1!", "Password must contain at least one uppercase letter")]
-    [InlineData("NOLOWERCASE1!", "Password must contain at least one lowercase letter")]
-    [InlineData("NoSpecialChar1", "Password must contain at least one special character")]
+    [ClassData(typeof(PasswordTestData))]
     public void Should_HaveError_When_PasswordIsInvalid(string password, string expectedError)
     {
         var model = new SignUpDTO { Password = password };
@@ -60,8 +56,8 @@ public class SignUpDTOValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.Password)
             .WithErrorMessage(expectedError);
     }
-    
-    [Fact]
+
+    [Fact(Timeout = 5000)]
     public void Should_NotHaveError_When_AllFieldsAreValid()
     {
         var model = new SignUpDTO
@@ -75,4 +71,19 @@ public class SignUpDTOValidatorTests
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
     }
+}
+
+public class PasswordTestData : IEnumerable<object[]>
+{
+    public IEnumerator<object[]> GetEnumerator()
+    {
+        yield return new object[] { "", "Password is required" };
+        yield return new object[] { "weak", "Password must be at least 8 characters long" };
+        yield return new object[] { "short1A", "Password must be at least 8 characters long" };
+        yield return new object[] { "nouppercase1!", "Password must contain at least one uppercase letter" };
+        yield return new object[] { "NOLOWERCASE1!", "Password must contain at least one lowercase letter" };
+        yield return new object[] { "NoSpecialChar1", "Password must contain at least one special character" };
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
