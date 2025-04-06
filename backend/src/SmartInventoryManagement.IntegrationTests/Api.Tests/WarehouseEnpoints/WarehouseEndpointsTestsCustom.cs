@@ -1,8 +1,7 @@
 ﻿using SmartInventoryManagement.IntegrationTests.Common;
 using SmartInventoryManagement.IntegrationTests.Helpers;
-using Error = Application.Common.Error;
 
-namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
+namespace SmartInventoryManagement.IntegrationTests.Api.Tests.WarehouseEnpoints;
 
 // Sends http requests to the TestContainer by IntegrationTestWebAppFactory
 public class WarehouseEndpointsTestsCustom :
