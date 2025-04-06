@@ -41,40 +41,7 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
         }
 
-        string accessToken;
-        try
-        {
-            accessToken = _tokenService.GenerateJwtToken(user);
-        }
-        catch (Exception ex)
-        {
-            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
-        }
-
-        //todo: write unit tests for timespan 
-
-        RefreshToken refreshToken;
-        try
-        {
-            refreshToken = _tokenService.GenerateRefreshToken(user);
-        }
-        catch (Exception ex)
-        {
-            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("refresh", ex.Message));
-        }
-
-        await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
-        await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
-
-        //todo: add role check for endpoints
-
-        var response = new AuthenticationDTO
-        {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken.Token
-        };
-
-        return Result<AuthenticationDTO>.Success(response);
+        return await GenerateTokensAsync(user);
     }
 
     public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
@@ -106,29 +73,18 @@ public class AuthenticationService : IAuthenticationService
             return Result<IdleUnit>.Failure(AuthenticationErrors.PhoneAlreadyExists());
         }
 
-        string passwordHash = _passwordHasher.Hash(signUpDTO.Password);
-
         var defaultRole = await _roleRepository.GetByNameAsync("Worker");
         if (defaultRole == null)
         {
             return Result<IdleUnit>.Failure(CommonErrors.NotFound("role"));
         }
 
-        var newUser = new User
-        {
-            Email = signUpDTO.Email,
-            Phone = signUpDTO.PhoneNumber,
-            Name = signUpDTO.FullName,
-            PasswordHash = passwordHash,
-            Role = defaultRole
-        };
-
+        var newUser = CreateUser(signUpDTO, defaultRole);
         await _userRepository.AddAsync(newUser);
 
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
-    //todo: write some integration tests for refresh tokens
     public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
@@ -144,6 +100,13 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
+        return await GenerateTokensAsync(user);
+    }
+
+    private async Task<Result<AuthenticationDTO>> GenerateTokensAsync(User user)
+    {
+        // TODO: write unit tests for timespan
+
         string accessToken;
         try
         {
@@ -154,10 +117,10 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
         }
 
-        RefreshToken newRefreshToken;
+        RefreshToken refreshToken;
         try
         {
-            newRefreshToken = _tokenService.GenerateRefreshToken(user);
+            refreshToken = _tokenService.GenerateRefreshToken(user);
         }
         catch (Exception ex)
         {
@@ -165,14 +128,26 @@ public class AuthenticationService : IAuthenticationService
         }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
-        await _refreshTokenRepository.SaveRefreshTokenAsync(newRefreshToken);
+        await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
 
-        var response = new AuthenticationDTO
+        return Result<AuthenticationDTO>.Success(new AuthenticationDTO
         {
             AccessToken = accessToken,
-            RefreshToken = newRefreshToken.Token
-        };
+            RefreshToken = refreshToken.Token
+        });
+    }
 
-        return Result<AuthenticationDTO>.Success(response);
+    private User CreateUser(SignUpDTO dto, Role role)
+    {
+        var passwordHash = _passwordHasher.Hash(dto.Password);
+
+        return new User
+        {
+            Email = dto.Email,
+            Phone = dto.PhoneNumber,
+            Name = dto.FullName,
+            PasswordHash = passwordHash,
+            Role = role
+        };
     }
 }
