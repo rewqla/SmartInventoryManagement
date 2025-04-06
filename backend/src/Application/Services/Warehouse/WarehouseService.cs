@@ -19,15 +19,15 @@ public class WarehouseService : IWarehouseService
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly WarehouseDTOValidator _warehouseDTOValidator;
     private readonly ILogger<WarehouseService> _logger;
-    private readonly IReportService<WarehouseDTO> _warehouseReportService;
+    private readonly IReportService _reportService;
 
     public WarehouseService(IWarehouseRepository warehouseRepository, ILogger<WarehouseService> logger,
-        WarehouseDTOValidator warehouseDtoValidator, IReportService<WarehouseDTO> warehouseReportService)
+        WarehouseDTOValidator warehouseDtoValidator, IReportService reportService)
     {
         _warehouseRepository = warehouseRepository;
         _logger = logger;
         _warehouseDTOValidator = warehouseDtoValidator;
-        _warehouseReportService = warehouseReportService;
+        _reportService = reportService;
     }
 
     public async Task<Result<WarehouseDTO>> GetWarehouseByIdAsync(Guid id,
@@ -136,7 +136,7 @@ public class WarehouseService : IWarehouseService
         var warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
         var warehousesDTO = warehouses.Select(WarehouseMapper.ToDTO);
 
-        var report = _warehouseReportService.GenerateReport(warehousesDTO);
+        var report = _reportService.GenerateReport(warehousesDTO);
 
         return Result<byte[]>.Success(report);
     }

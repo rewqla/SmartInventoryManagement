@@ -70,10 +70,12 @@ public static class DependencyInjection
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<IReportService<WarehouseDTO>, WarehouseReportService>();
-        services.AddScoped<IReportService<Product>, ProductReportService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-
+        
+        services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IReportGenerator<WarehouseDTO>, WarehouseReportGenerator>();
+        services.AddScoped<IReportGenerator<Product>, ProductReportGenerator>();
+        
         services.AddTransient<CleanupExpiredTokensJob>();
 
         services.AddValidatorsFromAssembly(typeof(WarehouseDTOValidator).Assembly);

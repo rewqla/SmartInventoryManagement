@@ -6,7 +6,7 @@ using QuestPDF.Fluent;
 
 namespace Application.Reports;
 
-public class ProductReportService : IReportService<Product>
+public class ProductReportGenerator : IReportGenerator<Product>
 {
     public byte[] GenerateReport(IEnumerable<Product> items)
     {

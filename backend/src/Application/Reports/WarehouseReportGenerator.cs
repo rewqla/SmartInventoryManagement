@@ -1,11 +1,10 @@
 ﻿using Application.DTO.Warehouse;
-using Application.Interfaces.Services.Report;
 using Application.Reports.Templates;
 using QuestPDF.Fluent;
 
 namespace Application.Reports;
 
-public class WarehouseReportService : IReportService<WarehouseDTO>
+public class WarehouseReportGenerator : IReportGenerator<WarehouseDTO>
 {
     public byte[] GenerateReport(IEnumerable<WarehouseDTO> items)
     {

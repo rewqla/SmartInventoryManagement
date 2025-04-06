@@ -8,19 +8,19 @@ namespace Application.Services.Product;
 
 public class ProductService : IProductService
 {
-    private readonly IReportService<Infrastructure.Entities.Product> _productReportService;
+    private readonly IReportService _reportService;
     private readonly IProductRepository _productRepository;
 
-    public ProductService(IReportService<Infrastructure.Entities.Product> productReportService, IProductRepository productRepository)
+    public ProductService(IReportService reportService, IProductRepository productRepository)
     {
-        _productReportService = productReportService;
+        _reportService = reportService;
         _productRepository = productRepository;
     }
 
     public async Task<Result<byte[]>> GenerateProductReportAsync(CancellationToken cancellationToken = default)
     {
         var products = await _productRepository.GetAllAsync(cancellationToken);
-        var report = _productReportService.GenerateReport(products);
+        var report = _reportService.GenerateReport(products);
 
         return Result<byte[]>.Success(report);
     }

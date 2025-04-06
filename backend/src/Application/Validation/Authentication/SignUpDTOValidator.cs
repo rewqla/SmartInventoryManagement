@@ -27,6 +27,4 @@ public class SignUpDTOValidator : AbstractValidator<SignUpDTO>
             .Matches(@"\d").WithMessage("Password must contain at least one number")
             .Matches(@"[^\w\d\s]").WithMessage("Password must contain at least one special character");
     }
-    
-    //todo: add check if email and phone number is unique
 }
