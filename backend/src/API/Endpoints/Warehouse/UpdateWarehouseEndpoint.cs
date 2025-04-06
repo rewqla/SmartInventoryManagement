@@ -37,13 +37,13 @@ public static class UpdateWarehouseEndpoint
                                     statusCode: StatusCodes.Status400BadRequest,
                                     extensions: new Dictionary<string, object?>
                                     {
-                                        { "errors", error.Errors } 
+                                        { "errors", error.Errors }
                                     })
                             };
                         });
                 })
             .WithName(Name)
-            .WithTags("Warehouse");
+            .WithTags(EndpointTags.Warehouse);
 
         return app;
     }

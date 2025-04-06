@@ -51,7 +51,7 @@ public static class SignUpEndpoint
                         });
                 })
             .WithName(Name)
-            .WithTags("Auth");
+            .WithTags(EndpointTags.Auth);
 
         return app;
     }

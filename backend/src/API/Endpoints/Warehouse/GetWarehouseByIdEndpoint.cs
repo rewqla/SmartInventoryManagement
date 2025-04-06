@@ -28,7 +28,7 @@ public static class GetWarehouseByIdEndpoint
                     );
                 })
             .WithName(Name)
-            .WithTags("Warehouse")
+            .WithTags(EndpointTags.Warehouse)
             .RequireAuthorization(PolicyRoles.Admin);
 
         return app;

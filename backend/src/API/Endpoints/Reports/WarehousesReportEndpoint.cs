@@ -20,7 +20,7 @@ public static class WarehousesReportEndpoint
                     return Results.File(result.Value!, "application/pdf", fileName);
                 })
             .WithName(Name)
-            .WithTags("Reports");
+            .WithTags(EndpointTags.Report);
 
         return app;
     }

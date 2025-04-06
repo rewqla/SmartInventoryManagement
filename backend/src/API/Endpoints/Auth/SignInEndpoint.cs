@@ -24,6 +24,7 @@ public static class SignInEndpoint
                         {
                             return error.Code switch
                             {
+                                //todo: update check not by string, but as object
                                 "User.NotFound" => Results.NotFound(new
                                 {
                                     type = "https://httpstatuses.com/404",
@@ -36,9 +37,7 @@ public static class SignInEndpoint
                         });
                 })
             .WithName(Name)
-            .WithTags("Auth");
-
-        //todo: make tag as separate variable
+            .WithTags(EndpointTags.Auth);
 
         return app;
     }

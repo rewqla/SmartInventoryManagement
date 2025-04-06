@@ -19,7 +19,7 @@ public static class GetWarehousesEndpoint
                     return Results.Ok(result.Value);
                 })
             .WithName(Name)
-            .WithTags("Warehouse");
+            .WithTags(EndpointTags.Warehouse);
 
         return app;
     }

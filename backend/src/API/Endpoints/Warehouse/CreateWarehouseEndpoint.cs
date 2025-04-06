@@ -41,7 +41,7 @@ public static class CreateWarehouseEndpoint
                         });
                 })
             .WithName(Name)
-            .WithTags("Warehouse");
+            .WithTags(EndpointTags.Warehouse);
 
         return app;
     }

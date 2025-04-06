@@ -29,8 +29,7 @@ public static class DeleteWarehouseEndpoint
                     );
                 })
             .WithName(Name)
-            .WithTags("Warehouse");
-
+            .WithTags(EndpointTags.Warehouse);
         return app;
     }
 }
