@@ -35,5 +35,22 @@ public class AuthEndpointsTests:
         authResponse.RefreshToken.Should().NotBeNullOrWhiteSpace();
     }
     
-  
+    [Fact]
+    public async Task SignIn_ReturnsUnauthorized_WhenPasswordIsInvalid()
+    {
+        // Arrange
+        var signInDto = new SignInDTO
+        {
+            EmailOrPhone = "testuser@example.com",
+            Password = "Tes21323423t@1234"
+        };
+
+        // Act
+        var response = await _httpClient.PostAsJsonAsync("/api/auth/signin", signInDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+ 
 }
