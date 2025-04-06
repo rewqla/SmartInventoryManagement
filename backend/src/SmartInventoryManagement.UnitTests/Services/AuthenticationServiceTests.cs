@@ -1,6 +1,7 @@
 ﻿using Application.Authentication;
 using Application.DTO.Authentication;
 using Application.Interfaces.Authentication;
+using Application.Validation.Authentication;
 
 namespace SmartInventoryManagement.Tests.Services;
 
@@ -315,7 +316,7 @@ public class AuthenticationServiceTests
         var signUpDTO = new SignUpDTO
         {
             Email = "existing@example.com",
-            PhoneNumber = "+123456789",
+            PhoneNumber = "+123456789123",
             FullName = "Existing User",
             Password = "SecurePassword123!"
         };
@@ -341,7 +342,7 @@ public class AuthenticationServiceTests
         var signUpDTO = new SignUpDTO
         {
             Email = "existing@example.com",
-            PhoneNumber = "+123456789",
+            PhoneNumber = "+123456789123",
             FullName = "Existing User",
             Password = "SecurePassword123!"
         };
@@ -367,7 +368,7 @@ public class AuthenticationServiceTests
         var signUpDTO = new SignUpDTO
         {
             Email = "newuser@example.com",
-            PhoneNumber = "+123456789",
+            PhoneNumber = "+123456789123",
             FullName = "New User",
             Password = "SecurePassword123!"
         };
@@ -396,7 +397,7 @@ public class AuthenticationServiceTests
         var signUpDTO = new SignUpDTO
         {
             Email = "newuser@example.com",
-            PhoneNumber = "+123456789",
+            PhoneNumber = "+123456789123",
             FullName = "New User",
             Password = "SecurePassword123!"
         };
@@ -423,5 +424,24 @@ public class AuthenticationServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(IdleUnit.Value);
+    }
+    
+    [Fact]
+    public async Task SignUpAsync_InvalidInput_ReturnsValidationError()
+    {
+        // Arrange
+        var signUpDTO = new SignUpDTO
+        {
+            Email = "invalid-email", 
+            PhoneNumber = "12345",
+            FullName = "",
+            Password = "short" 
+        };
+
+        var result = await _authenticationService.SignUpAsync(signUpDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("SignUpDTO.ValidationError");
     }
 }

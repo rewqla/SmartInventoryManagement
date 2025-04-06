@@ -1,4 +1,5 @@
 ﻿using SmartInventoryManagement.IntegrationTests.Common;
+using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
 
@@ -8,7 +9,8 @@ public class WarehouseEndpointsTests :
     private readonly HttpClient _httpClient;
     private readonly WarehouseTestFixture _testFixture;
 
-    public WarehouseEndpointsTests(WebApplicationFactory<ISmartInventoryHost> appFactory, WarehouseTestFixture testFixture)
+    public WarehouseEndpointsTests(WebApplicationFactory<ISmartInventoryHost> appFactory,
+        WarehouseTestFixture testFixture)
     {
         _testFixture = testFixture;
         _httpClient = appFactory.CreateClient();
@@ -65,7 +67,9 @@ public class WarehouseEndpointsTests :
     {
         // Arrange
         var warehouseId = _testFixture.CreatedWarehouseId;
-
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
+        
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{warehouseId}");
@@ -78,40 +82,62 @@ public class WarehouseEndpointsTests :
         warehouse!.Id.Should().Be(warehouseId);
         warehouse.Name.Should().NotBeNullOrEmpty();
         warehouse.Location.Should().NotBeNullOrEmpty();
+        
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
     //todo: update test for get by id to overcome unauthorized and send requests with token
-    //todo: add test for unauthorized
+    [Fact]
+    public async Task GetById_ReturnsUnauthorized_WhenUserIsNotAuthenticated()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/warehouses/{id}");
+
+        // Act
+        var response = await _httpClient.SendAsync(request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
     [Fact]
     public async Task GetById_ReturnsNotFound_WhenWarehouseNotFound()
     {
         // Arrange
         var id = Guid.NewGuid();
-
+        
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{id}");
 
         // Assert
-        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
-
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
+        var errorResponse = await response.Content.ReadFromJsonAsync<ResponseError>();
         errorResponse.Should().NotBeNull();
         errorResponse!.Title.Should().Be("Warehouse.NotFound");
         errorResponse!.Detail.Should().Be($"The warehouse with Id '{id}' was not found");
+        
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
     [Fact]
     public async Task UpdateWarehouse_ReturnsOk_WhenValidWarehouseIsProvided()
-    {
+    {      
+        // Arrange
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO("Updated Warehouse", "Updated Location");
         warehouseDto.Id = _testFixture.CreatedWarehouseId;
-
+        
+        // Act
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{warehouseDto.Id}", warehouseDto);
-
+        
+        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-
+        
         var updatedWarehouse = await response.Content.ReadFromJsonAsync<WarehouseDTO>();
         updatedWarehouse.Should().NotBeNull();
         updatedWarehouse!.Id.Should().Be(warehouseDto.Id);
@@ -119,6 +145,7 @@ public class WarehouseEndpointsTests :
         updatedWarehouse.Location.Should().Be(warehouseDto.Location);
 
         _testFixture.isUpdated = true;
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
     [Fact]
@@ -186,10 +213,10 @@ public class WarehouseEndpointsTests :
 
         // Act
         var createResponse = await _httpClient.PostAsJsonAsync("/api/warehouses", warehouseDto);
-        
+
         // Assert
         createResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        
+
         // Arrange
 
         var createdWarehouse = await createResponse.Content.ReadFromJsonAsync<WarehouseDTO>();

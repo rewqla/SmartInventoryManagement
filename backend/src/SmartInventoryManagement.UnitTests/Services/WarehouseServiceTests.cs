@@ -416,5 +416,4 @@ public class WarehouseServiceTests
     }
     // #todo: write tests with inventories
     // #todo: update tests also to check inventories
-    // #todo: write tests with CancellationToken
 }

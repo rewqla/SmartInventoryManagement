@@ -1,4 +1,5 @@
 ﻿using SmartInventoryManagement.IntegrationTests.Common;
+using SmartInventoryManagement.IntegrationTests.Helpers;
 using Error = Application.Common.Error;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Endpoints;
@@ -63,7 +64,9 @@ public class WarehouseEndpointsTestsCustom :
     {
         // Arrange
         var warehouseId = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc");
-
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
+        
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{warehouseId}");
@@ -76,6 +79,8 @@ public class WarehouseEndpointsTestsCustom :
         warehouse!.Id.Should().Be(warehouseId);
         warehouse.Name.Should().NotBeNullOrEmpty();
         warehouse.Location.Should().NotBeNullOrEmpty();
+        
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
     [Fact]
@@ -83,7 +88,9 @@ public class WarehouseEndpointsTestsCustom :
     {
         // Arrange
         var id = Guid.Empty;
-
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
+        
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{id}");
@@ -96,6 +103,8 @@ public class WarehouseEndpointsTestsCustom :
         errorResponse.Should().NotBeNull();
         errorResponse!.Title.Should().Be("Warehouse.NotFound");
         errorResponse!.Detail.Should().Be($"The warehouse with Id '{id}' was not found");
+        
+        _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
     [Fact]
