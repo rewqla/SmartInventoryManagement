@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.TestHost;
+using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests;
 
@@ -66,6 +68,29 @@ public class IntegrationTestWebAppFactory
         };
 
         await dbContext.Warehouses.AddRangeAsync(warehouses);
+        await dbContext.SaveChangesAsync();
+        
+        var testRole = new Role
+        {
+            Id = Guid.NewGuid(),
+            Name = "Worker"
+        };
+        await dbContext.Roles.AddAsync(testRole);
+        
+        string password = "Test@1234";
+        string hashedPassword = PasswordHasher.Hash(password); 
+
+        var testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = "testuser@example.com",
+            Phone = "+1234567890",
+            Name = "Test User",
+            PasswordHash = hashedPassword,
+            Role = testRole
+        };
+        await dbContext.Users.AddAsync(testUser);
+
         await dbContext.SaveChangesAsync();
     }
 }

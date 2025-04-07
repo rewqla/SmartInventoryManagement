@@ -52,5 +52,5 @@ public class AuthEndpointsTests:
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
- 
+   
 }
