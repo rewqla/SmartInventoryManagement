@@ -34,6 +34,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
+using Application.Interfaces.News;
+using Application.Services.News;
+using Refit;
 
 
 namespace API;
@@ -71,14 +74,36 @@ public static class DependencyInjection
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        
+        services.AddScoped<INewsService, NewsService>();
+
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IReportGenerator<WarehouseDTO>, WarehouseReportGenerator>();
         services.AddScoped<IReportGenerator<Product>, ProductReportGenerator>();
-        
+
         services.AddTransient<CleanupExpiredTokensJob>();
 
         services.AddValidatorsFromAssembly(typeof(WarehouseDTOValidator).Assembly);
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder ConfigureRefit(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        var newsApiKey = builder.Configuration.GetValue<string>("NewsApiKey")!;
+
+        services.AddRefitClient<INewsApi>()
+            .ConfigureHttpClient(
+                c =>
+                {
+                    c.BaseAddress = new Uri("https://newsapi.org/v2");
+                    c.DefaultRequestHeaders.Add("Authorization", newsApiKey);
+                    c.DefaultRequestHeaders.Add("User-Agent", "Dj");
+                    // c.DefaultRequestHeaders.Add("X-Api-Key", newsApiKey);
+                }
+            );
 
         return builder;
     }
@@ -126,11 +151,12 @@ public static class DependencyInjection
         return builder;
     }
 
+    //todo: write integration tests to check work
     public static WebApplicationBuilder ConfigureRateLimiter(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
- 
+
         services.AddRateLimiter(rateLimiterOptions =>
         {
             rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
