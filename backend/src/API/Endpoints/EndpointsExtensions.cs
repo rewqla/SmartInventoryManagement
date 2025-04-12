@@ -1,4 +1,5 @@
 ﻿using API.Endpoints.Auth;
+using API.Endpoints.News;
 using API.Endpoints.Reports;
 using API.Endpoints.Warehouse;
 using HealthChecks.UI.Client;
@@ -13,6 +14,7 @@ public static class EndpointsExtensions
         app.MapWarehouseEndpoints();
         app.MapReportEndpoints();
         app.MapAuthEndpoints();
+        app.MapNewsEndpoints();
         
         app.MapHealthChecks("/health", new HealthCheckOptions
         {

@@ -1,0 +1,4 @@
+﻿### Get top titles by refit
+GET {{baseUrl}}/api/news/titles?q
+
+###

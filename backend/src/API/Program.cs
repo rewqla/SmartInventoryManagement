@@ -13,6 +13,7 @@ try
     builder.AddHealthChecks();
     builder.ConfigureRateLimiter();
     builder.ConfigureGraphQL();
+    builder.ConfigureRefit();
 
     QuestPDF.Settings.License = LicenseType.Community;
 
