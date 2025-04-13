@@ -18,7 +18,8 @@ public class AuthenticationService : IAuthenticationService
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
-
+    
+    //todo: add separate class for configuring 
     private const int MaxFailedAttempts = 5;
     private const int LockoutDurationMinutes = 60;
 
@@ -43,31 +44,19 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
-        if (user.LockoutEnd.HasValue && user.LockoutEnd > _dateTimeProvider.UtcNow)
+        if (IsAccountLocked(user))
         {
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.AccountLockedOut());
         }
-        
-        //todo: refactor
-        //todo: add unit tests
-        if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
+
+        if (!IsPasswordValid(signInDTO.Password, user.PasswordHash))
         {
-            user.FailedLoginAttempts++;
-
-            if (user.FailedLoginAttempts >= MaxFailedAttempts)
-            {
-                user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes(LockoutDurationMinutes);
-                user.FailedLoginAttempts = 0;
-            }
-
-            await _userRepository.UpdateAsync(user);
+            await HandleFailedLoginAsync(user);
 
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
         }
 
-        user.FailedLoginAttempts = 0;
-        user.LockoutEnd = null;
-        await _userRepository.UpdateAsync(user);
+        await ResetLockoutAsync(user);
 
         return await GenerateTokensAsync(user);
     }
@@ -170,5 +159,36 @@ public class AuthenticationService : IAuthenticationService
     private async Task<bool> UserExistsAsync(string value)
     {
         return await _userRepository.GetByEmailOrPhoneAsync(value) is not null;
+    }
+
+    private bool IsAccountLocked(User user)
+    {
+        return user.LockoutEnd.HasValue && user.LockoutEnd > _dateTimeProvider.UtcNow;
+    }
+
+    private bool IsPasswordValid(string inputPassword, string passwordHash)
+    {
+        return _passwordHasher.Verify(inputPassword, passwordHash);
+    }
+
+    private async Task HandleFailedLoginAsync(User user)
+    {
+        user.FailedLoginAttempts++;
+
+        if (user.FailedLoginAttempts >= MaxFailedAttempts)
+        {
+            user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes(LockoutDurationMinutes);
+            user.FailedLoginAttempts = 0; 
+        }
+
+        await _userRepository.UpdateAsync(user);
+    }
+
+    private async Task ResetLockoutAsync(User user)
+    {
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
+        
+        await _userRepository.UpdateAsync(user);
     }
 }
