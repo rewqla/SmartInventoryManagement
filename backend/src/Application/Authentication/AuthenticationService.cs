@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.DTO.Authentication;
 using Application.Exceptions;
+using Application.Interfaces;
 using Application.Interfaces.Authentication;
 using Application.Validation;
 using Application.Validation.Authentication;
@@ -16,15 +17,21 @@ public class AuthenticationService : IAuthenticationService
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    private const int MaxFailedAttempts = 5;
+    private const int LockoutDurationMinutes = 60;
 
     public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
-        IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository)
+        IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository,
+        IDateTimeProvider dateTimeProvider)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
         _roleRepository = roleRepository;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
@@ -36,16 +43,35 @@ public class AuthenticationService : IAuthenticationService
             return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
         }
 
-        //todo: add custom lock ut for users
+        if (user.LockoutEnd.HasValue && user.LockoutEnd > _dateTimeProvider.UtcNow)
+        {
+            return Result<AuthenticationDTO>.Failure(AuthenticationErrors.AccountLockedOut());
+        }
+        
+        //todo: refactor
+        //todo: add unit tests
         if (!_passwordHasher.Verify(signInDTO.Password, user.PasswordHash))
         {
+            user.FailedLoginAttempts++;
+
+            if (user.FailedLoginAttempts >= MaxFailedAttempts)
+            {
+                user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes(LockoutDurationMinutes);
+                user.FailedLoginAttempts = 0;
+            }
+
+            await _userRepository.UpdateAsync(user);
+
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
         }
+
+        user.FailedLoginAttempts = 0;
+        user.LockoutEnd = null;
+        await _userRepository.UpdateAsync(user);
 
         return await GenerateTokensAsync(user);
     }
 
-    //todo: refactor this method
     public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
     {
         var validator = new SignUpDTOValidator();
@@ -54,7 +80,7 @@ public class AuthenticationService : IAuthenticationService
         if (!validationResult.IsValid)
         {
             var errorDetails = validationResult.ToErrorDetails();
-            
+
             return Result<IdleUnit>.Failure(CommonErrors.ValidationError("SignUpDTO", errorDetails));
         }
 
@@ -134,13 +160,13 @@ public class AuthenticationService : IAuthenticationService
         return new User
         {
             Email = dto.Email,
-            Phone = dto.PhoneNumber,
-            Name = dto.FullName,
+            PhoneNumber = dto.PhoneNumber,
+            FullName = dto.FullName,
             PasswordHash = passwordHash,
             Role = role
         };
     }
-    
+
     private async Task<bool> UserExistsAsync(string value)
     {
         return await _userRepository.GetByEmailOrPhoneAsync(value) is not null;
