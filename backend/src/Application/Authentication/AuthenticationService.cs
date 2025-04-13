@@ -58,17 +58,11 @@ public class AuthenticationService : IAuthenticationService
             return Result<IdleUnit>.Failure(CommonErrors.ValidationError("SignUpDTO", errorDetails));
         }
 
-        var existingUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.Email);
-        if (existingUser != null)
-        {
+        if (await UserExistsAsync(signUpDTO.Email))
             return Result<IdleUnit>.Failure(AuthenticationErrors.EmailAlreadyExists());
-        }
 
-        var existingPhoneUser = await _userRepository.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber);
-        if (existingPhoneUser != null)
-        {
+        if (await UserExistsAsync(signUpDTO.PhoneNumber))
             return Result<IdleUnit>.Failure(AuthenticationErrors.PhoneAlreadyExists());
-        }
 
         var defaultRole = await _roleRepository.GetByNameAsync("Worker");
         if (defaultRole == null)
@@ -103,7 +97,6 @@ public class AuthenticationService : IAuthenticationService
     private async Task<Result<AuthenticationDTO>> GenerateTokensAsync(User user)
     {
         // TODO: write unit tests for timespan
-
         string accessToken;
         try
         {
@@ -146,5 +139,10 @@ public class AuthenticationService : IAuthenticationService
             PasswordHash = passwordHash,
             Role = role
         };
+    }
+    
+    private async Task<bool> UserExistsAsync(string value)
+    {
+        return await _userRepository.GetByEmailOrPhoneAsync(value) is not null;
     }
 }
