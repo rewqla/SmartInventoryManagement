@@ -10,9 +10,9 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Name);
+        builder.Property(e => e.FullName);
         // #todo: add unique attribute
-        builder.Property(e => e.Phone);
+        builder.Property(e => e.PhoneNumber);
         // #todo: add unique attribute
         builder.Property(e => e.Email);
         builder.Property(e => e.PasswordHash);
@@ -24,7 +24,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(p => p.Email)
             .IsUnique();
         
-        builder.HasIndex(p => p.Phone)
+        builder.HasIndex(p => p.PhoneNumber)
             .IsUnique();
         
         builder.HasMany(e => e.RefreshTokens)
