@@ -5,6 +5,7 @@ using Application.Exceptions;
 using Application.Interfaces.Services.Report;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Warehouse;
+using Application.Validation;
 using Application.Validation.Warehouse;
 using FluentValidation;
 using Infrastructure.Interfaces.Repositories;
@@ -66,11 +67,7 @@ public class WarehouseService : IWarehouseService
 
         if (!validationResult.IsValid)
         {
-            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
-            {
-                PropertyName = error.PropertyName,
-                ErrorMessage = error.ErrorMessage
-            }).ToList();
+            var errorDetails = validationResult.ToErrorDetails();
 
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }
@@ -89,13 +86,10 @@ public class WarehouseService : IWarehouseService
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
+        
         if (!validationResult.IsValid)
         {
-            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
-            {
-                PropertyName = error.PropertyName,
-                ErrorMessage = error.ErrorMessage
-            }).ToList();
+            var errorDetails = validationResult.ToErrorDetails();
 
             return Result<WarehouseDTO>.Failure(CommonErrors.ValidationError("warehouse", errorDetails));
         }

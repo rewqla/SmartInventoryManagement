@@ -2,6 +2,7 @@
 using Application.DTO.Authentication;
 using Application.Exceptions;
 using Application.Interfaces.Authentication;
+using Application.Validation;
 using Application.Validation.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories;
@@ -44,6 +45,7 @@ public class AuthenticationService : IAuthenticationService
         return await GenerateTokensAsync(user);
     }
 
+    //todo: refactor this method
     public async Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO)
     {
         var validator = new SignUpDTOValidator();
@@ -51,13 +53,8 @@ public class AuthenticationService : IAuthenticationService
 
         if (!validationResult.IsValid)
         {
-            //todo: write unit tests for validation
-            var errorDetails = validationResult.Errors.Select(error => new ErrorDetail
-            {
-                PropertyName = error.PropertyName,
-                ErrorMessage = error.ErrorMessage
-            }).ToList();
-
+            var errorDetails = validationResult.ToErrorDetails();
+            
             return Result<IdleUnit>.Failure(CommonErrors.ValidationError("SignUpDTO", errorDetails));
         }
 
