@@ -9,6 +9,7 @@ public interface INewsApi
         CancellationToken cancellationToken = default);
 }
 
+//todo: move somewhere this classes
 public class Article
 {
     public Source Source { get; set; }

@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<User?> GetByEmailOrPhoneAsync(string emailOrPhone);
     Task<User?> GetByIdWithRoles(Guid id);
     Task AddAsync(User user);
+    Task UpdateAsync(User user);
 }

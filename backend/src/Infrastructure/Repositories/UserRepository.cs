@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
+//todo: inherit base repo
 public class UserRepository : IUserRepository
 {
     private readonly InventoryContext _dbContext;
@@ -19,7 +20,7 @@ public class UserRepository : IUserRepository
     {
         return await _dbContext.Users
             .Include(u => u.Role)
-            .FirstOrDefaultAsync(u => u.Email == emailOrPhone || u.Phone == emailOrPhone);
+            .FirstOrDefaultAsync(u => u.Email == emailOrPhone || u.PhoneNumber == emailOrPhone);
     }
 
     public async Task<User?> GetByIdWithRoles(Guid id)
@@ -32,6 +33,12 @@ public class UserRepository : IUserRepository
     public async Task AddAsync(User user)
     {
         await _dbContext.Users.AddAsync(user);
+        await _dbContext.SaveChangesAsync();
+    }
+    
+    public async Task UpdateAsync(User user)
+    {
+        _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync();
     }
 }

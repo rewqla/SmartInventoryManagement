@@ -84,8 +84,8 @@ public class IntegrationTestWebAppFactory
         {
             Id = Guid.NewGuid(),
             Email = "testuser@example.com",
-            Phone = "+1234567890",
-            Name = "Test User",
+            PhoneNumber = "+1234567890",
+            FullName = "Test User",
             PasswordHash = hashedPassword,
             Role = testRole
         };
