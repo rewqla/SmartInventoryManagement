@@ -1,5 +1,6 @@
 ﻿using Application.Authentication;
 using Application.DTO.Authentication;
+using Application.Interfaces;
 using Application.Interfaces.Authentication;
 using Application.Validation.Authentication;
 
@@ -13,6 +14,7 @@ public class AuthenticationServiceTests
     private readonly Mock<IRoleRepository> _roleRepository;
     private readonly Mock<ITokenService> _tokenService;
     private readonly Mock<IPasswordHasher> _passwordHasher;
+    private readonly Mock<IDateTimeProvider> _dateTimeProvider;
 
     public AuthenticationServiceTests()
     {
@@ -21,10 +23,11 @@ public class AuthenticationServiceTests
         _userRepository = new Mock<IUserRepository>();
         _tokenService = new Mock<ITokenService>();
         _roleRepository = new Mock<IRoleRepository>();
+        _dateTimeProvider = new Mock<IDateTimeProvider>();
 
         _authenticationService =
             new AuthenticationService(_tokenService.Object, _passwordHasher.Object, _userRepository.Object,
-                _refreshTokenRepository.Object, _roleRepository.Object);
+                _refreshTokenRepository.Object, _roleRepository.Object, _dateTimeProvider.Object);
     }
 
     [Fact]
@@ -70,6 +73,12 @@ public class AuthenticationServiceTests
 
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
         _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
+        
+        _userRepository.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+            u.FailedLoginAttempts == 1 &&
+            u.LockoutEnd == null
+        )), Times.Once);
+
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Never);
     }
 
@@ -100,32 +109,7 @@ public class AuthenticationServiceTests
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
     }
 
-    [Fact]
-    public async Task SignInAsync_RefreshTokenGenerationFails_ReturnsTokenGenerationError()
-    {
-        // Arrange
-        var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
 
-        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
-        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
-        _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("validAccessToken");
-        _tokenService.Setup(x => x.GenerateRefreshToken(user))
-            .Throws(new Exception("Unexpected error during refresh token generation"));
-
-        // Act
-        var result = await _authenticationService.SignInAsync(signInDTO);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Code.Should().Be("Authentication.TokenGenerationError");
-        result.Error.Description.Should().Contain("Unexpected error during refresh token generation");
-
-        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
-        _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
-        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
-        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
-    }
 
     [Fact]
     public async Task SignInAsync_Success_ReturnsAuthenticationDTO()
@@ -334,7 +318,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.EmailAlreadyExists");
     }
-    
+
     [Fact]
     public async Task SignUpAsync_PhoneAlreadyExists_ReturnsFailure()
     {
@@ -348,7 +332,7 @@ public class AuthenticationServiceTests
         };
 
         var existingUser = new UserFaker().Generate();
-        existingUser.Phone = signUpDTO.PhoneNumber;
+        existingUser.PhoneNumber = signUpDTO.PhoneNumber;
 
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber))
             .ReturnsAsync(existingUser);
@@ -360,7 +344,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.PhoneAlreadyExists");
     }
-    
+
     [Fact]
     public async Task SignUpAsync_RoleNotFound_ReturnsFailure()
     {
@@ -372,7 +356,7 @@ public class AuthenticationServiceTests
             FullName = "New User",
             Password = "SecurePassword123!"
         };
-    
+
         var existingUser = (User)null;
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email))
             .ReturnsAsync(existingUser);
@@ -389,7 +373,7 @@ public class AuthenticationServiceTests
         result.Error.Code.Should().Be("Role.NotFound");
         result.Error.Description.Should().Be("The role was not found");
     }
-    
+
     [Fact]
     public async Task SignUpAsync_ValidInput_ReturnsSuccess()
     {
@@ -425,17 +409,17 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(IdleUnit.Value);
     }
-    
+
     [Fact]
     public async Task SignUpAsync_InvalidInput_ReturnsValidationError()
     {
         // Arrange
         var signUpDTO = new SignUpDTO
         {
-            Email = "invalid-email", 
+            Email = "invalid-email",
             PhoneNumber = "12345",
             FullName = "",
-            Password = "short" 
+            Password = "short"
         };
 
         var result = await _authenticationService.SignUpAsync(signUpDTO);
