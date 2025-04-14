@@ -45,7 +45,7 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("User.NotFound");
     }
-
+  
     [Fact]
     public async Task SignInAsync_PasswordVerificationFails_ReturnsInvalidCredentialsError()
     {
@@ -109,7 +109,38 @@ public class AuthenticationServiceTests
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Never);
     }
 
+    [Fact]
+    public async Task SignInAsync_RefreshTokenGenerationFails_ReturnsTokenGenerationError()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
 
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
+        _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
+        _tokenService.Setup(x => x.GenerateJwtToken(user)).Returns("validAccessToken");
+        _tokenService.Setup(x => x.GenerateRefreshToken(user))
+            .Throws(new Exception("Unexpected error during refresh token generation"));
+
+        // Act
+        var result = await _authenticationService.SignInAsync(signInDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.TokenGenerationError");
+        result.Error.Description.Should().Contain("Unexpected error during refresh token generation");
+
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
+        _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
+        
+        _userRepository.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+            u.FailedLoginAttempts == 0 &&
+            u.LockoutEnd == null
+        )), Times.Once);
+        
+        _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
+        _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
+    }
 
     [Fact]
     public async Task SignInAsync_Success_ReturnsAuthenticationDTO()
