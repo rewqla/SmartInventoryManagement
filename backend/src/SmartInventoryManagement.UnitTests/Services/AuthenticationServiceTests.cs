@@ -45,7 +45,35 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("User.NotFound");
     }
-  
+    
+    [Fact]
+    public async Task SignInAsync_AccountIsLocked_ReturnsLockedOutFailure()
+    {
+        // Arrange
+        var user = new UserFaker().Generate();
+        user.LockoutEnd = DateTime.UtcNow.AddHours(1);
+        
+        var signInDTO = new SignInDTO
+        {
+            EmailOrPhone = user.Email,
+            Password = "password"
+        };
+        
+        _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(user.Email))
+            .ReturnsAsync(user);
+        
+        _dateTimeProvider.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
+        
+        // Act
+        var result = await _authenticationService.SignInAsync(signInDTO);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Code.Should().Be("Authentication.AccountLockedOut");
+        
+        _passwordHasher.Verify(x => x.Verify(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
     [Fact]
     public async Task SignInAsync_PasswordVerificationFails_ReturnsInvalidCredentialsError()
     {
