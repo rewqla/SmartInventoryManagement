@@ -32,7 +32,14 @@ public static class SignInEndpoint
                                     detail = error.Description,
                                     statusCode = StatusCodes.Status404NotFound
                                 }),
-                                "Authentication.InvalidCredentials" => Results.Unauthorized()
+                                "Authentication.InvalidCredentials" => Results.Unauthorized(),
+                                "Authentication.AccountLockedOut" => Results.BadRequest(new
+                                {
+                                    type = "https://httpstatuses.com/400",
+                                    title = error.Code,
+                                    detail = error.Description,
+                                    statusCode = StatusCodes.Status400BadRequest
+                                })
                             };
                         });
                 })
