@@ -29,11 +29,10 @@ using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Security.Claims;
+using Application.Configuration;
 using Application.Interfaces.News;
 using Application.Services.News;
 using Refit;
@@ -65,6 +64,7 @@ public static class DependencyInjection
             };
         });
 
+        services.AddSingleton<LockoutConfig>();
         services.AddSingleton<ITokenService, TokenService>();
         services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(connectionString));
