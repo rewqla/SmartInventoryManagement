@@ -48,7 +48,6 @@ public class GraphQLServiceSetup : IAsyncLifetime
     }
 
     // todo: add other seeds
-    // todo: make graphql and rest seeds the same
     private async Task SeedDataAsync(InventoryContext dbContext)
     {
         if (!dbContext.Warehouses.Any())

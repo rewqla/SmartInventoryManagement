@@ -5,7 +5,7 @@ using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests;
 
-public class IntegrationTestWebAppFactory
+public class CustomWebApplicationFactory
     : WebApplicationFactory<ISmartInventoryHost>,
         IAsyncLifetime
 {

@@ -5,13 +5,13 @@ namespace SmartInventoryManagement.IntegrationTests.Api.Tests.WarehouseEnpoints;
 
 // Sends http requests to the TestContainer by IntegrationTestWebAppFactory
 public class WarehouseEndpointsTestsCustom :
-    IClassFixture<IntegrationTestWebAppFactory>
+    IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _httpClient;
 
-    public WarehouseEndpointsTestsCustom(IntegrationTestWebAppFactory appFactory)
+    public WarehouseEndpointsTestsCustom(CustomWebApplicationFactory applicationFactory)
     {
-        _httpClient = appFactory.CreateClient();
+        _httpClient = applicationFactory.CreateClient();
     }
 
     [Fact]
