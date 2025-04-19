@@ -1,0 +1,10 @@
+﻿### Lockout
+POST {{baseUrl}}/api/auth/settings/lockout
+Content-Type: application/json
+
+{
+  "maxFailedAttempts": "1",
+  "lockoutDurationMinutes": "1"
+}
+
+###

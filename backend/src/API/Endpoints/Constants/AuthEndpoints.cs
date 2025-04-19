@@ -7,6 +7,7 @@ internal static class AuthEndpoints
     internal const string SignIn = $"{BaseRoute}/signin";
     internal const string SignUp = $"{BaseRoute}/signup";
     internal const string Refresh = $"{BaseRoute}/refresh-token";
+    internal const string Lockout = $"{BaseRoute}/settings/lockout";
     internal const string Revoke = $"{BaseRoute}/revoke";
     internal const string ForgotPassword = $"{BaseRoute}/forgot-password";
     internal const string ResetPassword = $"{BaseRoute}/reset-password";
