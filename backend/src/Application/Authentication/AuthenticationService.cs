@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Configuration;
 using Application.DTO.Authentication;
 using Application.Exceptions;
 using Application.Interfaces;
@@ -18,14 +19,11 @@ public class AuthenticationService : IAuthenticationService
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly LockoutConfig _lockoutConfig;
     
-    //todo: add separate class for configuring 
-    private const int MaxFailedAttempts = 5;
-    private const int LockoutDurationMinutes = 60;
-
     public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
         IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider, LockoutConfig lockoutConfig)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
@@ -33,6 +31,7 @@ public class AuthenticationService : IAuthenticationService
         _refreshTokenRepository = refreshTokenRepository;
         _roleRepository = roleRepository;
         _dateTimeProvider = dateTimeProvider;
+        _lockoutConfig = lockoutConfig;
     }
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
@@ -175,9 +174,9 @@ public class AuthenticationService : IAuthenticationService
     {
         user.FailedLoginAttempts++;
 
-        if (user.FailedLoginAttempts >= MaxFailedAttempts)
+        if (user.FailedLoginAttempts >= _lockoutConfig.MaxFailedAttempts)
         {
-            user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes(LockoutDurationMinutes);
+            user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes( _lockoutConfig.LockoutDurationMinutes);
             user.FailedLoginAttempts = 0; 
         }
 
