@@ -71,4 +71,30 @@ public class AuthEndpointsTests :
         var blockedResponse = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
         blockedResponse.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
     }
+
+    [Fact]
+    public async Task RefreshToken_Returns429ForAnonymousUser_Then200ForAuthenticatedUser()
+    {
+        // Arrange
+        var refreshTokenRequest = new RefreshTokenRequest { RefreshToken = "some-token" };
+
+        // Act
+        for (int i = 0; i < 10; i++)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
+            Assert.NotEqual(HttpStatusCode.TooManyRequests, response.StatusCode);
+        }
+        
+        // Assert
+        var blockedResponse = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
+        blockedResponse.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
+
+        var authenticatedResponse  = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
+        authenticatedResponse .StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+    }
 }
