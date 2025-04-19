@@ -6,13 +6,13 @@ using SmartInventoryManagement.IntegrationTests.Helpers;
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Auth;
 
 public class AuthEndpointsTests :
-    IClassFixture<IntegrationTestWebAppFactory>
+    IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _httpClient;
 
-    public AuthEndpointsTests(IntegrationTestWebAppFactory appFactory)
+    public AuthEndpointsTests(CustomWebApplicationFactory applicationFactory)
     {
-        _httpClient = appFactory.CreateClient();
+        _httpClient = applicationFactory.CreateClient();
     }
 
     [Fact]
@@ -73,11 +73,13 @@ public class AuthEndpointsTests :
     }
 
     [Fact]
-    public async Task RefreshToken_Returns429ForAnonymousUser_Then200ForAuthenticatedUser()
+    public async Task RefreshToken_Returns429ForTHeFirstUser_Then200ForTheSecondUser()
     {
         // Arrange
         var refreshTokenRequest = new RefreshTokenRequest { RefreshToken = "some-token" };
-
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Astral"));
+        
         // Act
         for (int i = 0; i < 10; i++)
         {
