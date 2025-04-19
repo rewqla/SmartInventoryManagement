@@ -151,7 +151,6 @@ public static class DependencyInjection
         return builder;
     }
 
-    //todo: write integration tests to check work
     public static WebApplicationBuilder ConfigureRateLimiter(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);

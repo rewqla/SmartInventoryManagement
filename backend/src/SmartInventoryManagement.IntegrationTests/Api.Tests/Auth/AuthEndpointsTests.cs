@@ -1,9 +1,11 @@
-﻿using Application.DTO.Authentication;
+﻿using API.Endpoints.Auth;
+using Application.DTO.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Auth;
 
-public class AuthEndpointsTests:
+public class AuthEndpointsTests :
     IClassFixture<IntegrationTestWebAppFactory>
 {
     private readonly HttpClient _httpClient;
@@ -12,7 +14,7 @@ public class AuthEndpointsTests:
     {
         _httpClient = appFactory.CreateClient();
     }
-    
+
     [Fact]
     public async Task SignIn_ReturnsOk_WhenValidCredentialsProvided()
     {
@@ -34,7 +36,7 @@ public class AuthEndpointsTests:
         authResponse!.AccessToken.Should().NotBeNullOrWhiteSpace();
         authResponse.RefreshToken.Should().NotBeNullOrWhiteSpace();
     }
-    
+
     [Fact]
     public async Task SignIn_ReturnsUnauthorized_WhenPasswordIsInvalid()
     {
@@ -52,5 +54,21 @@ public class AuthEndpointsTests:
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-   
+    [Fact]
+    public async Task RefreshToken_ReturnsToManyRequests_WhenRateLimitIsExceeded()
+    {
+        // Arrange
+        var refreshTokenRequest = new RefreshTokenRequest { RefreshToken = "some-token" };
+
+        // Act
+        for (int i = 0; i < 10; i++)
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
+            response.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+        }
+
+        // Assert
+        var blockedResponse = await _httpClient.PostAsJsonAsync("/api/auth/refresh-token", refreshTokenRequest);
+        blockedResponse.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+    }
 }
