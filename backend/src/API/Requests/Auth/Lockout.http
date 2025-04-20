@@ -1,5 +1,6 @@
 ﻿### Lockout
 POST {{baseUrl}}/api/auth/settings/lockout
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {

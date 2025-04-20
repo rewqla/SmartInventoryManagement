@@ -20,7 +20,6 @@ public static class LockoutEndpoint
                 {
                     //todo: make better lockout set
                     //todo: make lockout validation
-                    //todo: add route only for admin role
                     //todo: add endpoint for retrieving current lockout settings
                     settings.MaxFailedAttempts = newSettings.MaxFailedAttempts;
                     settings.LockoutDurationMinutes = newSettings.LockoutDurationMinutes;
@@ -28,7 +27,8 @@ public static class LockoutEndpoint
                     return Results.Ok(settings);
                 })
             .WithName(Name)
-            .WithTags(EndpointTags.Auth);
+            .WithTags(EndpointTags.Auth)
+            .RequireAuthorization();
 
         return app;
     }
