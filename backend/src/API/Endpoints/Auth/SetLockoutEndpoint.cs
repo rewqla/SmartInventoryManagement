@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Auth;
 
-public static class LockoutEndpoint
+public static class SetLockoutEndpoint
 {
-    private const string Name = "Lockout";
+    private const string Name = "SetLockout";
 
-    public static IEndpointRouteBuilder MapLockout(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapSetLockout(this IEndpointRouteBuilder app)
     {
         app.MapPost(AuthEndpoints.Lockout,
                 ([FromServices] LockoutConfig settings,
@@ -20,7 +20,6 @@ public static class LockoutEndpoint
                 {
                     //todo: make better lockout set
                     //todo: make lockout validation
-                    //todo: add endpoint for retrieving current lockout settings
                     settings.MaxFailedAttempts = newSettings.MaxFailedAttempts;
                     settings.LockoutDurationMinutes = newSettings.LockoutDurationMinutes;
 

@@ -6,7 +6,8 @@ public static class AuthEndpointsExtension
     {
         app.MapSignIn();
         app.MapSignUp();
-        app.MapLockout();
+        app.MapSetLockout();
+        app.MapGetLockout();
         app.MapRefreshToken();
 
         return app;
