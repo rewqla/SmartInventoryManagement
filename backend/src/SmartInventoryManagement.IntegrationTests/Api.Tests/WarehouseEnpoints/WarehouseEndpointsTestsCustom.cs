@@ -3,15 +3,15 @@ using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.WarehouseEnpoints;
 
-// Sends http requests to the TestContainer by IntegrationTestWebAppFactory
-public class WarehouseEndpointsTestsCustom :
-    IClassFixture<CustomWebApplicationFactory>
+// Sends http requests to the TestContainer by CustomWebApplicationFactory
+[Collection(nameof(SmartInventoryCollection))]
+public class WarehouseEndpointsTestsCustom
 {
     private readonly HttpClient _httpClient;
 
-    public WarehouseEndpointsTestsCustom(CustomWebApplicationFactory applicationFactory)
+    public WarehouseEndpointsTestsCustom(CustomWebApplicationFactory factory)
     {
-        _httpClient = applicationFactory.CreateClient();
+        _httpClient = factory.CreateClient();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class WarehouseEndpointsTestsCustom :
         var warehouseId = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc");
         _httpClient.DefaultRequestHeaders.Authorization =
             new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
-        
+
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{warehouseId}");
@@ -78,7 +78,7 @@ public class WarehouseEndpointsTestsCustom :
         warehouse!.Id.Should().Be(warehouseId);
         warehouse.Name.Should().NotBeNullOrEmpty();
         warehouse.Location.Should().NotBeNullOrEmpty();
-        
+
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 
@@ -89,7 +89,7 @@ public class WarehouseEndpointsTestsCustom :
         var id = Guid.Empty;
         _httpClient.DefaultRequestHeaders.Authorization =
             new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
-        
+
         // Act
         var response = await _httpClient
             .GetAsync($"/api/warehouses/{id}");
@@ -102,7 +102,7 @@ public class WarehouseEndpointsTestsCustom :
         errorResponse.Should().NotBeNull();
         errorResponse!.Title.Should().Be("Warehouse.NotFound");
         errorResponse!.Detail.Should().Be($"The warehouse with Id '{id}' was not found");
-        
+
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }
 

@@ -1,8 +1,10 @@
 ﻿using SmartInventoryManagement.IntegrationTests.Api.Tests;
+using SmartInventoryManagement.IntegrationTests.Common;
 
 namespace SmartInventoryManagement.IntegrationTests;
 
-public class DatabaseTests : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
+[Collection(nameof(SmartInventoryCollection))]
+public class DatabaseTests : IAsyncLifetime
 {
     private readonly CustomWebApplicationFactory _applicationFactory;
 
@@ -28,3 +30,5 @@ public class DatabaseTests : IClassFixture<CustomWebApplicationFactory>, IAsyncL
     public Task InitializeAsync() => Task.CompletedTask;
     public Task DisposeAsync() => Task.CompletedTask;
 }
+
+//todo: refactor CustomWebApplicationFactory

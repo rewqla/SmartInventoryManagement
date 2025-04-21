@@ -1,18 +1,19 @@
 ﻿using API.Endpoints.Auth;
 using Application.DTO.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using SmartInventoryManagement.IntegrationTests.Common;
 using SmartInventoryManagement.IntegrationTests.Helpers;
 
 namespace SmartInventoryManagement.IntegrationTests.Api.Tests.Auth;
 
-public class AuthEndpointsTests :
-    IClassFixture<CustomWebApplicationFactory>
+[Collection(nameof(SmartInventoryCollection))]
+public class AuthEndpointsTests
 {
     private readonly HttpClient _httpClient;
 
-    public AuthEndpointsTests(CustomWebApplicationFactory applicationFactory)
+    public AuthEndpointsTests(CustomWebApplicationFactory factory)
     {
-        _httpClient = applicationFactory.CreateClient();
+        _httpClient = factory.CreateClient();
     }
 
     [Fact]
