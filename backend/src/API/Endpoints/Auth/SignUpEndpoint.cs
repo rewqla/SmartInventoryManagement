@@ -25,13 +25,22 @@ public static class SignUpEndpoint
                         {
                             return error.Code switch
                             {
-                                "Authentication.UserAlreadyExists" => Results.Conflict(new
-                                {
-                                    type = "https://httpstatuses.com/409",
-                                    title = error.Code,
-                                    detail = error.Description,
-                                    statusCode = StatusCodes.Status409Conflict
-                                }),
+                                "Authentication.EmailAlreadyExists" => Results
+                                    .Conflict(new
+                                    {
+                                        type = "https://httpstatuses.com/409",
+                                        title = error.Code,
+                                        detail = error.Description,
+                                        statusCode = StatusCodes.Status409Conflict
+                                    }),
+                                "Authentication.PhoneAlreadyExists" => Results
+                                    .Conflict(new
+                                    {
+                                        type = "https://httpstatuses.com/409",
+                                        title = error.Code,
+                                        detail = error.Description,
+                                        statusCode = StatusCodes.Status409Conflict
+                                    }),
                                 "Common.NotFound.role" => Results.NotFound(new
                                 {
                                     type = "https://httpstatuses.com/404",
