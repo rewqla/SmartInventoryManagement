@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Net;
+using System.Net.Mail;
+using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
 using API.Authorization;
@@ -33,6 +35,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Application.Configuration;
+using Application.Email;
 using Application.Interfaces.News;
 using Application.Services.News;
 using Refit;
@@ -198,6 +201,30 @@ public static class DependencyInjection
 
         return builder;
     }
+    
+    public static WebApplicationBuilder ConfigureSMTPHost(this WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+        var configuration = builder.Configuration;
+
+        var emailSettingsSection = configuration.GetSection("EmailSettings");
+
+        services.AddFluentEmail(emailSettingsSection["FromAddress"])
+            .AddSmtpSender(new SmtpClient(emailSettingsSection["Host"])
+            {
+                Port = int.Parse(emailSettingsSection["Port"]),
+                Credentials = new NetworkCredential(
+                    emailSettingsSection["Username"],
+                    emailSettingsSection["Password"]
+                ),
+                EnableSsl = bool.Parse(emailSettingsSection["EnableSsl"]),
+                Timeout = 10000 
+            });
+
+        services.AddScoped<IEmailService, SmtpEmailService>();
+        return builder;
+    }
 
     public static WebApplication ConfigureScheduler(this WebApplication app)
     {
@@ -206,6 +233,7 @@ public static class DependencyInjection
             scheduler.Schedule<CleanupExpiredTokensJob>()
                 .DailyAt(2, 00);
         });
+        
         return app;
     }
 

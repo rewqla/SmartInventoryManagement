@@ -14,6 +14,7 @@ try
     builder.ConfigureRateLimiter();
     builder.ConfigureGraphQL();
     builder.ConfigureRefit();
+    builder.ConfigureSMTPHost();
 
     QuestPDF.Settings.License = LicenseType.Community;
 
@@ -26,9 +27,9 @@ try
     app.ConfigureMiddlewares();
     app.ConfigureScheduler();
     app.MapEndpoints();
-    
+
     app.UseRateLimiter();
-    
+
 
     app.ApplyMigrations();
 
