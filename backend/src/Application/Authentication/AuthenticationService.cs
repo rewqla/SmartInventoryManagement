@@ -20,10 +20,11 @@ public class AuthenticationService : IAuthenticationService
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly LockoutConfig _lockoutConfig;
+    private readonly IEmailService _emailService;
     
     public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
         IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository,
-        IDateTimeProvider dateTimeProvider, LockoutConfig lockoutConfig)
+        IDateTimeProvider dateTimeProvider, LockoutConfig lockoutConfig, IEmailService emailService)
     {
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
@@ -32,6 +33,7 @@ public class AuthenticationService : IAuthenticationService
         _roleRepository = roleRepository;
         _dateTimeProvider = dateTimeProvider;
         _lockoutConfig = lockoutConfig;
+        _emailService = emailService;
     }
 
     public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
@@ -87,6 +89,12 @@ public class AuthenticationService : IAuthenticationService
         var newUser = CreateUser(signUpDTO, defaultRole);
         await _userRepository.AddAsync(newUser);
 
+        var subject = "Welcome to Smart Inventory Management!";
+        var body = $"Hello {signUpDTO.FullName},\n\n" +
+                   "Your account has been successfully created.\n\n" +
+                   "Thank you for joining us!";
+        await _emailService.SendEmailAsync(signUpDTO.Email, subject, body);
+        
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
