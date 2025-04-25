@@ -14,9 +14,16 @@ public class SmtpEmailService : IEmailService
 
     public async Task SendEmailAsync(string to, string subject, string body)
     {
-        var result = await _fluentEmail.To(to)
-            .Subject(subject)
-            .Body(body)
-            .SendAsync();
+        try
+        {
+            await _fluentEmail.To(to)
+                .Subject(subject)
+                .Body(body)
+                .SendAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send email to the {to} with error: {ex.InnerException?.Message ?? ex.Message}");
+        }
     }
 }

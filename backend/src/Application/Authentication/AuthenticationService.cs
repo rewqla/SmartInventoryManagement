@@ -89,6 +89,8 @@ public class AuthenticationService : IAuthenticationService
         var newUser = CreateUser(signUpDTO, defaultRole);
         await _userRepository.AddAsync(newUser);
 
+        //todo: add template
+        //todo: unit test
         var subject = "Welcome to Smart Inventory Management!";
         var body = $"Hello {signUpDTO.FullName},\n\n" +
                    "Your account has been successfully created.\n\n" +
