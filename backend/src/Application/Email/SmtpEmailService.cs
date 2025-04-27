@@ -26,4 +26,19 @@ public class SmtpEmailService : IEmailService
             Console.WriteLine($"Failed to send email to the {to} with error: {ex.InnerException?.Message ?? ex.Message}");
         }
     }
+
+    public async Task SendEmailWithTemplateAsync<T>(string to, string subject, string template, T model)
+    {
+        try
+        {
+            await _fluentEmail.To(to)
+                .Subject(subject)
+                .UsingTemplateFromFile(template, model)
+                .SendAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to send email to {to} with error: {ex.InnerException?.Message ?? ex.Message}");
+        }
+    }
 }
