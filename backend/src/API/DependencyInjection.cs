@@ -220,7 +220,8 @@ public static class DependencyInjection
                 ),
                 EnableSsl = bool.Parse(emailSettingsSection["EnableSsl"]),
                 Timeout = 10000 
-            });
+            })
+            .AddRazorRenderer();
 
         services.AddScoped<IEmailService, SmtpEmailService>();
         return builder;

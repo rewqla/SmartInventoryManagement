@@ -21,7 +21,7 @@ public class AuthenticationService : IAuthenticationService
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly LockoutConfig _lockoutConfig;
     private readonly IEmailService _emailService;
-    
+
     public AuthenticationService(ITokenService tokenService, IPasswordHasher passwordHasher,
         IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IRoleRepository roleRepository,
         IDateTimeProvider dateTimeProvider, LockoutConfig lockoutConfig, IEmailService emailService)
@@ -89,14 +89,12 @@ public class AuthenticationService : IAuthenticationService
         var newUser = CreateUser(signUpDTO, defaultRole);
         await _userRepository.AddAsync(newUser);
 
-        //todo: add template
         //todo: unit test
         var subject = "Welcome to Smart Inventory Management!";
-        var body = $"Hello {signUpDTO.FullName},\n\n" +
-                   "Your account has been successfully created.\n\n" +
-                   "Thank you for joining us!";
-        await _emailService.SendEmailAsync(signUpDTO.Email, subject, body);
-        
+        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Application", "Email", "Templates", "Register.cshtml");
+
+        await _emailService.SendEmailWithTemplateAsync(signUpDTO.Email, subject, templatePath, signUpDTO);
+
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
@@ -186,8 +184,8 @@ public class AuthenticationService : IAuthenticationService
 
         if (user.FailedLoginAttempts >= _lockoutConfig.MaxFailedAttempts)
         {
-            user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes( _lockoutConfig.LockoutDurationMinutes);
-            user.FailedLoginAttempts = 0; 
+            user.LockoutEnd = _dateTimeProvider.UtcNow.AddMinutes(_lockoutConfig.LockoutDurationMinutes);
+            user.FailedLoginAttempts = 0;
         }
 
         await _userRepository.UpdateAsync(user);
@@ -197,7 +195,7 @@ public class AuthenticationService : IAuthenticationService
     {
         user.FailedLoginAttempts = 0;
         user.LockoutEnd = null;
-        
+
         await _userRepository.UpdateAsync(user);
     }
 }
