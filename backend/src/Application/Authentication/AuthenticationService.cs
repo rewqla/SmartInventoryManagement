@@ -90,11 +90,15 @@ public class AuthenticationService : IAuthenticationService
         await _userRepository.AddAsync(newUser);
 
         //todo: unit test
-        var subject = "Welcome to Smart Inventory Management!";
-        string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Application", "Email", "Templates", "Register.cshtml");
+        _ = Task.Run(async () =>
+        {
+            var subject = "Welcome to Smart Inventory Management!";
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Application", "Email",
+                "Templates", "Register.cshtml");
 
-        await _emailService.SendEmailWithTemplateAsync(signUpDTO.Email, subject, templatePath, signUpDTO);
-
+            await _emailService.SendEmailWithTemplateAsync(signUpDTO.Email, subject, templatePath, signUpDTO);
+        });
+        
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
