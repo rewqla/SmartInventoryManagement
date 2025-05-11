@@ -3,10 +3,8 @@ using Infrastructure.Interfaces.Repositories.Base;
 
 namespace Infrastructure.Interfaces.Repositories;
 
-public interface IUserRepository
+public interface IUserRepository : IGenericRepository<User>
 {
     Task<User?> GetByEmailOrPhoneAsync(string emailOrPhone);
     Task<User?> GetByIdWithRoles(Guid id);
-    Task AddAsync(User user);
-    Task UpdateAsync(User user);
 }

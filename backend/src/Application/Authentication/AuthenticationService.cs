@@ -52,12 +52,12 @@ public class AuthenticationService : IAuthenticationService
 
         if (!IsPasswordValid(signInDTO.Password, user.PasswordHash))
         {
-            await HandleFailedLoginAsync(user);
+            HandleFailedLoginAsync(user);
 
             return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
         }
 
-        await ResetLockoutAsync(user);
+        ResetLockoutAsync(user);
 
         return await GenerateTokensAsync(user);
     }
@@ -98,7 +98,7 @@ public class AuthenticationService : IAuthenticationService
 
             await _emailService.SendEmailWithTemplateAsync(signUpDTO.Email, subject, templatePath, signUpDTO);
         });
-        
+
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
@@ -182,7 +182,7 @@ public class AuthenticationService : IAuthenticationService
         return _passwordHasher.Verify(inputPassword, passwordHash);
     }
 
-    private async Task HandleFailedLoginAsync(User user)
+    private void HandleFailedLoginAsync(User user)
     {
         user.FailedLoginAttempts++;
 
@@ -192,14 +192,15 @@ public class AuthenticationService : IAuthenticationService
             user.FailedLoginAttempts = 0;
         }
 
-        await _userRepository.UpdateAsync(user);
+        _userRepository.Update(user);
+        _userRepository.CompleteAsync();
     }
 
-    private async Task ResetLockoutAsync(User user)
+    private void ResetLockoutAsync(User user)
     {
         user.FailedLoginAttempts = 0;
         user.LockoutEnd = null;
 
-        await _userRepository.UpdateAsync(user);
+        _userRepository.Update(user);
     }
 }
