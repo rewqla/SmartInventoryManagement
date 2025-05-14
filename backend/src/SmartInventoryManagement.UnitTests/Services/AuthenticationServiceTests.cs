@@ -1,4 +1,5 @@
 ﻿using Application.Authentication;
+using Application.Configuration;
 using Application.DTO.Authentication;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
@@ -13,9 +14,13 @@ public class AuthenticationServiceTests
     private readonly Mock<IUserRepository> _userRepository;
     private readonly Mock<IRoleRepository> _roleRepository;
     private readonly Mock<ITokenService> _tokenService;
+    private readonly Mock<LockoutConfig> _lockoutConfig;
+    private readonly Mock<IEmailService> _emailService;
     private readonly Mock<IPasswordHasher> _passwordHasher;
     private readonly Mock<IDateTimeProvider> _dateTimeProvider;
 
+    //todo: update test with lockout and email
+    //todo: write lockout tests
     public AuthenticationServiceTests()
     {
         _passwordHasher = new Mock<IPasswordHasher>();
@@ -23,11 +28,14 @@ public class AuthenticationServiceTests
         _userRepository = new Mock<IUserRepository>();
         _tokenService = new Mock<ITokenService>();
         _roleRepository = new Mock<IRoleRepository>();
+        _lockoutConfig = new Mock<LockoutConfig>();
+        _emailService = new Mock<IEmailService>();
         _dateTimeProvider = new Mock<IDateTimeProvider>();
 
         _authenticationService =
             new AuthenticationService(_tokenService.Object, _passwordHasher.Object, _userRepository.Object,
-                _refreshTokenRepository.Object, _roleRepository.Object, _dateTimeProvider.Object);
+                _refreshTokenRepository.Object, _roleRepository.Object, _dateTimeProvider.Object, _lockoutConfig.Object,
+                _emailService.Object);
     }
 
     [Fact]
@@ -45,32 +53,32 @@ public class AuthenticationServiceTests
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("User.NotFound");
     }
-    
+
     [Fact]
     public async Task SignInAsync_AccountIsLocked_ReturnsLockedOutFailure()
     {
         // Arrange
         var user = new UserFaker().Generate();
         user.LockoutEnd = DateTime.UtcNow.AddHours(1);
-        
+
         var signInDTO = new SignInDTO
         {
             EmailOrPhone = user.Email,
             Password = "password"
         };
-        
+
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(user.Email))
             .ReturnsAsync(user);
-        
+
         _dateTimeProvider.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
-        
+
         // Act
         var result = await _authenticationService.SignInAsync(signInDTO);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Error.Code.Should().Be("Authentication.AccountLockedOut");
-        
+
         _passwordHasher.Verify(x => x.Verify(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -101,8 +109,8 @@ public class AuthenticationServiceTests
 
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
         _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
-        
-        _userRepository.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+
+        _userRepository.Verify(x => x.Update(It.Is<User>(u =>
             u.FailedLoginAttempts == 1 &&
             u.LockoutEnd == null
         )), Times.Once);
@@ -160,12 +168,12 @@ public class AuthenticationServiceTests
 
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone), Times.Once);
         _passwordHasher.Verify(x => x.Verify(signInDTO.Password, user.PasswordHash), Times.Once);
-        
-        _userRepository.Verify(x => x.UpdateAsync(It.Is<User>(u =>
+
+        _userRepository.Verify(x => x.Update(It.Is<User>(u =>
             u.FailedLoginAttempts == 0 &&
             u.LockoutEnd == null
         )), Times.Once);
-        
+
         _tokenService.Verify(x => x.GenerateJwtToken(It.IsAny<User>()), Times.Once);
         _tokenService.Verify(x => x.GenerateRefreshToken(It.IsAny<User>()), Times.Once);
     }
@@ -458,8 +466,8 @@ public class AuthenticationServiceTests
         _passwordHasher.Setup(x => x.Hash(signUpDTO.Password))
             .Returns("hashedpassword");
 
-        _userRepository.Setup(x => x.AddAsync(It.IsAny<User>()))
-            .Returns(Task.CompletedTask);
+        _userRepository.Setup(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new User());
 
         // Act
         var result = await _authenticationService.SignUpAsync(signUpDTO);
