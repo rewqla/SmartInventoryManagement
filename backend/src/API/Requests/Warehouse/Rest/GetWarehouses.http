@@ -1,4 +1,5 @@
 ﻿### Retrieve warehouses
 GET {{baseUrl}}/api/warehouses/
+ApiKey: 03CNZejrIUoUrVRUnK2l8ArJ1Uj37rbc7RWqpK2Utw8A5Xg8XcGNw4QJ96YGHdjSWqGx
 
 ###

@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Services.Warehouse;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ public static class GetWarehousesEndpoint
 {
     private const string Name = "GetWarehouses";
 
+    //todo: add integration tests
     public static IEndpointRouteBuilder MapGetWarehouses(this IEndpointRouteBuilder app)
     {
         app.MapGet(WarehouseEndpoints.GetAll,
@@ -19,7 +21,8 @@ public static class GetWarehousesEndpoint
                     return Results.Ok(result.Value);
                 })
             .WithName(Name)
-            .WithTags(EndpointTags.Warehouse);
+            .WithTags(EndpointTags.Warehouse)
+            .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
 
         return app;
     }
