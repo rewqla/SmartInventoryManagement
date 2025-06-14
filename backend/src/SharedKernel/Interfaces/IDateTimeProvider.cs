@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces;
+﻿namespace SharedKernel.Interfaces;
 
 public interface IDateTimeProvider
 {

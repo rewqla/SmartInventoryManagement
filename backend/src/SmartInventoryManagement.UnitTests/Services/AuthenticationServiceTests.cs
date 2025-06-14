@@ -3,7 +3,7 @@ using Application.Configuration;
 using Application.DTO.Authentication;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
-using Application.Validation.Authentication;
+using SharedKernel.Interfaces;
 
 namespace SmartInventoryManagement.Tests.Services;
 

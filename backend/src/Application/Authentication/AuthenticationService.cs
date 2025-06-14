@@ -8,6 +8,7 @@ using Application.Validation;
 using Application.Validation.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories;
+using SharedKernel.Interfaces;
 
 namespace Application.Authentication;
 

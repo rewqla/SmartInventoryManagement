@@ -39,6 +39,8 @@ using Application.Email;
 using Application.Interfaces.News;
 using Application.Services.News;
 using Refit;
+using SharedKernel;
+using SharedKernel.Interfaces;
 
 
 namespace API;
@@ -336,3 +338,6 @@ public static class DependencyInjection
         });
     }
 }
+
+
+//todo: move requests folder to the Solution items

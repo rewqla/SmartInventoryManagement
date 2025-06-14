@@ -1,8 +1,7 @@
-﻿using Application.Interfaces;
+﻿using SharedKernel.Interfaces;
 
-namespace Application.Services;
+namespace SharedKernel;
 
-//todo: move to shared kernel layer 
 public sealed class DateTimeProvider : IDateTimeProvider
 {
     public DateTime UtcNow => DateTime.UtcNow;
