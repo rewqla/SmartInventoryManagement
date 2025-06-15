@@ -414,6 +414,21 @@ public class WarehouseServiceTests
         _warehouseRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         _reportService.Verify(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()), Times.Once);
     }
-    // #todo: write tests with inventories
-    // #todo: update tests also to check inventories
+
+    [Fact]
+    public async Task GetWarehousesWithInventoriesAsync_ShouldReturnEmpty_WhenNoWarehouses()
+    {
+        // Arrange
+        _warehouseRepository.Setup(r => r.GetWarehousesWithInventoriesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Enumerable.Empty<Warehouse>())
+            .Verifiable();
+
+        // Act
+        var result = await _warehouseService.GetWarehousesWithInventoriesAsync();
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Error.Should().Be(Error.None);
+        result.Value.Should().BeEmpty();
+    }
 }
