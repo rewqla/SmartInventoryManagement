@@ -1,5 +1,4 @@
-﻿
-namespace SmartInventoryManagement.Tests.Services;
+﻿namespace SmartInventoryManagement.Tests.Services;
 
 public class WarehouseServiceTests
 {
@@ -284,7 +283,7 @@ public class WarehouseServiceTests
             Name = "Test Warehouse",
             Location = "Test Location"
         };
-        
+
         // Act
         var result = await _warehouseService.UpdateWarehouseAsync(warehouseDTO);
 
@@ -329,8 +328,8 @@ public class WarehouseServiceTests
         // Arrange
         var warehouse = new WarehouseFaker().Generate();
         var warehouseId = warehouse.Id;
-        
-        
+
+
         _warehouseRepository.Setup(r => r.FindByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(warehouse)
             .Verifiable();
@@ -395,12 +394,12 @@ public class WarehouseServiceTests
     public async Task GenerateWarehousesReportAsync_ShouldReturnReport_WhenNoWarehouses()
     {
         // Arrange
-        var warehouses = new List<Warehouse>();  
+        var warehouses = new List<Warehouse>();
 
         _warehouseRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(warehouses);
 
-        var reportBytes = new byte[] { 1, 2, 3, 4, 5 };  // Default report (non-empty)
+        var reportBytes = new byte[] { 1, 2, 3, 4, 5 }; // Default report (non-empty)
         _reportService.Setup(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()))
             .Returns(reportBytes);
 
@@ -409,7 +408,7 @@ public class WarehouseServiceTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(reportBytes);  
+        result.Value.Should().BeEquivalentTo(reportBytes);
 
         _warehouseRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
         _reportService.Verify(r => r.GenerateReport(It.IsAny<IEnumerable<WarehouseDTO>>()), Times.Once);
@@ -430,5 +429,66 @@ public class WarehouseServiceTests
         result.IsSuccess.Should().BeTrue();
         result.Error.Should().Be(Error.None);
         result.Value.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetWarehousesWithInventoriesAsync_ShouldReturnMappedWarehouses_WhenWarehousesExist()
+    {
+        //todo: move to bogus
+        // Arrange
+        var warehouses = new List<Warehouse>
+        {
+            new()
+            {
+                Id = GuidV7.NewGuid(),
+                Name = "Warehouse 1",
+                Inventories = new List<Inventory>
+                {
+                    new() 
+                    { 
+                        Id = GuidV7.NewGuid(), 
+                        ProductId = GuidV7.NewGuid(), 
+                        Quantity = 10,
+                        Product = new Product { Name = "1" }
+                    },
+                    new() 
+                    { 
+                        Id = GuidV7.NewGuid(), 
+                        ProductId = GuidV7.NewGuid(), 
+                        Quantity = 5, 
+                        Product = new Product { Name = "3" }
+                    }
+                }
+            },
+            new()
+            {
+                Id = GuidV7.NewGuid(),
+                Name = "Warehouse 2",
+                Inventories = new List<Inventory>
+                {
+                    new() 
+                    { 
+                        Id = GuidV7.NewGuid(), 
+                        ProductId = GuidV7.NewGuid(), 
+                        Quantity = 15 ,
+                        Product = new Product { Name = "12" }
+                    }
+                }
+            }
+        };
+
+
+        _warehouseRepository.Setup(r => r.GetWarehousesWithInventoriesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(warehouses)
+            .Verifiable();
+
+        // Act
+        var result = await _warehouseService.GetWarehousesWithInventoriesAsync();
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Error.Should().Be(Error.None);
+        result.Value.Should().HaveCount(2);
+        result.Value.Should().AllSatisfy(dto => dto.Inventories.Should().NotBeEmpty());
     }
 }
