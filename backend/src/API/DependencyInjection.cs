@@ -55,6 +55,8 @@ public static class DependencyInjection
 
         services.AddSwagger();
         services.AddScheduler();
+        services.AddCors();
+        
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -231,6 +233,8 @@ public static class DependencyInjection
 
     public static WebApplication ConfigureScheduler(this WebApplication app)
     {
+        ArgumentNullException.ThrowIfNull(app);
+        
         app.Services.UseScheduler(scheduler =>
         {
             scheduler.Schedule<CleanupExpiredTokensJob>()
@@ -239,6 +243,19 @@ public static class DependencyInjection
         
         return app;
     }
+    
+    public static WebApplication ConfigureCors(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        
+        app.UseCors(opt =>
+        {
+            opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:5500");
+        });
+        
+        return app;
+    }
+
 
     public static WebApplicationBuilder ConfigureDatabase(this WebApplicationBuilder builder)
     {
