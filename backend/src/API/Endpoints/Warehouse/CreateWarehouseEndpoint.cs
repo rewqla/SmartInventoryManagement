@@ -1,8 +1,10 @@
 ﻿using API.Endpoints.Constants;
 using API.Extensions;
+using API.Hubs;
 using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Endpoints.Warehouse;
 
@@ -14,10 +16,16 @@ public static class CreateWarehouseEndpoint
     {
         app.MapPost(WarehouseEndpoints.Create,
                 async ([FromBody] WarehouseDTO warehouseDto, [FromServices] IWarehouseService warehouseService,
+                    [FromServices] IHubContext<WarehouseNotificationHub> hubContext,
                     CancellationToken cancellationToken) =>
                 {
                     var result = await warehouseService.CreateWarehouseAsync(warehouseDto, cancellationToken);
 
+                    if (result.IsSuccess)
+                    {
+                        await hubContext.Clients.All.SendAsync("WarehouseCreated", result.Value.Name);
+                    }
+                    
                     return result.Match(
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
