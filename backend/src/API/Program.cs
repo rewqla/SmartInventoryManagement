@@ -26,10 +26,12 @@ try
 
     app.ConfigureMiddlewares();
     app.ConfigureScheduler();
+    app.ConfigureHubs();
     app.MapEndpoints();
 
     app.UseRateLimiter();
 
+    app.ConfigureCors();
 
     app.ApplyMigrations();
 

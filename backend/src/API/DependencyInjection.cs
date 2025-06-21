@@ -9,6 +9,7 @@ using API.GraphQL.Mutations;
 using API.GraphQL.Queries;
 using API.GraphQL.Subscriptions;
 using API.Health;
+using API.Hubs;
 using Application.Authentication;
 using Application.BackgroundJobs;
 using Application.DTO.Warehouse;
@@ -56,6 +57,7 @@ public static class DependencyInjection
         services.AddSwagger();
         services.AddScheduler();
         services.AddCors();
+        services.AddSignalR();
         
         services.AddProblemDetails(options =>
         {
@@ -319,6 +321,15 @@ public static class DependencyInjection
         return app;
     }
 
+    public static WebApplication ConfigureHubs(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+        
+        app.MapHub<WarehouseNotificationHub>("/warehouseHub");
+
+        return app;
+    }
+    
     private static void AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
