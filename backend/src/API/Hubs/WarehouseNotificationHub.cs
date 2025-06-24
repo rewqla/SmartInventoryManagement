@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Application.Interfaces.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Hubs;
 
-public sealed class WarehouseNotificationHub : Hub
+public sealed class WarehouseNotificationHub : Hub<IWarehouseNotificationClient>
 {
-    // public async Task NotifyWarehouseAddedAsync(string warehouseName)
-    // {
-    //     await Clients.All.SendAsync("WarehouseAdded", warehouseName);
-    // }
+    public async Task NotifyWarehouseAddedAsync(string warehouseName)
+    {
+        await Clients.All.NotifyWarehouseAddedAsync(warehouseName);
+    }
 }
