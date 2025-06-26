@@ -24,7 +24,7 @@ public static class CreateWarehouseEndpoint
 
                     if (result.IsSuccess)
                     {
-                        await hubContext.Clients.All.NotifyWarehouseAddedAsync(result.Value.Name);
+                        await hubContext.Clients.All.NotifyWarehouseAddedAsync(result.Value);
                     }
                     
                     return result.Match(
