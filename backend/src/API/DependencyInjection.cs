@@ -58,7 +58,7 @@ public static class DependencyInjection
         services.AddScheduler();
         services.AddCors();
         services.AddSignalR();
-        
+
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -141,6 +141,22 @@ public static class DependencyInjection
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!))
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/warehouseHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddAuthorization(options =>
@@ -207,7 +223,7 @@ public static class DependencyInjection
 
         return builder;
     }
-    
+
     public static WebApplicationBuilder ConfigureSMTPHost(this WebApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -225,7 +241,7 @@ public static class DependencyInjection
                     emailSettingsSection["Password"]
                 ),
                 EnableSsl = bool.Parse(emailSettingsSection["EnableSsl"]),
-                Timeout = 10000 
+                Timeout = 10000
             })
             .AddRazorRenderer();
 
@@ -236,25 +252,28 @@ public static class DependencyInjection
     public static WebApplication ConfigureScheduler(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
+
         app.Services.UseScheduler(scheduler =>
         {
             scheduler.Schedule<CleanupExpiredTokensJob>()
                 .DailyAt(2, 00);
         });
-        
+
         return app;
     }
-    
+
     public static WebApplication ConfigureCors(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
+
         app.UseCors(opt =>
         {
-            opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:5500");
+            opt.WithOrigins("http://127.0.0.1:5500")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
-        
+
         return app;
     }
 
@@ -324,12 +343,12 @@ public static class DependencyInjection
     public static WebApplication ConfigureHubs(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        
+
         app.MapHub<WarehouseNotificationHub>("/warehouseHub");
 
         return app;
     }
-    
+
     private static void AddSwagger(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();

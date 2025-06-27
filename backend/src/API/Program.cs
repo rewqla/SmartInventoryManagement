@@ -23,7 +23,8 @@ try
     // todo: add appsettings.Production.json 
 
     var app = builder.Build();
-
+    
+    app.ConfigureCors();
     app.ConfigureMiddlewares();
     app.ConfigureScheduler();
     app.ConfigureHubs();
@@ -31,7 +32,6 @@ try
 
     app.UseRateLimiter();
 
-    app.ConfigureCors();
 
     app.ApplyMigrations();
 
