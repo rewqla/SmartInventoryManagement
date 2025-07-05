@@ -1,8 +1,11 @@
 ﻿using API.Endpoints.Constants;
 using API.Extensions;
+using API.Hubs;
 using Application.DTO.Warehouse;
+using Application.Interfaces.Hubs;
 using Application.Interfaces.Services.Warehouse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace API.Endpoints.Warehouse;
 
@@ -14,11 +17,16 @@ public static class UpdateWarehouseEndpoint
     {
         app.MapPut(WarehouseEndpoints.Update,
                 async (Guid id, [FromBody] WarehouseDTO warehouseDto, [FromServices] IWarehouseService warehouseService,
-                    CancellationToken cancellationToken) =>
+                    [FromServices] IHubContext<WarehouseNotificationHub, IWarehouseNotificationClient> hubContext, CancellationToken cancellationToken) =>
                 {
                     warehouseDto.Id = id;
                     var result = await warehouseService.UpdateWarehouseAsync(warehouseDto, cancellationToken);
 
+                    if (result.IsSuccess)
+                    {
+                        await hubContext.Clients.All.NotifyWarehouseUpdatedAsync(result.Value);
+                    }
+                    
                     return result.Match(
                         onSuccess: value => Results.Ok(value),
                         onFailure: error =>
