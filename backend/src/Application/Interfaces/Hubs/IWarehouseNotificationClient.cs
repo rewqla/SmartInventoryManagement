@@ -7,4 +7,5 @@ public interface IWarehouseNotificationClient
 {
     Task NotifyWarehouseAddedAsync(WarehouseDTO warehouse);
     Task NotifyWarehouseUpdatedAsync(WarehouseDTO warehouse);
+    Task NotifyWarehouseDeletedAsync();
 }
