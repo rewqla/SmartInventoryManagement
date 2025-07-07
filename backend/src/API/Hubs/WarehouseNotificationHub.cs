@@ -12,17 +12,17 @@ public sealed class WarehouseNotificationHub : Hub<IWarehouseNotificationClient>
     {
         await Clients.All.NotifyWarehouseAddedAsync(warehouse);
     }
-    
+
     public async Task NotifyWarehouseUpdatedAsync(WarehouseDTO warehouse)
     {
         await Clients.All.NotifyWarehouseUpdatedAsync(warehouse);
     }
-    
+
+    [AllowAnonymous]
     public async Task NotifyWarehouseDeletedAsync()
     {
         await Clients.All.NotifyWarehouseDeletedAsync();
     }
-    
+
     //todo: configure SignalR hub lifetime
-    //todo: add unathorize attribute
 }
