@@ -11,6 +11,8 @@
     <ItemGroup>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.0" />
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0" />
+        <PackageReference Include="FastEndpoints" Version="6.2.0" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="6.2.0" />
         <PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
         <PackageReference Include="HotChocolate.AspNetCore" Version="14.2.0" />

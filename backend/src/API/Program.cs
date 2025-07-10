@@ -21,9 +21,11 @@ try
     // todo: add serilog and magnify logging
     // todo: add request middleware for logging urls and methods
     // todo: add appsettings.Production.json 
+    //todo: add timeout for requests
+    //todo: move to vertical slice arcitecture
 
     var app = builder.Build();
-    
+
     app.ConfigureCors();
     app.ConfigureMiddlewares();
     app.ConfigureScheduler();
@@ -46,5 +48,3 @@ catch (Exception ex)
 finally
 {
 }
-
-//todo: add timeout for requests

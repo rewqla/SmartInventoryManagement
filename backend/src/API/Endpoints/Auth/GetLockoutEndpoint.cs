@@ -4,22 +4,39 @@ using Application.Configuration;
 using Application.DTO.Authentication;
 using Application.Exceptions;
 using Application.Interfaces.Authentication;
+using FastEndpoints;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Auth;
 
-public static class GetLockoutEndpoint
+// public static class GetLockoutEndpoint
+// {
+//     private const string Name = "SetLockout";
+//
+//     public static IEndpointRouteBuilder MapGetLockout(this IEndpointRouteBuilder app)
+//     {
+//         app.MapGet(AuthEndpoints.Lockout,
+//                 ([FromServices] LockoutConfig settings) => Results.Ok(settings))
+//             .WithName($"{Name}.Get")
+//             .WithTags(EndpointTags.Auth)
+//             .RequireAuthorization();
+//
+//         return app;
+//     }
+// }
+
+internal sealed class GetLockoutEndpoint : EndpointWithoutRequest<LockoutConfig>
 {
-    private const string Name = "SetLockout";
+    public LockoutConfig settings { get; set; }
 
-    public static IEndpointRouteBuilder MapGetLockout(this IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapGet(AuthEndpoints.Lockout,
-                ([FromServices] LockoutConfig settings) => Results.Ok(settings))
-            .WithName($"{Name}.Get")
-            .WithTags(EndpointTags.Auth)
-            .RequireAuthorization();
+        Get(AuthEndpoints.Lockout);
+        Description(x => x.WithTags("Auth"));
+    }
 
-        return app;
+    public override async Task HandleAsync(CancellationToken ct)
+    {
+        await SendAsync(settings, cancellation: ct);
     }
 }

@@ -39,6 +39,7 @@ using Application.Configuration;
 using Application.Email;
 using Application.Interfaces.News;
 using Application.Services.News;
+using FastEndpoints;
 using Refit;
 using SharedKernel;
 using SharedKernel.Interfaces;
@@ -58,7 +59,8 @@ public static class DependencyInjection
         services.AddScheduler();
         services.AddCors();
         services.AddSignalR();
-
+        services.AddFastEndpoints();
+        
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -335,6 +337,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(app);
 
         app.MapGraphQL();
+        app.UseFastEndpoints();
         app.MapApiEndpoints();
 
         return app;
