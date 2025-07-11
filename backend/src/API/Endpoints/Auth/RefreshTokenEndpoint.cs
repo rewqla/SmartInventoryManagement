@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Auth;
 
-//todo: move to another namespace ot add contract layer
 public class RefreshTokenRequest
 {
     public string RefreshToken { get; set; } = string.Empty;
