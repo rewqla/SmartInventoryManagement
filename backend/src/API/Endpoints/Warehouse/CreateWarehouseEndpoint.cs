@@ -55,3 +55,5 @@ public static class CreateWarehouseEndpoint
         return app;
     }
 }
+
+//todo: write integration tests using fast endpoints extension

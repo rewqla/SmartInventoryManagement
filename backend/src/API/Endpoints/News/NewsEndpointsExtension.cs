@@ -4,7 +4,7 @@ public static class NewsEndpointsExtension
 {
     public static IEndpointRouteBuilder MapNewsEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGetTitles();
+        // app.MapGetTitles();
 
         return app;
     }

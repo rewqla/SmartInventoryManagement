@@ -35,8 +35,8 @@ internal sealed class GetLockoutEndpoint : EndpointWithoutRequest<LockoutConfig>
         Description(x => x.WithTags("Auth"));
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken cancellationToken)
     {
-        await SendAsync(settings, cancellation: ct);
+        await SendAsync(settings, cancellation: cancellationToken);
     }
 }

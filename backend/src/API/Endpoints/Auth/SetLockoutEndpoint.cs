@@ -52,11 +52,11 @@ internal sealed class SetLockoutEndpoint : Endpoint<SetLockoutRequest, LockoutCo
     
     //todo: make lockout validation
     //todo: make better lockout set
-    public override async Task HandleAsync(SetLockoutRequest setLockoutRequest, CancellationToken ct)
+    public override async Task HandleAsync(SetLockoutRequest setLockoutRequest, CancellationToken cancellationToken)
     {
         settings.MaxFailedAttempts = setLockoutRequest.MaxFailedAttempts;
         settings.LockoutDurationMinutes = setLockoutRequest.LockoutDurationMinutes;
         
-        await SendAsync(settings, cancellation: ct);
+        await SendAsync(settings, cancellation: cancellationToken);
     }
 }
