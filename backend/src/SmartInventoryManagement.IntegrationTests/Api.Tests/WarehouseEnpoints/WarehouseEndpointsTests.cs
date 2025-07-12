@@ -59,7 +59,7 @@ public class WarehouseEndpointsTests :
         errorResponse.Detail.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
         errorResponse.Errors.Should()
-            .Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
+            .Contain(d => d.PropertyName == "name" && d.ErrorMessage.Contains("Name is required"));
     }
 
     [Fact]
@@ -184,7 +184,7 @@ public class WarehouseEndpointsTests :
         errorResponse.Detail.Should().Contain("Some validation problem occured");
         errorResponse.Errors.Should().NotBeEmpty();
         errorResponse.Errors.Should()
-            .Contain(d => d.PropertyName == "Name" && d.ErrorMessage.Contains("Name is required"));
+            .Contain(d => d.PropertyName == "name" && d.ErrorMessage.Contains("Name is required"));
     }
 
     [Fact]

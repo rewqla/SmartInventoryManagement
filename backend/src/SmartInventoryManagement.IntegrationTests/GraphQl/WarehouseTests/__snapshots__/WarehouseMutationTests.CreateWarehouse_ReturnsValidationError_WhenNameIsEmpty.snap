@@ -11,7 +11,7 @@
           "message": "Validation errors occurred",
           "errors": [
             {
-              "propertyName": "Name",
+              "propertyName": "name",
               "errorMessage": "Name is required"
             }
           ]
