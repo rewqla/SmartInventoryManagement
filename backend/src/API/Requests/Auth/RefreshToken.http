@@ -3,7 +3,7 @@ POST {{baseUrl}}/api/auth/refresh-token
 Content-Type: application/json
 
 {
-  "refreshToken": "/5pngmNTBXG0+esbtNrqvy4bQ6trR6o33jRsjV7+hEU="
+  "refreshToken": "0SwAcoE+JDyRijs5DPzqxsFIw8ZdAbUOuaeLxu2Wjfms="
 }
 
 ###
