@@ -4,6 +4,6 @@ Content-Type: application/json
 
 {
   "name": "Mythic warehouse",
-  "location": "Loch Ness"
+  "location": ""
 }
 ###

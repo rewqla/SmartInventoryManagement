@@ -3,10 +3,10 @@ POST {{baseUrl}}/api/auth/signup
 Content-Type: application/json
 
 {
-  "email": "ghfgfbbxsder34rfsdfsd@gmail.com",
-  "phoneNumber": "4568886523",
-  "fullName": "John Doe",
-  "password": "Securepass!word123"
+  "email": "ghfgfb2bxsder34rfsdfsd@gmail.com",
+  "phoneNumber": "",
+  "fullName": "",
+  "password": "sdasdasdsS!word123"
 }
 
 ###

@@ -1,5 +1,5 @@
 ﻿### Retrieve warehouse by id 
-GET {{baseUrl}}/api/warehouses/78c29401-1334-a67c-98ab-2866987222e5
+GET {{baseUrl}}/api/warehouses/e72ccb0e-14ed-42bc-9a66-48aee45b1870
 Authorization: Bearer {{accessToken}}
 
 ###
