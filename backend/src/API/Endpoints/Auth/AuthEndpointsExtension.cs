@@ -4,11 +4,11 @@ public static class AuthEndpointsExtension
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapSignIn();
-        app.MapSignUp();
+        // app.MapSignIn();
+        // app.MapSignUp();
         // app.MapSetLockout();
         // app.MapGetLockout();
-        app.MapRefreshToken();
+        // app.MapRefreshToken();
 
         return app;
     }
