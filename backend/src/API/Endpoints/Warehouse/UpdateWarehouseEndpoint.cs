@@ -30,7 +30,7 @@ namespace API.Endpoints.Warehouse;
 //                     {
 //                         await hubContext.Clients.All.NotifyWarehouseUpdatedAsync(result.Value);
 //                     }
-//                     
+//
 //                     return result.Match(
 //                         onSuccess: value => Results.Ok(value),
 //                         onFailure: error =>
@@ -94,7 +94,7 @@ internal sealed class
             Location = request.Location,
             Inventories = request.Inventories
         };
-        
+
         var result = await warehouseService.UpdateWarehouseAsync(dto, cancellationToken);
 
         if (result.IsSuccess)
@@ -129,10 +129,7 @@ internal sealed class
                     title = error.Code,
                     detail = error.Description,
                     statusCode = StatusCodes.Status400BadRequest,
-                    extensions = new Dictionary<string, object?>
-                    {
-                        { "errors", error.Errors }
-                    }
+                    errors = error.Errors
                 }));
                 break;
         }

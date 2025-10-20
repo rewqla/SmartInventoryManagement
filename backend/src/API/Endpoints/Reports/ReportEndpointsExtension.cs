@@ -6,9 +6,8 @@ public static class ReportEndpointsExtension
     {
         //todo: move to fast ednpoints
         app.MapWarehousesReport();
-        //todo: move to fast ednpoints
-        app.MapProductsReport();
-        
+        // app.MapProductsReport();
+
         return app;
     }
 }

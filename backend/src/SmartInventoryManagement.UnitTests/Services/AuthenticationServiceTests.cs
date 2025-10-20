@@ -468,6 +468,9 @@ public class AuthenticationServiceTests
 
         _userRepository.Setup(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new User());
+        
+        _userRepository.Setup(x => x.CompleteAsync())
+            .ReturnsAsync(1);
 
         // Act
         var result = await _authenticationService.SignUpAsync(signUpDTO);
@@ -475,6 +478,13 @@ public class AuthenticationServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(IdleUnit.Value);
+        
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email), Times.Once);
+        _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber), Times.Once);
+        _userRepository.Verify(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
+        _userRepository.Verify(x => x.CompleteAsync(), Times.Once);
+        _roleRepository.Verify(x => x.GetByNameAsync("Worker"), Times.Once);
+        _passwordHasher.Verify(x => x.Hash(signUpDTO.Password), Times.Once);
     }
 
     [Fact]

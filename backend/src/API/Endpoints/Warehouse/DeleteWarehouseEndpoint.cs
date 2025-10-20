@@ -71,7 +71,7 @@ internal sealed class
         if (result.IsSuccess)
         {
             await hubContext.Clients.All.NotifyWarehouseDeletedAsync();
-            await SendResultAsync(TypedResults.Ok(result.Value));
+            await SendResultAsync(TypedResults.NoContent());
 
             return;
         }

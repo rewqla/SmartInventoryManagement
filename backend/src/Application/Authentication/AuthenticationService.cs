@@ -89,6 +89,7 @@ public class AuthenticationService : IAuthenticationService
 
         var newUser = CreateUser(signUpDTO, defaultRole);
         await _userRepository.AddAsync(newUser);
+        await _userRepository.CompleteAsync();
 
         //todo: unit test
         _ = Task.Run(async () =>

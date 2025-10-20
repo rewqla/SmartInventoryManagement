@@ -6,8 +6,7 @@ public static class WarehouseEndpointExtension
     {
         // app.MapGetWarehouses();
         // app.MapGetWarehouseById();
-        //todo: move to fast ednpoints
-        app.MapCreateWarehouse();
+        // app.MapCreateWarehouse();
         // app.MapUpdateWarehouse();
         // app.MapDeleteWarehouse();
 

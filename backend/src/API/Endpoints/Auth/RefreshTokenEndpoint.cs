@@ -71,6 +71,11 @@ internal sealed class
         Post(AuthEndpoints.Refresh);
         Description(x => x.WithTags(EndpointTags.Auth));
         Options(x => x.RequireRateLimiting("fixed"));
+        // Throttle(
+        //     hitLimit: 10,
+        //     durationSeconds: 60,
+        //     headerName: "X-Client-Id"
+        // );
         AllowAnonymous();
     }
 

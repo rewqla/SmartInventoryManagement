@@ -1,29 +1,51 @@
 ﻿using API.Authorization;
 using API.Endpoints.Constants;
 using API.Extensions;
+using Application.DTO.Warehouse;
 using Application.Interfaces.Services.Warehouse;
+using FastEndpoints;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Warehouse;
 
-public static class GetWarehousesEndpoint
+// public static class GetWarehousesEndpoint
+// {
+//     private const string Name = "GetWarehouses";
+//
+//     //todo: add integration tests
+//     public static IEndpointRouteBuilder MapGetWarehouses(this IEndpointRouteBuilder app)
+//     {
+//         app.MapGet(WarehouseEndpoints.GetAll,
+//                 async ([FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
+//                 {
+//                     var result = await warehouseService.GetWarehousesAsync(cancellationToken);
+//
+//                     return Results.Ok(result.Value);
+//                 })
+//             .WithName(Name)
+//             .WithTags(EndpointTags.Warehouse)
+//             .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
+//
+//         return app;
+//     }
+// }
+
+internal sealed class GetWarehousesEndpoint : EndpointWithoutRequest<IEnumerable<WarehouseDTO>>
 {
-    private const string Name = "GetWarehouses";
+    public IWarehouseService WarehouseService { get; set; }
 
-    //todo: add integration tests
-    public static IEndpointRouteBuilder MapGetWarehouses(this IEndpointRouteBuilder app)
+    public override void Configure()
     {
-        app.MapGet(WarehouseEndpoints.GetAll,
-                async ([FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
-                {
-                    var result = await warehouseService.GetWarehousesAsync(cancellationToken);
+        Get(WarehouseEndpoints.GetAll);
+        Description(x => x.WithTags(EndpointTags.Warehouse));
+        AllowAnonymous();
+        PreProcessor<ApiKeyAuthenticationPreProcessor>();
+    }
 
-                    return Results.Ok(result.Value);
-                })
-            .WithName(Name)
-            .WithTags(EndpointTags.Warehouse)
-            .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
+    public override async Task HandleAsync(CancellationToken ct)
+    {
+        var result = await WarehouseService.GetWarehousesAsync(ct);
 
-        return app;
+        await SendOkAsync(result.Value!, ct);
     }
 }

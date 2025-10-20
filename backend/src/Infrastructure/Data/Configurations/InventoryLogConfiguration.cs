@@ -18,5 +18,9 @@ internal class InventoryLogConfiguration : IEntityTypeConfiguration<InventoryLog
         builder.HasOne(e => e.Inventory)
             .WithMany(m=>m.InventoryLogs)
             .HasForeignKey(f => f.InventoryId);
+
+        builder.HasOne(e => e.User)
+            .WithMany(m=>m.InventoryLogs)
+            .HasForeignKey(f => f.ChangedById);
     }
 }

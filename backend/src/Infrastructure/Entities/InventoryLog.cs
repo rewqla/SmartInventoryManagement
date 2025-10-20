@@ -7,4 +7,6 @@ public sealed class InventoryLog : BaseEntity
     public DateTime Timestamp { get; set; }
     public int QuantityChanged { get; set; }
     public ChangeType  ChangeType { get; set; }
+    public Guid ChangedById { get; set; }
+    public User User { get; set; } = null!;
 }
