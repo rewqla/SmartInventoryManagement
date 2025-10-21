@@ -1,0 +1,8 @@
+﻿### Release inventory
+POST {{baseUrl}}/api/inventories/12fef601-3172-4e92-ad71-c58ffeafe1ec/release
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "quantityToRelease": "12"
+}

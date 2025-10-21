@@ -8,28 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Warehouse;
 
-// public static class GetWarehousesEndpoint
-// {
-//     private const string Name = "GetWarehouses";
-//
-//     //todo: add integration tests
-//     public static IEndpointRouteBuilder MapGetWarehouses(this IEndpointRouteBuilder app)
-//     {
-//         app.MapGet(WarehouseEndpoints.GetAll,
-//                 async ([FromServices] IWarehouseService warehouseService, CancellationToken cancellationToken) =>
-//                 {
-//                     var result = await warehouseService.GetWarehousesAsync(cancellationToken);
-//
-//                     return Results.Ok(result.Value);
-//                 })
-//             .WithName(Name)
-//             .WithTags(EndpointTags.Warehouse)
-//             .AddEndpointFilter<ApiKeyAuthenticationEndpointFilter>();
-//
-//         return app;
-//     }
-// }
-
 internal sealed class GetWarehousesEndpoint : EndpointWithoutRequest<IEnumerable<WarehouseDTO>>
 {
     public IWarehouseService WarehouseService { get; set; }

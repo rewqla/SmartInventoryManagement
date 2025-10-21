@@ -1,0 +1,3 @@
+﻿### Get inventories by warehouseId
+GET {{baseUrl}}/api/inventories/warehouse/5610a06c-a797-46c7-abef-1ba67bdc7328
+Authorization: Bearer {{accessToken}}

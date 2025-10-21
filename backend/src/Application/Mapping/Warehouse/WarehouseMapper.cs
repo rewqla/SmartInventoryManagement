@@ -15,10 +15,10 @@ public static class WarehouseMapper
             Id = warehouse.Id,
             Name = warehouse.Name,
             Location = warehouse.Location,
-            Inventories = warehouse.Inventories.Select(i => new InventoryDTO
+            Inventories = warehouse.Inventories.Select(i => new InventoryWarehouseDTO
             {
                 ProductId = i.ProductId,
-                ProductName = i.Product.Name, 
+                ProductName = i.Product.Name,
                 Quantity = i.Quantity
             }).ToList()
         };
@@ -30,7 +30,7 @@ public static class WarehouseMapper
 
         return new Infrastructure.Entities.Warehouse
         {
-            Id = warehouseDto.Id, 
+            Id = warehouseDto.Id,
             Name = warehouseDto.Name,
             Location = warehouseDto.Location
         };

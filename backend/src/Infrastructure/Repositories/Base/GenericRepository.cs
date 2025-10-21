@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories.Base;
 
 public abstract  class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
-{      
+{
     private readonly InventoryContext _dbContext;
     private readonly DbSet<TEntity> _dbSet;
 
@@ -20,7 +20,7 @@ public abstract  class GenericRepository<TEntity> : IGenericRepository<TEntity> 
     {
         return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
     }
-    
+
     public async Task<TEntity?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbSet.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -40,6 +40,11 @@ public abstract  class GenericRepository<TEntity> : IGenericRepository<TEntity> 
     public void Delete(TEntity entity)
     {
         _dbSet.Remove(entity);
+    }
+
+    public IQueryable<TEntity> Query()
+    {
+        return _dbSet.AsQueryable();
     }
 
     public TEntity Update(TEntity entity)

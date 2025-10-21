@@ -37,7 +37,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Application.Configuration;
 using Application.Email;
+using Application.Interfaces.Inventories;
 using Application.Interfaces.News;
+using Application.Services.Inventories;
 using Application.Services.News;
 using FastEndpoints;
 using Refit;
@@ -60,7 +62,7 @@ public static class DependencyInjection
         services.AddCors();
         services.AddSignalR();
         services.AddFastEndpoints();
-        
+
         services.AddProblemDetails(options =>
         {
             options.CustomizeProblemDetails = context =>
@@ -221,7 +223,9 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IInventoryRepository, InventoryRepository>();
 
         return builder;
     }

@@ -1,0 +1,10 @@
+﻿### Create inventory
+POST {{baseUrl}}/api/inventories/
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "productId": "0da4983d-c22e-4dcd-858e-bf3282966fb2",
+  "warehouseId": "34279801-5755-7b71-8af7-4fadd384851f",
+  "quantity": 23
+}

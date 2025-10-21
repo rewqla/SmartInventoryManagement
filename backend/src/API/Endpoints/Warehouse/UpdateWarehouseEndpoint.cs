@@ -91,8 +91,7 @@ internal sealed class
         {
             Id = request.Id,
             Name = request.Name,
-            Location = request.Location,
-            Inventories = request.Inventories
+            Location = request.Location
         };
 
         var result = await warehouseService.UpdateWarehouseAsync(dto, cancellationToken);

@@ -7,6 +7,7 @@ public interface IGenericRepository<TEntity>
     Task<TEntity> AddAsync(TEntity entities, CancellationToken cancellationToken = default);
     Task AddRangeAsync(TEntity entity, CancellationToken cancellationToken = default);
     void Delete(TEntity entity);
+    IQueryable<TEntity> Query();
     TEntity Update(TEntity entity);
     Task<int> CompleteAsync();
     Task DisposeAsync();

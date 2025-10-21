@@ -1,0 +1,8 @@
+﻿### Update inventory
+PUT {{baseUrl}}/api/inventories/3289fff6-1417-45c8-866a-fc1ac647120c
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "quantity": 55
+}

@@ -1,0 +1,3 @@
+﻿### Get all inventories
+GET {{baseUrl}}/api/inventories/
+Authorization: Bearer {{accessToken}}

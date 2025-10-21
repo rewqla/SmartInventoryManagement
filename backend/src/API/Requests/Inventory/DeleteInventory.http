@@ -1,0 +1,3 @@
+﻿### Delete inventory
+DELETE {{baseUrl}}/api/inventories/eb2cb83b-cd6c-40a4-aa52-988dfc7e0d87
+Authorization: Bearer {{accessToken}}

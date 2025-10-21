@@ -1,0 +1,3 @@
+﻿### Get by Id inventory with history
+GET {{baseUrl}}/api/inventories/history/3289fff6-1417-45c8-866a-fc1ac647120c
+Authorization: Bearer {{accessToken}}
