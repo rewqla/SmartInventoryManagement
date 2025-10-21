@@ -14,11 +14,11 @@ public sealed class WarehouseQueries
     public async Task<IEnumerable<WarehouseDTO>> GetWarehouse(IWarehouseService warehouseService,
         CancellationToken cancellationToken)
     {
-        var result = await warehouseService.GetWarehousesWithInventoriesAsync(cancellationToken);
+        var result = await warehouseService.GetWarehousesAsync(cancellationToken);
 
         return result.Value!;
     }
-    
+
     public async Task<WarehouseDTO?> GetWarehouseById(IWarehouseService warehouseService, Guid id,
         CancellationToken cancellationToken)
     {

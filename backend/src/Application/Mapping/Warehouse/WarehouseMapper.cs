@@ -17,6 +17,7 @@ public static class WarehouseMapper
             Location = warehouse.Location,
             Inventories = warehouse.Inventories.Select(i => new InventoryWarehouseDTO
             {
+                Id = i.Id,
                 ProductId = i.ProductId,
                 ProductName = i.Product.Name,
                 Quantity = i.Quantity

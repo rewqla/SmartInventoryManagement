@@ -3,5 +3,5 @@
 namespace Infrastructure.Interfaces.Repositories;
 public interface IWarehouseRepository : IGenericRepository<Entities.Warehouse>
 {
-    Task<IEnumerable<Entities.Warehouse>> GetWarehousesWithInventoriesAsync(CancellationToken cancellationToken = default);
+    Task<Entities.Warehouse?> GetWarehouseWithInventoriesAsync(Guid id, CancellationToken cancellationToken = default);
 }

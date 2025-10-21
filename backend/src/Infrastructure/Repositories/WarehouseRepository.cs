@@ -8,16 +8,19 @@ namespace Infrastructure.Repositories;
 public class WarehouseRepository : GenericRepository<Entities.Warehouse>, IWarehouseRepository
 {
     private readonly InventoryContext _dbContext;
+
     public WarehouseRepository(InventoryContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Entities.Warehouse>> GetWarehousesWithInventoriesAsync(CancellationToken cancellationToken = default)
+    public async Task<Entities.Warehouse?> GetWarehouseWithInventoriesAsync(Guid id,
+        CancellationToken cancellationToken = default)
     {
         return await _dbContext.Warehouses
+            .Where(w => w.Id == id)
             .Include(w => w.Inventories)
-            .ThenInclude(p=>p.Product)
-            .ToListAsync(cancellationToken);
+            .ThenInclude(i => i.Product) // Include the related Product for each inventory
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

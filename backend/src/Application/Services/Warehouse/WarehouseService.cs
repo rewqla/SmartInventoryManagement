@@ -86,7 +86,7 @@ public class WarehouseService : IWarehouseService
         CancellationToken cancellationToken = default)
     {
         var validationResult = await _warehouseDTOValidator.ValidateAsync(warehouseDto, cancellationToken);
-        
+
         if (!validationResult.IsValid)
         {
             var errorDetails = validationResult.ToErrorDetails();
@@ -135,13 +135,13 @@ public class WarehouseService : IWarehouseService
         return Result<byte[]>.Success(report);
     }
 
-    public async Task<Result<IEnumerable<WarehouseDTO>>> GetWarehousesWithInventoriesAsync(
+    public async Task<Result<WarehouseDTO>> GetWarehouseWithInventoriesAsync(Guid Id,
         CancellationToken cancellationToken = default)
     {
-        var warehouses = await _warehouseRepository.GetWarehousesWithInventoriesAsync(cancellationToken);
+        var warehouse = await _warehouseRepository.GetWarehouseWithInventoriesAsync(Id, cancellationToken);
 
-        var warehousesDTO = warehouses.Select(WarehouseMapper.ToDTO);
+        var warehousesDTO = WarehouseMapper.ToDTO(warehouse);
 
-        return Result<IEnumerable<WarehouseDTO>>.Success(warehousesDTO);
+        return Result<WarehouseDTO>.Success(warehousesDTO);
     }
 }

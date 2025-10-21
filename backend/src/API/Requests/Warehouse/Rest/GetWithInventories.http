@@ -1,0 +1,5 @@
+﻿### Retrieve warehouses
+GET {{baseUrl}}/api/warehouses/5610a06c-a797-46c7-abef-1ba67bdc7328/with-inventories
+Authorization: Bearer {{accessToken}}
+
+###
