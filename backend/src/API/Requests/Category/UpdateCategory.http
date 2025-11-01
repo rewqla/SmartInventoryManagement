@@ -1,0 +1,8 @@
+﻿### Update
+PUT {{baseUrl}}/api/categories/a54466df-1cd9-49f2-ac25-a68eb6f3377f
+Content-Type: application/json
+
+{
+  "name": "Home Furniture"
+}
+###

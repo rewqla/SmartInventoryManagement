@@ -39,6 +39,8 @@ using Application.Configuration;
 using Application.Email;
 using Application.Interfaces.Inventories;
 using Application.Interfaces.News;
+using Application.Interfaces.Services.Category;
+using Application.Services.Category;
 using Application.Services.Inventories;
 using Application.Services.News;
 using FastEndpoints;
@@ -83,6 +85,7 @@ public static class DependencyInjection
             new DbConnectionFactory(connectionString));
 
         services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -226,6 +229,7 @@ public static class DependencyInjection
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IInventoryRepository, InventoryRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         return builder;
     }

@@ -1,0 +1,8 @@
+﻿### Create
+POST {{baseUrl}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Furniture"
+}
+###

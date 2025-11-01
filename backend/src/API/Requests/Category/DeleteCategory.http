@@ -1,0 +1,5 @@
+﻿### DELETE
+DELETE {{baseUrl}}/api/categories/5a4a1e63-e142-4fc4-9fed-907ed9f581a8
+Content-Type: application/json
+
+###
