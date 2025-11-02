@@ -29,7 +29,18 @@ public sealed class CreateProductEndpoint : Endpoint<MutationProductDto, Product
                 cancellation: ct
             );
         else
-            await SendErrorsAsync(statusCode: 400, cancellation: ct);
+        {
+            var error = result.Error;
+
+            await SendResultAsync(TypedResults.BadRequest(new
+            {
+                type = "https://httpstatuses.com/400",
+                title = error.Code,
+                detail = error.Description,
+                statusCode = StatusCodes.Status400BadRequest,
+                errors = error.Errors
+            }));
+        }
     }
 }
 

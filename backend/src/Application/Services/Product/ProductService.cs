@@ -62,7 +62,8 @@ public class ProductService : IProductService
         return Result<ProductDto>.Success(MapToDto(product));
     }
 
-    public async Task<Result<IEnumerable<ProductDto>>> GetByCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<ProductDto>>> GetByCategoryAsync(Guid categoryId,
+        CancellationToken cancellationToken = default)
     {
         var products = await _productRepository.GetByCategoryWithCategoryAsync(categoryId, cancellationToken);
         return Result<IEnumerable<ProductDto>>.Success(products.Select(MapToDto));
@@ -71,7 +72,7 @@ public class ProductService : IProductService
     public async Task<Result<IEnumerable<ShortProductDto>>> FindInWarehousesAsync(Guid warehouseId,
         CancellationToken cancellationToken = default)
     {
-        var inventories = await _inventoryRepository.GetByWarehouseAsync(warehouseId,cancellationToken);
+        var inventories = await _inventoryRepository.GetByWarehouseAsync(warehouseId, cancellationToken);
         var products = inventories
             .Select(x => x.Product)
             .Distinct()
@@ -94,7 +95,14 @@ public class ProductService : IProductService
     public async Task<Result<ProductDto>> CreateAsync(MutationProductDto dto,
         CancellationToken cancellationToken = default)
     {
-        var product = new Infrastructure.Entities.Product
+        var products = await _productRepository.GetAllAsync(cancellationToken);
+        var exists = products.Any(p => p.SKU == dto.SKU);
+
+        if (exists)
+            return Result<ProductDto>.Failure(
+                new Error("Product.DuplicateSKU", $"A product with SKU '{dto.SKU}' already exists."));
+
+        Infrastructure.Entities.Product product = new Infrastructure.Entities.Product
         {
             Name = dto.Name,
             SKU = dto.SKU,
