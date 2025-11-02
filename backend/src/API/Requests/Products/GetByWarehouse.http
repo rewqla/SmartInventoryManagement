@@ -1,0 +1,2 @@
+﻿### Find Products In Warehouse
+GET {{baseUrl}}/api/warehouses/5610a06c-a797-4637-abef-1ba67bdc7328/products

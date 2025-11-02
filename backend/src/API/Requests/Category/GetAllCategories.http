@@ -2,5 +2,4 @@
 GET {{baseUrl}}/api/categories
 Content-Type: application/json
 
-
 ###

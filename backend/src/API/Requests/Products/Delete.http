@@ -1,0 +1,2 @@
+﻿### Soft Delete Product
+DELETE {{baseUrl}}/api/products/d8b5c4c1-304a-4c5f-bc8d-cb53b033fc5c

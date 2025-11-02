@@ -20,7 +20,7 @@ public class WarehouseRepository : GenericRepository<Entities.Warehouse>, IWareh
         return await _dbContext.Warehouses
             .Where(w => w.Id == id)
             .Include(w => w.Inventories)
-            .ThenInclude(i => i.Product) // Include the related Product for each inventory
+            .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(cancellationToken);
     }
 }

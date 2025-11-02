@@ -1,0 +1,2 @@
+﻿### Get Products By Category
+GET {{baseUrl}}/api/categories/6a1cc206-5e21-4ac1-a6f9-8ab6ee399494/products

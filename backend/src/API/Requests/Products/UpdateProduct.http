@@ -1,0 +1,11 @@
+﻿### Update Product
+PUT {{baseUrl}}/api/products/6aacc493-0815-4d79-9939-ae1036078239
+Content-Type: application/json
+
+{
+  "name": "Office Chair Deluxe",
+  "sku": "C2LOT-04301",
+  "description": "Updated ergonomic chair with headrest",
+  "unitPrice": 549.99,
+  "categoryId": "6a1cc206-5e21-4ac1-a6f9-8ab6ee399494"
+}

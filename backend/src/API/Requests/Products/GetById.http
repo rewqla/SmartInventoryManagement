@@ -1,0 +1,2 @@
+﻿### Get Product By Id
+GET {{baseUrl}}/api/products/af46961a-56b8-4017-95e1-31d48bcd4259

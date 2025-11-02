@@ -1,0 +1,2 @@
+﻿### Get All Products
+GET {{baseUrl}}/api/products

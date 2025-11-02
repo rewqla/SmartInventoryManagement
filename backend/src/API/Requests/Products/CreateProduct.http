@@ -1,0 +1,11 @@
+﻿### Create Product
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Office Chair",
+  "sku": "CHt-00123",
+  "description": "Ergonomic office chair with adjustable height",
+  "unitPrice": 129.99,
+  "categoryId": "0db81c13-3de0-446d-844b-4605e1c5a105"
+}

@@ -4,14 +4,14 @@ namespace Application.Exceptions;
 
 public static class CommonErrors
 {
-    public static Error NotFound(string entity) => new Error(
+    public static Error NotFound(string entity) => new (
         $"{entity.ToUpperFirstLetter()}.NotFound", $"The {entity.ToLower()} was not found");
-    
-    public static Error NotFoundById(string entity, Guid id) => new Error(
+
+    public static Error NotFoundById(string entity, Guid id) => new (
         $"{entity.ToUpperFirstLetter()}.NotFound", $"The {entity.ToLower()} with Id '{id}' was not found");
 
-    public static Error ValidationError(string entity, List<ErrorDetail> errorDetails) => new Error(
-        $"{entity.ToUpperFirstLetter()}.ValidationError", 
+    public static Error ValidationError(string entity, List<ErrorDetail> errorDetails) => new (
+        $"{entity.ToUpperFirstLetter()}.ValidationError",
         "Some validation problem occured",
         errorDetails);
 }
