@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="docker-compose.yml" />
+    <File Path="src/.editorconfig" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/API/API.csproj" />
+    <Project Path="src/Application/Application.csproj" />
+    <Project Path="src/Infrastructure/Infrastructure.csproj" />
+    <Project Path="src/SharedKernel/SharedKernel.csproj" />
+    <Project Path="src/SmartInventoryManagement.IntegrationTests/SmartInventoryManagement.IntegrationTests.csproj" />
+    <Project Path="src/SmartInventoryManagement.UnitTests/SmartInventoryManagement.UnitTests.csproj" />
+  </Folder>
+</Solution>
