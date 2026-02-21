@@ -4,6 +4,7 @@ using Application.DTO.Authentication;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
 using SharedKernel.Interfaces;
+using SharedKernel.ResultPattern;
 
 namespace SmartInventoryManagement.Tests.Services;
 

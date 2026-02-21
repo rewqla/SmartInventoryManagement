@@ -1,11 +1,11 @@
-﻿using Error = Application.Common.Error;
+﻿using Error = SharedKernel.Error;
 
 namespace API.Extensions;
 
 public static class ResultExtensions
 {
     public static IResult Match<T>(
-        this Application.Common.Result<T> result,
+        this SharedKernel.ResultPattern.Result<T> result,
         Func<T, IResult> onSuccess,
         Func<Error, IResult> onFailure)
     {

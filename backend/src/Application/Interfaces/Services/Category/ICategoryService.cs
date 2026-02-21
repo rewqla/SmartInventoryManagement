@@ -1,5 +1,5 @@
-﻿using Application.Common;
-using Application.DTO.Category;
+﻿using Application.DTO.Category;
+using SharedKernel.ResultPattern;
 
 namespace Application.Interfaces.Services.Category;
 

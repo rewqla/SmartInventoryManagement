@@ -1,5 +1,5 @@
-﻿using Application.Common;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
+using SharedKernel;
 
 namespace Application.Mapping.Errors;
 

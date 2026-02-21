@@ -1,4 +1,4 @@
-﻿using Application.Common;
+﻿using SharedKernel;
 
 namespace Application.Validation;
 

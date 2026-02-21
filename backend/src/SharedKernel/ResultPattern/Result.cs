@@ -1,4 +1,4 @@
-﻿namespace Application.Common;
+﻿namespace SharedKernel.ResultPattern;
 
 public class Result<T>
 {

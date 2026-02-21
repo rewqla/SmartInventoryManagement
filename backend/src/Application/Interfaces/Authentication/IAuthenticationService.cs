@@ -1,5 +1,5 @@
-﻿using Application.Common;
-using Application.DTO.Authentication;
+﻿using Application.DTO.Authentication;
+using SharedKernel.ResultPattern;
 
 namespace Application.Interfaces.Authentication;
 

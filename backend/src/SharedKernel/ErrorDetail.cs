@@ -1,4 +1,4 @@
-﻿namespace Application.Common;
+﻿namespace SharedKernel;
 
 public record ErrorDetail
 {

@@ -1,4 +1,4 @@
-﻿namespace Application.Common;
+﻿namespace SharedKernel;
 
 public sealed record Error(string Code, string Description, List<ErrorDetail> Errors = null)
 {

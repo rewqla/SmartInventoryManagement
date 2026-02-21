@@ -5,7 +5,6 @@ using API.GraphQL.Shared;
 using API.GraphQL.Subscriptions;
 using API.GraphQL.Subscriptions.EventsMessages;
 using API.GraphQL.Subscriptions.Topics;
-using Application.Exceptions;
 using Application.Interfaces.Services.Warehouse;
 using Application.Mapping.Errors;
 using Application.Validation.Warehouse;
@@ -13,6 +12,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using HotChocolate.Subscriptions;
 using Infrastructure.Data;
+using SharedKernel.Exceptions;
 
 namespace API.GraphQL.Mutations;
 

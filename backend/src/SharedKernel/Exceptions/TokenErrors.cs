@@ -1,6 +1,4 @@
-﻿using Application.Common;
-
-namespace Application.Exceptions;
+﻿namespace SharedKernel.Exceptions;
 
 public static class TokenErrors
 {

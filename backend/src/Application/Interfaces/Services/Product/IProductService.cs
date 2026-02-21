@@ -1,5 +1,5 @@
-﻿using Application.Common;
-using Application.DTO.Product;
+﻿using Application.DTO.Product;
+using SharedKernel.ResultPattern;
 
 namespace Application.Interfaces.Services.Product;
 

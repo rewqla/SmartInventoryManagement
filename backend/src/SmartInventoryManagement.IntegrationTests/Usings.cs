@@ -19,7 +19,6 @@ global using HotChocolate.Execution;
 global using Snapshooter.Xunit;
 global using System.Net;
 global using API;
-global using Application.Common;
 global using FluentAssertions;
 global using Microsoft.AspNetCore.Mvc.Testing;
 global using System.Net.Http.Json;

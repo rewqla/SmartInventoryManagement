@@ -1,4 +1,4 @@
-﻿namespace Application.Common;
+﻿namespace SharedKernel;
 
 public static class StringExtensions
 {
@@ -7,6 +7,6 @@ public static class StringExtensions
         if (string.IsNullOrEmpty(input))
             return input;
 
-        return char.ToUpper(input[0]) + input.Substring(1);
+        return char.ToUpper(input[0]) + input[1..];
     }
 }

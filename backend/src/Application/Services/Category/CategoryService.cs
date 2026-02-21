@@ -1,8 +1,8 @@
-﻿using Application.Common;
-using Application.DTO.Category;
-using Application.Exceptions;
+﻿using Application.DTO.Category;
 using Application.Interfaces.Services.Category;
 using Infrastructure.Interfaces.Repositories;
+using SharedKernel.Exceptions;
+using SharedKernel.ResultPattern;
 
 namespace Application.Services.Category;
 

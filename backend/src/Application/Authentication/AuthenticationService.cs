@@ -1,14 +1,14 @@
-﻿using Application.Common;
-using Application.Configuration;
+﻿using Application.Configuration;
 using Application.DTO.Authentication;
-using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Authentication;
 using Application.Validation;
 using Application.Validation.Authentication;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces.Repositories;
+using SharedKernel.Exceptions;
 using SharedKernel.Interfaces;
+using SharedKernel.ResultPattern;
 
 namespace Application.Authentication;
 

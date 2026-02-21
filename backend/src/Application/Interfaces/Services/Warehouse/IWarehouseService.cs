@@ -1,5 +1,5 @@
-﻿using Application.Common;
-using Application.DTO.Warehouse;
+﻿using Application.DTO.Warehouse;
+using SharedKernel.ResultPattern;
 
 namespace Application.Interfaces.Services.Warehouse;
 

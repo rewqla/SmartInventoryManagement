@@ -3,7 +3,6 @@ global using Moq;
 global using FluentAssertions;
 global using Bogus;
 global using Microsoft.Extensions.Logging;
-global using Application.Common;
 global using Application.DTO.Warehouse;
 global using Application.Interfaces.Services.Report;
 global using Application.Services.Warehouse;

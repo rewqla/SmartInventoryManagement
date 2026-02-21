@@ -1,10 +1,11 @@
-﻿using Application.Common;
-using Application.DTO.Product;
-using Application.Exceptions;
+﻿using Application.DTO.Product;
 using Application.Interfaces.Services.Product;
 using Application.Interfaces.Services.Report;
 using Infrastructure.Data;
 using Infrastructure.Interfaces.Repositories;
+using SharedKernel;
+using SharedKernel.Exceptions;
+using SharedKernel.ResultPattern;
 
 namespace Application.Services.Product;
 
