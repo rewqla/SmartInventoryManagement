@@ -37,25 +37,25 @@ public class AuthenticationService : IAuthenticationService
         _emailService = emailService;
     }
 
-    public async Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO)
+    public async Task<Result<AuthenticationResponse>> SignInAsync(SignInRequest signInRequest)
     {
-        var user = await _userRepository.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone);
+        var user = await _userRepository.GetByEmailOrPhoneAsync(signInRequest.EmailOrPhone);
 
         if (user == null)
         {
-            return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
+            return Result<AuthenticationResponse>.Failure(CommonErrors.NotFound("User"));
         }
 
         if (IsAccountLocked(user))
         {
-            return Result<AuthenticationDTO>.Failure(AuthenticationErrors.AccountLockedOut());
+            return Result<AuthenticationResponse>.Failure(AuthenticationErrors.AccountLockedOut());
         }
 
-        if (!IsPasswordValid(signInDTO.Password, user.PasswordHash))
+        if (!IsPasswordValid(signInRequest.Password, user.PasswordHash))
         {
             HandleFailedLoginAsync(user);
 
-            return Result<AuthenticationDTO>.Failure(AuthenticationErrors.InvalidCredentials());
+            return Result<AuthenticationResponse>.Failure(AuthenticationErrors.InvalidCredentials());
         }
 
         ResetLockoutAsync(user);
@@ -104,25 +104,25 @@ public class AuthenticationService : IAuthenticationService
         return Result<IdleUnit>.Success(IdleUnit.Value);
     }
 
-    public async Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken)
+    public async Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken)
     {
         var existingRefreshToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
         if (existingRefreshToken == null || existingRefreshToken.ExpiresOnUtc < DateTime.UtcNow)
         {
-            return Result<AuthenticationDTO>.Failure(TokenErrors.InvalidOrExpiredRefreshToken());
+            return Result<AuthenticationResponse>.Failure(TokenErrors.InvalidOrExpiredRefreshToken());
         }
 
         var user = await _userRepository.GetByIdWithRoles(existingRefreshToken.UserId);
         if (user == null)
         {
-            return Result<AuthenticationDTO>.Failure(CommonErrors.NotFound("User"));
+            return Result<AuthenticationResponse>.Failure(CommonErrors.NotFound("User"));
         }
 
         return await GenerateTokensAsync(user);
     }
 
-    private async Task<Result<AuthenticationDTO>> GenerateTokensAsync(User user)
+    private async Task<Result<AuthenticationResponse>> GenerateTokensAsync(User user)
     {
         // TODO: write unit tests for timespan
         string accessToken;
@@ -132,7 +132,7 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
+            return Result<AuthenticationResponse>.Failure(TokenErrors.TokenGenerationError("access", ex.Message));
         }
 
         RefreshToken refreshToken;
@@ -142,13 +142,13 @@ public class AuthenticationService : IAuthenticationService
         }
         catch (Exception ex)
         {
-            return Result<AuthenticationDTO>.Failure(TokenErrors.TokenGenerationError("refresh", ex.Message));
+            return Result<AuthenticationResponse>.Failure(TokenErrors.TokenGenerationError("refresh", ex.Message));
         }
 
         await _refreshTokenRepository.DeleteByUserIdAsync(user.Id);
         await _refreshTokenRepository.SaveRefreshTokenAsync(refreshToken);
 
-        return Result<AuthenticationDTO>.Success(new AuthenticationDTO
+        return Result<AuthenticationResponse>.Success(new AuthenticationResponse
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken.Token

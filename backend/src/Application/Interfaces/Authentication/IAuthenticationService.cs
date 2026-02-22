@@ -5,9 +5,9 @@ namespace Application.Interfaces.Authentication;
 
 public interface IAuthenticationService
 {
-    Task<Result<AuthenticationDTO>> SignInAsync(SignInDTO signInDTO);
+    Task<Result<AuthenticationResponse>> SignInAsync(SignInRequest signInRequest);
     Task<Result<IdleUnit>> SignUpAsync(SignUpDTO signUpDTO);
-    Task<Result<AuthenticationDTO>> RefreshTokenAsync(string refreshToken);
+    Task<Result<AuthenticationResponse>> RefreshTokenAsync(string refreshToken);
 }
 
 //todo: move to request/response layer

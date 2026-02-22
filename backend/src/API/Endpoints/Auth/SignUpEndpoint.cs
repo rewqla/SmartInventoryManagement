@@ -8,7 +8,7 @@ namespace API.Endpoints.Auth;
 
 //todo: move to RERP structure (request, response, validation)
 internal sealed class
-    SignUpEndpoint : Endpoint<SignUpDTO, Results<Ok<AuthenticationDTO>, NotFound, BadRequest>>
+    SignUpEndpoint : Endpoint<SignUpDTO, Results<Ok<AuthenticationResponse>, NotFound, BadRequest>>
 {
     public IAuthenticationService authenticationService { get; set; }
 

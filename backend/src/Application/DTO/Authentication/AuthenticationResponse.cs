@@ -1,6 +1,6 @@
 ﻿namespace Application.DTO.Authentication;
 
-public class AuthenticationDTO
+public class AuthenticationResponse
 {
     public string AccessToken { get; set; }
     public string RefreshToken { get; set; }

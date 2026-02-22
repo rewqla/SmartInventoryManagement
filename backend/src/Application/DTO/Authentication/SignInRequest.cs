@@ -1,6 +1,6 @@
 ﻿namespace Application.DTO.Authentication;
 
-public class SignInDTO
+public class SignInRequest
 {
     public string EmailOrPhone { get; set; }
     public string Password { get; set; }

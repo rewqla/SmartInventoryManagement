@@ -43,7 +43,7 @@ public class AuthenticationServiceTests
     public async Task SignInAsync_UserNotFound_ReturnsFailure()
     {
         // Arrange
-        var signInDTO = new SignInDTO { EmailOrPhone = "nonexistent@example.com", Password = "password" };
+        var signInDTO = new SignInRequest { EmailOrPhone = "nonexistent@example.com", Password = "password" };
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone))
             .ReturnsAsync((User)null);
 
@@ -62,7 +62,7 @@ public class AuthenticationServiceTests
         var user = new UserFaker().Generate();
         user.LockoutEnd = DateTime.UtcNow.AddHours(1);
 
-        var signInDTO = new SignInDTO
+        var signInDTO = new SignInRequest
         {
             EmailOrPhone = user.Email,
             Password = "password"
@@ -88,7 +88,7 @@ public class AuthenticationServiceTests
     {
         // Arrange
         var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO
+        var signInDTO = new SignInRequest
         {
             EmailOrPhone = user.Email,
             Password = "wrongPassword"
@@ -124,7 +124,7 @@ public class AuthenticationServiceTests
     {
         // Arrange
         var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
+        var signInDTO = new SignInRequest { EmailOrPhone = user.Email, Password = "correctPassword" };
 
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
         _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
@@ -151,7 +151,7 @@ public class AuthenticationServiceTests
     {
         // Arrange
         var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
+        var signInDTO = new SignInRequest { EmailOrPhone = user.Email, Password = "correctPassword" };
 
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
         _passwordHasher.Setup(x => x.Verify(signInDTO.Password, user.PasswordHash)).Returns(true);
@@ -184,7 +184,7 @@ public class AuthenticationServiceTests
     {
         // Arrange
         var user = new UserFaker().Generate();
-        var signInDTO = new SignInDTO { EmailOrPhone = user.Email, Password = "correctPassword" };
+        var signInDTO = new SignInRequest { EmailOrPhone = user.Email, Password = "correctPassword" };
         var refreshToken = new RefreshToken { Token = "refreshToken", ExpiresOnUtc = DateTime.UtcNow.AddDays(30) };
 
         _userRepository.Setup(x => x.GetByEmailOrPhoneAsync(signInDTO.EmailOrPhone)).ReturnsAsync(user);
@@ -469,7 +469,7 @@ public class AuthenticationServiceTests
 
         _userRepository.Setup(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new User());
-        
+
         _userRepository.Setup(x => x.CompleteAsync())
             .ReturnsAsync(1);
 
@@ -479,7 +479,7 @@ public class AuthenticationServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(IdleUnit.Value);
-        
+
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signUpDTO.Email), Times.Once);
         _userRepository.Verify(x => x.GetByEmailOrPhoneAsync(signUpDTO.PhoneNumber), Times.Once);
         _userRepository.Verify(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);

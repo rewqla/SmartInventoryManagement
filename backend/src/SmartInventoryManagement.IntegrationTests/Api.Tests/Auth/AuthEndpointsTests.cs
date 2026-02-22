@@ -20,7 +20,7 @@ public class AuthEndpointsTests
     public async Task SignIn_ReturnsOk_WhenValidCredentialsProvided()
     {
         // Arrange
-        var signInDto = new SignInDTO
+        var signInDto = new SignInRequest
         {
             EmailOrPhone = "testuser@example.com",
             Password = "Test@1234"
@@ -32,7 +32,7 @@ public class AuthEndpointsTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var authResponse = await response.Content.ReadFromJsonAsync<AuthenticationDTO>();
+        var authResponse = await response.Content.ReadFromJsonAsync<AuthenticationResponse>();
         authResponse.Should().NotBeNull();
         authResponse!.AccessToken.Should().NotBeNullOrWhiteSpace();
         authResponse.RefreshToken.Should().NotBeNullOrWhiteSpace();
@@ -42,7 +42,7 @@ public class AuthEndpointsTests
     public async Task SignIn_ReturnsUnauthorized_WhenPasswordIsInvalid()
     {
         // Arrange
-        var signInDto = new SignInDTO
+        var signInDto = new SignInRequest
         {
             EmailOrPhone = "testuser@example.com",
             Password = "Tes21323423t@1234"
