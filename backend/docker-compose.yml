@@ -11,7 +11,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Database__ConnectionStrings=Host=postgres_db;Port=5432;Database=inventory;Username=postgres;Password=postgres
-        
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+          
   postgres_db:
     image: postgres:15 
     container_name: postgres_db
@@ -23,7 +26,12 @@ services:
       - "5432:5432" 
     volumes:
       - postgres_data:/var/lib/postgresql/data 
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventory"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
 volumes:
   postgres_data:
     driver: local
