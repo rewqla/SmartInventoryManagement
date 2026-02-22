@@ -19,6 +19,8 @@ public class WarehouseEndpointsTestsCustom
     {
         // Arrange
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO();
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         // Act
         var response = await _httpClient.PostAsJsonAsync("/api/warehouses", warehouseDto);
@@ -42,6 +44,9 @@ public class WarehouseEndpointsTestsCustom
             Name = "",
             Location = "Test Location"
         };
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
+
 
         // Act
         var response = await _httpClient.PostAsJsonAsync("/api/warehouses", invalidWarehouseDto);
@@ -111,6 +116,8 @@ public class WarehouseEndpointsTestsCustom
     {
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO("Updated Warehouse", "Updated Location");
         warehouseDto.Id = Guid.Parse("089a905d-660d-46d3-97b5-2933747387bc");
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{warehouseDto.Id}", warehouseDto);
 
@@ -128,6 +135,8 @@ public class WarehouseEndpointsTestsCustom
     {
         var nonExistentId = GuidV7.NewGuid();
         var warehouseDto = WarehouseTestFixture.GetWarehouseDTO();
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{nonExistentId}", warehouseDto);
 
@@ -148,6 +157,8 @@ public class WarehouseEndpointsTestsCustom
             Name = "",
             Location = "Updated Location"
         };
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         var response = await _httpClient.PutAsJsonAsync($"/api/warehouses/{warehouseDto.Id}", warehouseDto);
 
@@ -167,6 +178,8 @@ public class WarehouseEndpointsTestsCustom
     {
         // Arrange
         var nonExistentId = GuidV7.NewGuid();
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         // Act
         var response = await _httpClient.DeleteAsync($"/api/warehouses/{nonExistentId}");
@@ -185,6 +198,8 @@ public class WarehouseEndpointsTestsCustom
     {
         // Arrange
         var warehouseId = Guid.Parse("b24ab279-1fd3-4fb0-9107-8563612aee1f");
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new("Bearer", AccessTokenProvider.GenerateToken("Admin"));
 
         // Act
         var response = await _httpClient.DeleteAsync($"/api/warehouses/{warehouseId}");
