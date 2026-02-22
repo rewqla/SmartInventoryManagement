@@ -1,4 +1,5 @@
-﻿using Application.DTO.Product;
+﻿using API.Authorization;
+using Application.DTO.Product;
 using Application.Interfaces.Services.Product;
 using FastEndpoints;
 
@@ -16,7 +17,7 @@ public sealed class CreateProductEndpoint : Endpoint<MutationProductDto, Product
     public override void Configure()
     {
         Post("/api/products");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(MutationProductDto req, CancellationToken ct)

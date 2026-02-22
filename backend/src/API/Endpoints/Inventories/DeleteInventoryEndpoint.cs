@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using API.Authorization;
 using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Inventories;
@@ -18,6 +18,7 @@ public sealed class DeleteInventoryEndpoint : Endpoint<DeleteInventoryRequest>
     public override void Configure()
     {
         Delete(InventoryEndpoints.Delete);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(DeleteInventoryRequest req, CancellationToken ct)

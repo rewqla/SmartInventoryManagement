@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Inventories;
 using FastEndpoints;
@@ -19,6 +20,7 @@ public sealed class CreateInventoryEndpoint : Endpoint<CreateInventoryRequest, C
     public override void Configure()
     {
         Post(InventoryEndpoints.Create);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(CreateInventoryRequest req, CancellationToken ct)

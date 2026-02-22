@@ -1,5 +1,5 @@
-﻿using API.Endpoints.Constants;
-using API.Extensions;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Hubs;
 using FastEndpoints;
 using Application.DTO.Inventory;
@@ -7,7 +7,6 @@ using Application.DTO.Warehouse;
 using Application.Interfaces.Hubs;
 using Application.Interfaces.Services.Warehouse;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Endpoints.Warehouse;
@@ -32,7 +31,7 @@ internal sealed class
     {
         Post(WarehouseEndpoints.Create);
         Description(x => x.WithTags(EndpointTags.Warehouse));
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     //todo: think about refactoring of returning types

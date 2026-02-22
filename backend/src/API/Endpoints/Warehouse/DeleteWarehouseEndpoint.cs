@@ -61,7 +61,7 @@ internal sealed class
     {
         Delete(WarehouseEndpoints.Delete);
         Description(x => x.WithTags(EndpointTags.Warehouse));
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(DeleteWarehouseRequest request, CancellationToken cancellationToken)

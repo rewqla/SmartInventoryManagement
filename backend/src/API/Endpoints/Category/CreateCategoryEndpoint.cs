@@ -1,4 +1,5 @@
-﻿using Application.DTO.Category;
+﻿using API.Authorization;
+using Application.DTO.Category;
 using Application.Interfaces.Services.Category;
 using FastEndpoints;
 
@@ -16,7 +17,7 @@ public class CreateCategoryEndpoint : Endpoint<MutrateCategoryDTO, CategoryDTO>
     public override void Configure()
     {
         Post("/api/categories");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(MutrateCategoryDTO req, CancellationToken ct)
