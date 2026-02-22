@@ -1,4 +1,5 @@
-﻿using Application.DTO.Product;
+﻿using API.Authorization;
+using Application.DTO.Product;
 using Application.Interfaces.Services.Product;
 using FastEndpoints;
 
@@ -16,7 +17,7 @@ public sealed class GetProductByIdEndpoint : Endpoint<GetProductByIdRequest, Pro
     public override void Configure()
     {
         Get("/api/products/{id:guid}");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(GetProductByIdRequest request, CancellationToken ct)

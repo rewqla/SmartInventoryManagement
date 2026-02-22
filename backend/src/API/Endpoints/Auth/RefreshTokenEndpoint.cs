@@ -12,7 +12,7 @@ public class RefreshTokenRequest
 }
 
 internal sealed class
-    RefreshTokenEndpoint : Endpoint<RefreshTokenRequest, Results<Ok<AuthenticationDTO>, NotFound>>
+    RefreshTokenEndpoint : Endpoint<RefreshTokenRequest, Results<Ok<AuthenticationResponse>, NotFound>>
 {
     public IAuthenticationService authenticationService { get; set; }
 

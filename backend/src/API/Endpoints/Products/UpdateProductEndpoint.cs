@@ -1,4 +1,5 @@
-﻿using Application.DTO.Product;
+﻿using API.Authorization;
+using Application.DTO.Product;
 using Application.Interfaces.Services.Product;
 using FastEndpoints;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public sealed class UpdateProductEndpoint : Endpoint<UpdateProductRequest, Produ
     public override void Configure()
     {
         Put("/api/products/{id:guid}");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(UpdateProductRequest req, CancellationToken ct)

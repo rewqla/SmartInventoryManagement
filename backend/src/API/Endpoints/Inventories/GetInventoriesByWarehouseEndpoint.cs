@@ -1,7 +1,7 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.DTO.Inventory;
 using Application.Interfaces.Inventories;
-using Infrastructure.Entities;
 using FastEndpoints;
 
 namespace API.Endpoints.Inventories;
@@ -19,6 +19,7 @@ public sealed class
     public override void Configure()
     {
         Get(InventoryEndpoints.GetByWarehouse);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync( CancellationToken ct)

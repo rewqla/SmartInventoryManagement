@@ -1,4 +1,5 @@
-﻿using Application.DTO.Product;
+﻿using API.Authorization;
+using Application.DTO.Product;
 using Application.Interfaces.Services.Product;
 using FastEndpoints;
 
@@ -18,7 +19,7 @@ public sealed class
     public override void Configure()
     {
         Get("/api/warehouses/{warehouseId:guid}/products");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(FindProductsInWarehouseRequest request, CancellationToken ct)

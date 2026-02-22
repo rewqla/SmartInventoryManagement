@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Inventories;
 using Infrastructure.Entities;
@@ -19,6 +20,7 @@ public sealed class UpdateInventoryEndpoint : Endpoint<UpdateInventoryRequest, U
     public override void Configure()
     {
         Put(InventoryEndpoints.Update);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(UpdateInventoryRequest req, CancellationToken ct)

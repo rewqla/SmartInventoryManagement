@@ -1,7 +1,7 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.Interfaces.Inventories;
 using FastEndpoints;
-using Infrastructure.Entities;
 
 namespace API.Endpoints.Inventories;
 
@@ -17,6 +17,7 @@ public sealed class GetAllInventoriesEndpoint : EndpointWithoutRequest<IEnumerab
     public override void Configure()
     {
         Get(InventoryEndpoints.GetAll);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(CancellationToken ct)

@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services.Category;
+﻿using API.Authorization;
+using Application.Interfaces.Services.Category;
 using FastEndpoints;
 
 namespace API.Endpoints.Category;
@@ -15,7 +16,7 @@ public sealed class SoftDeleteCategoryEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Delete("/api/categories/{id:guid}");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(CancellationToken ct)

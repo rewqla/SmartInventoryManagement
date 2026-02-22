@@ -1,5 +1,5 @@
-﻿using API.Endpoints.Constants;
-using Application.Interfaces.Inventories;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.Interfaces.Services.Warehouse;
 using FastEndpoints;
 
@@ -19,6 +19,7 @@ public sealed class
     public override void Configure()
     {
         Get(WarehouseEndpoints.GetWithInventories);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(GetWarehouseWithInventoriesRequest req, CancellationToken ct)
@@ -58,7 +59,7 @@ public sealed class WarehouseWithInventoriesResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public List<InventoryResponse> Inventories { get; set; } = new();
+    public List<InventoryResponse> Inventories { get; set; } = [];
 }
 
 public sealed class InventoryResponse

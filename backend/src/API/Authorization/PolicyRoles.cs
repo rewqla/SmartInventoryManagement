@@ -1,8 +1,8 @@
 ﻿namespace API.Authorization;
 
-public static class PolicyRoles
+internal static class PolicyRoles
 {
-    public const string Admin = "Admin";
-    public const string Manager = "Manager";
-    public const string Worker = "Worker";
+    internal const string Admin = "Admin";
+    internal const string Manager = "Manager";
+    internal const string Worker = "Worker";
 }

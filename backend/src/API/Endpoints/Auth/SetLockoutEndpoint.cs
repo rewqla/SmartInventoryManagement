@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.Configuration;
 using FastEndpoints;
 
@@ -18,6 +19,7 @@ internal sealed class SetLockoutEndpoint : Endpoint<SetLockoutRequest, LockoutCo
     {
         Post(AuthEndpoints.Lockout);
         Description(x => x.WithTags("Auth"));
+        Roles(PolicyRoles.Admin);
     }
 
     //todo: make lockout validation

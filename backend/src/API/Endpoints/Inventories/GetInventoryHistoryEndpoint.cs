@@ -1,9 +1,8 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.DTO.Inventory;
 using Application.Interfaces.Inventories;
 using FastEndpoints;
-using Infrastructure.Entities;
-
 namespace API.Endpoints.Inventories;
 
 public sealed class GetInventoryByIdRequest
@@ -23,6 +22,7 @@ public sealed class GetInventoryHistoryEndpoint : Endpoint<GetInventoryByIdReque
     public override void Configure()
     {
         Get(InventoryEndpoints.GetHistory);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(GetInventoryByIdRequest req, CancellationToken ct)

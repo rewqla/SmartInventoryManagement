@@ -1,4 +1,5 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using Application.Configuration;
 using FastEndpoints;
 
@@ -12,6 +13,7 @@ internal sealed class GetLockoutEndpoint : EndpointWithoutRequest<LockoutConfig>
     {
         Get(AuthEndpoints.Lockout);
         Description(x => x.WithTags("Auth"));
+        Roles(PolicyRoles.Admin);
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)

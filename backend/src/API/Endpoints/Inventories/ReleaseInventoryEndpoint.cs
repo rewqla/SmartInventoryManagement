@@ -1,9 +1,9 @@
-﻿using API.Endpoints.Constants;
+﻿using API.Authorization;
+using API.Endpoints.Constants;
 using API.Extensions;
 using Application.Interfaces.Inventories;
 using FastEndpoints;
 using FluentValidation;
-using Infrastructure.Entities;
 
 namespace API.Endpoints.Inventories;
 
@@ -19,6 +19,7 @@ public sealed class ReleaseInventoryEndpoint : Endpoint<ReleaseInventoryRequest,
     public override void Configure()
     {
         Post(InventoryEndpoints.Release);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager, PolicyRoles.Worker);
     }
 
     public override async Task HandleAsync(ReleaseInventoryRequest req, CancellationToken ct)

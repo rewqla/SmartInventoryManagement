@@ -10,36 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Endpoints.Warehouse;
 
-// public static class GetWarehouseByIdEndpoint
-// {
-//     private const string Name = "GetWarehouseById";
-//
-//     public static IEndpointRouteBuilder MapGetWarehouseById(this IEndpointRouteBuilder app)
-//     {
-//         app.MapGet(WarehouseEndpoints.GetById,
-//                 async (Guid id, [FromServices] IWarehouseService warehouseService,
-//                     CancellationToken cancellationToken) =>
-//                 {
-//                     var result = await warehouseService.GetWarehouseByIdAsync(id, cancellationToken);
-//
-//                     return result.Match(
-//                         onSuccess: value => Results.Ok(value),
-//                         onFailure: error => Results.Problem(
-//                             type: "https://httpstatuses.com/404",
-//                             title: error.Code,
-//                             detail: error.Description,
-//                             statusCode: StatusCodes.Status404NotFound
-//                         )
-//                     );
-//                 })
-//             .WithName(Name)
-//             .WithTags(EndpointTags.Warehouse)
-//             .RequireAuthorization(PolicyRoles.Admin);
-//
-//         return app;
-//     }
-// }
-
 internal class GetWarehouseByIdRequest
 {
     public Guid Id { get; set; }
@@ -54,7 +24,7 @@ internal sealed class
     {
         Get(WarehouseEndpoints.GetById);
         Description(x => x.WithTags(EndpointTags.Warehouse));
-        Roles(PolicyRoles.Admin);
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(GetWarehouseByIdRequest request, CancellationToken cancellationToken)

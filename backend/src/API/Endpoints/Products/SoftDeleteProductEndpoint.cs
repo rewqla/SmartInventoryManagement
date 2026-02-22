@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services.Product;
+﻿using API.Authorization;
+using Application.Interfaces.Services.Product;
 using FastEndpoints;
 
 namespace API.Endpoints.Products;
@@ -15,7 +16,7 @@ public sealed class SoftDeleteProductEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Delete("/api/products/{id:guid}");
-        AllowAnonymous();
+        Roles(PolicyRoles.Admin, PolicyRoles.Manager);
     }
 
     public override async Task HandleAsync(CancellationToken ct)
